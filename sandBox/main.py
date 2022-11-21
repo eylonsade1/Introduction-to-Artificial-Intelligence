@@ -2,7 +2,7 @@ import os
 import csv
 import re
 import time
-import OutputStrings as out
+import outputStrings as out
 
 NUMBER_PREFIX = '#N'
 VERTEX_PREFIX = '#V'
