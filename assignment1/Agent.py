@@ -1,65 +1,24 @@
 from collections import defaultdict
 import Vertex
 import Graph
-from State import State
 
 SCORE_MULTIPLYER = 1000
 
 
 class Agent(object):
-    def __init__(self, startingPosition, graph):
+    def __init__(self, startingPosition):
         self.score = 0
         self.amountOfPeopleSaved = 0
         self.timeSpent = 0
         self.terminated = False
-        self.state = State(startingPosition)
-        self.graph = graph
+        self.state = None
+        self.graph = Graph()
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
-    def moveToPerform(self, observations):
+    def move(self, observations):
         print ("not yet implemented for this agent")
-
-
-class StupidGreedy(Agent):
-    def __init__(self):
-        super(StupidGreedy, self).__init__()
-        print("stupid greedy constructor called")
-
-    def moveToPerform(self, observations):
-        return
-
-
-class Saboteur(Agent):
-    def __init__(self, startPosition: Vertex.Vertex):
-        super(Saboteur, self).__init__(startPosition)
-        self.graph = Graph()
-
-    def breakV(self, vertexName):
-        vertex = self.graph.getVertexByName(vertexName)
-        if None:
-            print("Error!! This shouldn't happen")
-        vertex.isBlocked = True
-
-    def move(self):
-        path, dist = self.search(self.state.currentVertex)
-        if path is None:
-            self.terminated = True
-            # todo: Do no-op
-        elif dist == 1:  # break current node - Block
-            self.breakV(path[0])
-        else:  # move to next vertex
-            self.startPosition = path
-
-    def buildAdjMatrix(self, graph):
-        adjMet = defaultdict(list)
-        for edge in graph.edges:
-            a = "#V" + edge.toV
-            b = "#V" + edge.fromV
-            adjMet[a].append(b)
-            adjMet[b].append(a)
-        return adjMet
 
     def BFSShortestPath(self, adjMet, start, goal):
         explored = []
@@ -88,30 +47,74 @@ class Saboteur(Agent):
 
                     # Condition to check if the neighbour node is the goal
                     if neighbour == goal:
-                        print(*new_path)
                         return new_path, len(new_path)
                 explored.append(node)
 
         # nodes aren't connected
         return None, None
 
-    def search(self):
-        startPosition = self.state.currentVertex
+
+class StupidGreedy(Agent):
+    def __init__(self):
+        super(StupidGreedy, self).__init__()
+        print("stupid greedy constructor called")
+
+    def move(self, observations):
+        if not self.terminated:
+            if not self.computerShortestPath():
+                self.terminated = True
+        else:
+            print("Stupid greedy agent cannot move - terminated")
+    def computerShortestPath(self):
+        return
+
+
+class Saboteur(Agent):
+    def __init__(self, startPosition: Vertex.Vertex):
+        super(Saboteur, self).__init__(startPosition)
+        self.graph = Graph()
+
+    def breakV(self, vertexName):
+        vertex = self.graph.getVertexByName(vertexName)
+        if None:
+            print("Error!! This shouldn't happen")
+        vertex.isBlocked = True
+
+    def move(self):
+        path, dist = self.search(self.state.currentVertex)
+        if path is None:
+            self.terminated = True
+            # todo: Do no-op
+        elif dist == 1:  # break current node - Block
+            self.breakV(path[0])
+        else:  # move to next vertex
+            self.startPosition = path
+
+    def search(self, startPosition: Vertex.Vertex):
         brittles = self.graph.getAllBrittle()
         if len(brittles) == 0:
             return None
         minDist = None
         path = None
-        adjMet = self.buildAdjMatrix(self.graph)
+        adjMet = self.buildAdjMet(self.graph)
         startPos = startPosition.name
         for vertex in brittles:
-            newPath, dist = self.BFSShortestPath(adjMet, startPos, vertex.name)
+            newPath, dist = self.BFS_SP(adjMet, startPos, vertex.name)
             if newPath is None:
                 continue
             elif path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2]):
                 minDist = dist
                 path = newPath
         return path, minDist
+
+    def buildAdjMatrix(self, graph):
+        adjMet = defaultdict(list)
+        for edge in graph.edges:
+            a = "#V" + edge.toV
+            b = "#V" + edge.fromV
+            adjMet[a].append(b)
+            adjMet[b].append(a)
+        return adjMet
 
 class AIAgent(Agent):
     def __init__(self, h):
