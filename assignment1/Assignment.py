@@ -6,15 +6,8 @@ import Agent
 
 class Assignment1(object):
     def __init__(self):
-        self.graph = None
+        self.graph = Graph()
         self.start_time = time.time()
-
-    def createGraph(self, pathToGraph):
-        if os.path.isfile(pathToGraph):
-            self.graph = Graph(pathToGraph)
-        else:
-            print(out.FILE_DOESNT_EXIST)
-        print(out.GRAPH_FINISHED)
 
     def timeConvert(self):
         end_time = time.time()

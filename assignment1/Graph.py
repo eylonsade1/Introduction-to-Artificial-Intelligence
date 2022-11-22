@@ -11,11 +11,10 @@ PEOPLE_PREFIX = 'P'
 
 
 class Graph(Singleton):
-    def __init__(self, csvFilePath):
+    def __init__(self):
         self.numOfPoints = None
         self.vertexes = []
         self.edges = []
-        self.readCsvFillInfo(csvFilePath)
 
     def readCsvFillInfo(self, csvFilePath):
         with open(csvFilePath, newline='') as graophFileCsv:
