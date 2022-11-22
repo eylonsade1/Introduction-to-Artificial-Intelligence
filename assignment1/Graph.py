@@ -1,6 +1,7 @@
 import csv
 from Edge import Edge
 from Vertex import Vertex
+from Singleton import Singleton
 
 NUMBER_PREFIX = '#N'
 VERTEX_PREFIX = '#V'
@@ -9,12 +10,11 @@ WEIGHT_PREFIX = 'W'
 PEOPLE_PREFIX = 'P'
 
 
-class Graph(object):
-    def __init__(self, csvFilePath):
+class Graph(Singleton):
+    def __init__(self):
         self.numOfPoints = None
         self.vertexes = []
         self.edges = []
-        self.readCsvFillInfo(csvFilePath)
 
     def readCsvFillInfo(self, csvFilePath):
         with open(csvFilePath, newline='') as graophFileCsv:
