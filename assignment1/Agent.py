@@ -7,59 +7,19 @@ SCORE_MULTIPLYER = 1000
 
 
 class Agent(object):
-    def __init__(self, startingPosition, graph):
+    def __init__(self, startingPosition):
         self.score = 0
         self.amountOfPeopleSaved = 0
         self.timeSpent = 0
         self.terminated = False
         self.state = State(startingPosition)
-        self.graph = graph
+        self.graph = Graph()
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
-    def moveToPerform(self, observations):
+    def move(self, observations):
         print ("not yet implemented for this agent")
-
-
-class StupidGreedy(Agent):
-    def __init__(self):
-        super(StupidGreedy, self).__init__()
-        print("stupid greedy constructor called")
-
-    def moveToPerform(self, observations):
-        return
-
-
-class Saboteur(Agent):
-    def __init__(self, startPosition: Vertex.Vertex):
-        super(Saboteur, self).__init__(startPosition)
-        self.graph = Graph()
-
-    def breakV(self, vertexName):
-        vertex = self.graph.getVertexByName(vertexName)
-        if None:
-            print("Error!! This shouldn't happen")
-        vertex.isBlocked = True
-
-    def move(self):
-        path, dist = self.search(self.state.currentVertex)
-        if path is None:
-            self.terminated = True
-            # todo: Do no-op
-        elif dist == 1:  # break current node - Block
-            self.breakV(path[0])
-        else:  # move to next vertex
-            self.startPosition = path
-
-    def buildAdjMatrix(self, graph):
-        adjMet = defaultdict(list)
-        for edge in graph.edges:
-            a = "#V" + edge.toV
-            b = "#V" + edge.fromV
-            adjMet[a].append(b)
-            adjMet[b].append(a)
-        return adjMet
 
     def BFSShortestPath(self, adjMet, start, goal):
         explored = []
@@ -88,12 +48,53 @@ class Saboteur(Agent):
 
                     # Condition to check if the neighbour node is the goal
                     if neighbour == goal:
-                        print(*new_path)
                         return new_path, len(new_path)
                 explored.append(node)
 
         # nodes aren't connected
         return None, None
+
+
+class StupidGreedy(Agent):
+    def __init__(self):
+        super(StupidGreedy, self).__init__()
+        print("stupid greedy constructor called")
+
+    def move(self, observations):
+        if not self.terminated:
+            if not self.computerShortestPath():
+                self.terminated = True
+        else:
+            print("Stupid greedy agent cannot move - terminated")
+
+    def computerShortestPath(self):
+        return
+
+
+class Saboteur(Agent):
+    def __init__(self, startPosition: Vertex.Vertex):
+        super(Saboteur, self).__init__(startPosition)
+        self.graph = Graph()
+
+    def breakV(self, vertexName):
+        vertex = self.graph.getVertexByName(vertexName)
+        if None:
+            print("Error!! This shouldn't happen")
+        vertex.isBlocked = True
+        self.graph.deleteVertex(vertex)
+
+    def move(self):
+        path, dist = self.search(self.state.currentVertex)
+        if path is None:
+            self.terminated = True
+            # todo: Do no-op + print
+        elif dist == 2:  # path of length 1 - move one vertex then break it
+            self.state.currentVertex = path[1]
+            self.breakV(path[1])
+            # todo: print
+        else:  # move to next vertex, don't break it
+            self.state.currentVertex = path[1]
+            # todo: print
 
     def search(self):
         startPosition = self.state.currentVertex
@@ -112,6 +113,15 @@ class Saboteur(Agent):
                 minDist = dist
                 path = newPath
         return path, minDist
+
+    def buildAdjMatrix(self, graph):
+        adjMet = defaultdict(list)
+        for edge in graph.edges:
+            a = edge.toV
+            b = edge.fromV
+            adjMet[a].append(b)
+            adjMet[b].append(a)
+        return adjMet
 
 class AIAgent(Agent):
     def __init__(self, h):
