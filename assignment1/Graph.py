@@ -33,3 +33,10 @@ class Graph(object):
                     self.vertexes.append(Vertex(row[0], personCounter, isBrittle))
                 elif row[0].startswith(EDGE_PREFIX):
                     self.edges.append(Edge(row[1], row[2], row[3].split(WEIGHT_PREFIX)[1]))
+
+    def getAllBrittle(self):
+        brittles = []
+        for vertex in self.vertexes:
+            if vertex.isBrittle:
+                brittles.append(vertex)
+        return brittles

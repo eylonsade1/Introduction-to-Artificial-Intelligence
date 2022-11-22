@@ -1,7 +1,9 @@
 from Graph import Graph
 import time
 import os
-import outputStrings as out
+import OutputStrings as out
+import Agent
+
 class Assignment1(object):
     def __init__(self):
         self.graph = None
@@ -9,10 +11,10 @@ class Assignment1(object):
 
     def createGraph(self, pathToGraph):
         if os.path.isfile(pathToGraph):
-                self.graph = Graph(pathToGraph)
+            self.graph = Graph(pathToGraph)
         else:
-            print("File given doesn't exist!")
-        print("Finished generating graph object")
+            print(out.FILE_DOESNT_EXIST)
+        print(out.GRAPH_FINISHED)
 
     def timeConvert(self):
         end_time = time.time()
@@ -67,37 +69,28 @@ class Assignment1(object):
 
     def firstImpl(self):
         agents = []
-        agentString = ["Choose initial position for stupid greedy agent", "Choose initial position for saboteur agent agent"]
+        agentString = out.POSITION_PART1
         for agent in range(len(agentString)):
             print(agentString[agent])
             position = self.initPosition()
             agents.append(self.createAgent1(agent, position))
-        agentType = self.numInput("Choose type for agent number 3:\n"
-                                  "1)\tHuman agent\n"
-                                  "2)\tStupid greedy agent\n"
-                                  "3)\tSaboteur agent\n", 4)
+        agentType = self.numInput(out.CHOOSE_AGENT3, 4)
         position = self.initPosition()
         newAgent = self.createAgent1(agentType, position)
         agents.append(newAgent)
 
     def secondImpl(self):
-        numOfAgents = self.numInput("Insert the number of agents - ", 1000)
+        numOfAgents = self.numInput(out.CHOOSE_NUM_OF_AGENTS, 1000)
         agents = []
         for i in range(1, numOfAgents + 1):
-            agentType = self.numInput("Choose type for agent number" + str(i) + ":\n"
-                                  "1)\tGreedy search agent\n"
-                                  "2)\tA* search agent\n"
-                                  "3)\tReal time A* agent with L expansions\n", 4)
+            agentType = self.numInput(out.CHOOSE_AGENT_PART2.format(str(i)), 4)
             position = self.initPosition()
             newAgent = self.createAgent2(agentType, position)
             agents.append(newAgent)
 
     def userInit(self):
-        print('----Welcome to Hurricane Evacuation Problem----')
-        implNum = self.numInput("Insert which part to run:\n"
-                                "1)\tImplementation part 1\n"
-                                "2)\tImplementation part 2\n"
-                                "Your choice - ", 3)
+        print(out.WELCOME_HURRICANE)
+        implNum = self.numInput(out.CHOOSE_ASS_PART, 3)
         if implNum == 1:
             agents = self.firstImpl()
         else:
