@@ -41,7 +41,7 @@ class Graph(Singleton):
                         self.toSave.append(vertex)
                     self.vertexes.append(vertex)
                 elif row[0].startswith(EDGE_PREFIX):
-                    self.edges.append(Edge(row[1], row[2], row[3].split(WEIGHT_PREFIX)[1]))
+                    self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1]))
 
     def getAllBrittle(self):
         return self.brittles
@@ -54,3 +54,17 @@ class Graph(Singleton):
             if vertex.name is name:
                 return vertex
         return None
+
+    def deleteVertex(self, vertexToDelete: Vertex):
+        for vertex in self.vertexes:
+            if vertex == vertexToDelete:
+                self.vertexes.remove(vertex)
+        for vertex in self.brittles:
+            if vertex == vertexToDelete:
+                self.brittles.remove(vertex)
+        for vertex in self.toSave:
+            if vertex == vertexToDelete:
+                self.toSave.remove(vertex)
+        for edge in self.edges:
+            if edge.fromV == vertexToDelete.name or edge.toV == vertexToDelete.name:
+                self.edges.remove(edge)
