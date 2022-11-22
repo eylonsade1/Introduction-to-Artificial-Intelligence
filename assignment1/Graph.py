@@ -40,3 +40,9 @@ class Graph(Singleton):
             if vertex.isBrittle:
                 brittles.append(vertex)
         return brittles
+
+    def getVertexByName(self, name):
+        for vertex in self.vertexes:
+            if vertex.name is name:
+                return vertex
+        return None

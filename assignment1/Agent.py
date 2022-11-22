@@ -32,8 +32,15 @@ class StupidGreedy(Agent):
 
 
 class Saboteur(Agent):
-    def __init__(self, startPosition: Vertex.Vertex, graph: Graph.Graph):
-        super(Saboteur, self).__init__(startPosition, graph)
+    def __init__(self, startPosition: Vertex.Vertex):
+        super(Saboteur, self).__init__(startPosition)
+        self.graph = Graph()
+
+    def breakV(self, vertexName):
+        vertex = self.graph.getVertexByName(vertexName)
+        if None:
+            print("Error!! This shouldn't happen")
+        vertex.isBlocked = True
 
     def move(self):
         path, dist = self.search(self.state.currentVertex)
@@ -41,7 +48,7 @@ class Saboteur(Agent):
             self.terminated = True
             # todo: Do no-op
         elif dist == 1:  # break current node - Block
-            5
+            self.breakV(path[0])
         else:  # move to next vertex
             self.startPosition = path
 
