@@ -6,19 +6,52 @@ SCORE_MULTIPLYER = 1000
 
 
 class Agent(object):
-    def __init__(self, startingPosition, graph):
+    def __init__(self, startingPosition):
         self.score = 0
         self.amountOfPeopleSaved = 0
         self.timeSpent = 0
         self.terminated = False
         self.state = None
-        self.graph = graph
+        self.graph = Graph()
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
-    def moveToPerform(self, observations):
+    def move(self, observations):
         print ("not yet implemented for this agent")
+
+    def BFSShortestPath(self, adjMet, start, goal):
+        explored = []
+
+        # Queue for traversing the graph in the BFS
+        queue = [[start]]
+
+        # If the desired node is reached
+        if start == goal:
+            return start, 0
+
+        # Loop to traverse the graph with the help of the queue
+        while queue:
+            path = queue.pop(0)
+            node = path[-1]
+
+            # Condition to check if the current node is not visited
+            if node not in explored:
+                neighbours = adjMet[node]
+
+                # Loop to iterate over the neighbours of the node
+                for neighbour in neighbours:
+                    new_path = list(path)
+                    new_path.append(neighbour)
+                    queue.append(new_path)
+
+                    # Condition to check if the neighbour node is the goal
+                    if neighbour == goal:
+                        return new_path, len(new_path)
+                explored.append(node)
+
+        # nodes aren't connected
+        return None, None
 
 
 class StupidGreedy(Agent):
@@ -26,9 +59,14 @@ class StupidGreedy(Agent):
         super(StupidGreedy, self).__init__()
         print("stupid greedy constructor called")
 
-    def moveToPerform(self, observations):
+    def move(self, observations):
+        if not self.terminated:
+            if not self.computerShortestPath():
+                self.terminated = True
+        else:
+            print("Stupid greedy agent cannot move - terminated")
+    def computerShortestPath(self):
         return
-
 
 class Saboteur(Agent):
     def __init__(self, startPosition: Vertex.Vertex, graph: Graph.Graph):
@@ -68,39 +106,6 @@ class Saboteur(Agent):
             adjMet[a].append(b)
             adjMet[b].append(a)
         return adjMet
-
-    def BFSShortestPath(self, adjMet, start, goal):
-        explored = []
-
-        # Queue for traversing the graph in the BFS
-        queue = [[start]]
-
-        # If the desired node is reached
-        if start == goal:
-            return start, 0
-
-        # Loop to traverse the graph with the help of the queue
-        while queue:
-            path = queue.pop(0)
-            node = path[-1]
-
-            # Condition to check if the current node is not visited
-            if node not in explored:
-                neighbours = adjMet[node]
-
-                # Loop to iterate over the neighbours of the node
-                for neighbour in neighbours:
-                    new_path = list(path)
-                    new_path.append(neighbour)
-                    queue.append(new_path)
-
-                    # Condition to check if the neighbour node is the goal
-                    if neighbour == goal:
-                        return new_path, len(new_path)
-                explored.append(node)
-
-        # nodes aren't connected
-        return None, None
 
 
 class AIAgent(Agent):
