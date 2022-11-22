@@ -6,6 +6,7 @@ def createGraph(pathToGraph):
     if os.path.isfile(pathToGraph):
         graph = Graph()
         graph.readCsvFillInfo(pathToGraph)
+        graph.buildMatrix()
     else:
         print(out.FILE_DOESNT_EXIST)
     print(out.GRAPH_FINISHED)

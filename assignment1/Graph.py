@@ -17,6 +17,8 @@ class Graph(Singleton):
         self.edges = []
         self.brittles = []
         self.toSave = []
+        self.adjMatrix = None
+
     def readCsvFillInfo(self, csvFilePath):
         with open(csvFilePath, newline='') as graophFileCsv:
             spamreader = csv.reader(graophFileCsv, delimiter=',')
@@ -68,3 +70,12 @@ class Graph(Singleton):
         for edge in self.edges:
             if edge.fromV == vertexToDelete.name or edge.toV == vertexToDelete.name:
                 self.edges.remove(edge)
+
+    def buildMatrix(self):
+        self.adjMatrix = [[0 for x in self.vertexes] for x in self.vertexes]
+        for edge in self.edges:
+            aCoordinate = int(edge.toV.split(VERTEX_PREFIX)[1]) -1
+            bCoordinate = int(edge.fromV.split(VERTEX_PREFIX)[1]) -1
+            self.adjMatrix[aCoordinate][bCoordinate] = int(edge.weight)
+            self.adjMatrix[bCoordinate][aCoordinate] = int(edge.weight)
+
