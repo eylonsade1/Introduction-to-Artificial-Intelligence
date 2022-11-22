@@ -2,7 +2,7 @@ from Graph import Graph
 import time
 import os
 import OutputStrings as out
-import Agent
+from Agent import Saboteur
 
 class Assignment1(object):
     def __init__(self):
@@ -12,6 +12,9 @@ class Assignment1(object):
     def createGraph(self, pathToGraph):
         if os.path.isfile(pathToGraph):
             self.graph = Graph(pathToGraph)
+            s = Saboteur(self.graph.vertexes[0], self.graph)
+            print("[0] = ", self.graph.vertexes[0])
+            print(s.search())
         else:
             print(out.FILE_DOESNT_EXIST)
         print(out.GRAPH_FINISHED)

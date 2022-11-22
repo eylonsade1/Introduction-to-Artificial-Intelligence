@@ -1,6 +1,7 @@
 from collections import defaultdict
 import Vertex
 import Graph
+from State import State
 
 SCORE_MULTIPLYER = 1000
 
@@ -11,7 +12,7 @@ class Agent(object):
         self.amountOfPeopleSaved = 0
         self.timeSpent = 0
         self.terminated = False
-        self.state = None
+        self.state = State(startingPosition)
         self.graph = graph
 
     def calcualteScore(self):
@@ -35,30 +36,14 @@ class Saboteur(Agent):
         super(Saboteur, self).__init__(startPosition, graph)
 
     def move(self):
-        path, dist = self.search(self.startPosition)
+        path, dist = self.search(self.state.currentVertex)
         if path is None:
-            return
+            self.terminated = True
+            # todo: Do no-op
         elif dist == 1:  # break current node - Block
             5
         else:  # move to next vertex
             self.startPosition = path
-
-    def search(self, startPosition: Vertex.Vertex):
-        brittles = self.graph.getAllBrittle()
-        if len(brittles) == 0:
-            return None
-        minDist = None
-        path = None
-        adjMet = self.buildAdjMet(self.graph)
-        startPos = startPosition.name
-        for vertex in brittles:
-            newPath, dist = self.BFS_SP(adjMet, startPos, vertex.name)
-            if newPath is None:
-                continue
-            elif path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2]):
-                minDist = dist
-                path = newPath
-        return path, minDist
 
     def buildAdjMatrix(self, graph):
         adjMet = defaultdict(list)
@@ -96,12 +81,30 @@ class Saboteur(Agent):
 
                     # Condition to check if the neighbour node is the goal
                     if neighbour == goal:
+                        print(*new_path)
                         return new_path, len(new_path)
                 explored.append(node)
 
         # nodes aren't connected
         return None, None
 
+    def search(self):
+        startPosition = self.state.currentVertex
+        brittles = self.graph.getAllBrittle()
+        if len(brittles) == 0:
+            return None
+        minDist = None
+        path = None
+        adjMet = self.buildAdjMatrix(self.graph)
+        startPos = startPosition.name
+        for vertex in brittles:
+            newPath, dist = self.BFSShortestPath(adjMet, startPos, vertex.name)
+            if newPath is None:
+                continue
+            elif path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2]):
+                minDist = dist
+                path = newPath
+        return path, minDist
 
 class AIAgent(Agent):
     def __init__(self, h):
