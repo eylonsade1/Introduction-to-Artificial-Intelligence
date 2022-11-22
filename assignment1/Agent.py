@@ -2,7 +2,6 @@ from collections import defaultdict
 import Vertex
 import Graph
 from State import State
-
 SCORE_MULTIPLYER = 1000
 
 
@@ -19,7 +18,37 @@ class Agent(object):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
     def move(self, observations):
-        print ("not yet implemented for this agent")
+        print("not yet implemented for this agent")
+
+class Saboteur(Agent):
+    def __init__(self, startPosition: Vertex.Vertex):
+        super(Saboteur, self).__init__(startPosition)
+        self.graph = Graph()
+
+    def breakV(self, vertexName):
+        vertex = self.graph.getVertexByName(vertexName)
+        if None:
+            print("Error!! This shouldn't happen")
+        vertex.isBlocked = True
+
+    def move(self):
+        path, dist = self.search(self.state.currentVertex)
+        if path is None:
+            self.terminated = True
+            # todo: Do no-op
+        elif dist == 1:  # break current node - Block
+            self.breakV(path[0])
+        else:  # move to next vertex
+            self.startPosition = path
+
+    def buildAdjMatrix(self, graph):
+        adjMet = defaultdict(list)
+        for edge in graph.edges:
+            a = edge.toV
+            b = edge.fromV
+            adjMet[a].append(b)
+            adjMet[b].append(a)
+        return adjMet
 
     def BFSShortestPath(self, adjMet, start, goal):
         explored = []
@@ -113,15 +142,6 @@ class Saboteur(Agent):
                 minDist = dist
                 path = newPath
         return path, minDist
-
-    def buildAdjMatrix(self, graph):
-        adjMet = defaultdict(list)
-        for edge in graph.edges:
-            a = edge.toV
-            b = edge.fromV
-            adjMet[a].append(b)
-            adjMet[b].append(a)
-        return adjMet
 
 class AIAgent(Agent):
     def __init__(self, h):

@@ -15,7 +15,8 @@ class Graph(Singleton):
         self.numOfPoints = None
         self.vertexes = []
         self.edges = []
-
+        self.brittles = []
+        self.toSave = []
     def readCsvFillInfo(self, csvFilePath):
         with open(csvFilePath, newline='') as graophFileCsv:
             spamreader = csv.reader(graophFileCsv, delimiter=',')
@@ -25,24 +26,45 @@ class Graph(Singleton):
                 elif row[0].startswith(VERTEX_PREFIX):
                     personCounter = 0
                     isBrittle = False
+                    peopleToSave = False
                     for field in row:
                         if field.startswith(PEOPLE_PREFIX):
                             personCounter = field.split(PEOPLE_PREFIX)[1]
+                            peopleToSave = True
                         elif field == 'B':
                             isBrittle = True
-                    self.vertexes.append(Vertex(row[0], personCounter, isBrittle))
+
+                    vertex = Vertex(row[0], personCounter, isBrittle)
+                    if isBrittle:
+                        self.brittles.append(vertex)
+                    if peopleToSave:
+                        self.toSave.append(vertex)
+                    self.vertexes.append(vertex)
                 elif row[0].startswith(EDGE_PREFIX):
-                    self.edges.append(Edge(row[1], row[2], row[3].split(WEIGHT_PREFIX)[1]))
+                    self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1]))
 
     def getAllBrittle(self):
-        brittles = []
-        for vertex in self.vertexes:
-            if vertex.isBrittle:
-                brittles.append(vertex)
-        return brittles
+        return self.brittles
+
+    def getAllToSave(self):
+        return self.toSave
 
     def getVertexByName(self, name):
         for vertex in self.vertexes:
             if vertex.name is name:
                 return vertex
         return None
+
+    def deleteVertex(self, vertexToDelete: Vertex):
+        for vertex in self.vertexes:
+            if vertex == vertexToDelete:
+                self.vertexes.remove(vertex)
+        for vertex in self.brittles:
+            if vertex == vertexToDelete:
+                self.brittles.remove(vertex)
+        for vertex in self.toSave:
+            if vertex == vertexToDelete:
+                self.toSave.remove(vertex)
+        for edge in self.edges:
+            if edge.fromV == vertexToDelete.name or edge.toV == vertexToDelete.name:
+                self.edges.remove(edge)
