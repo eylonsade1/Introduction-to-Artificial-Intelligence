@@ -1,7 +1,7 @@
 from collections import defaultdict
 import Vertex
 import Graph
-
+from State import State
 SCORE_MULTIPLYER = 1000
 
 
@@ -11,14 +11,14 @@ class Agent(object):
         self.amountOfPeopleSaved = 0
         self.timeSpent = 0
         self.terminated = False
-        self.state = None
+        self.state = State(startingPosition)
         self.graph = Graph()
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
     def move(self, observations):
-        print ("not yet implemented for this agent")
+        print("not yet implemented for this agent")
 
     def BFSShortestPath(self, adjMet, start, goal):
         explored = []
@@ -115,6 +115,7 @@ class Saboteur(Agent):
             adjMet[a].append(b)
             adjMet[b].append(a)
         return adjMet
+
 
 class AIAgent(Agent):
     def __init__(self, h):
