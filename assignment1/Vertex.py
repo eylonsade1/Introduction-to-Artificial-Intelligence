@@ -6,4 +6,4 @@ class Vertex(object):
         self.isBlocked = isBlocked
 
     def __str__(self):
-        return self.name
+        return "[{}:persons:{}--brittle:{}]\n".format(self.name, self.persons, self.isBrittle)

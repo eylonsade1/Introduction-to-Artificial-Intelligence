@@ -8,6 +8,7 @@ class Assignment1(object):
     def __init__(self):
         self.graph = Graph()
         self.start_time = time.time()
+        self.agents = []
 
     def timeConvert(self):
         end_time = time.time()
@@ -44,13 +45,19 @@ class Assignment1(object):
         position = self.numInput(positions, numOfVert + 1)
         return position - 1
 
+    def allAgentTerminated(self):
+        for agent in self.agents:
+            if not agent.terminated:
+                return False
+        return True
+
     def createAgent1(self, agentType, position):
         if agentType == 1:
-            return # Human agent
+            return Agent.HumanAgent(position)
         elif agentType == 2:
-            return # Stupid greedy agent
+            return Agent.StupidGreedy(position)
         elif agentType == 3:
-            return # Saboteur agent
+            return Agent.Saboteur(position)
 
     def createAgent2(self, agentType, position):
         if agentType == 1:
@@ -85,6 +92,15 @@ class Assignment1(object):
         print(out.WELCOME_HURRICANE)
         implNum = self.numInput(out.CHOOSE_ASS_PART, 3)
         if implNum == 1:
-            agents = self.firstImpl()
+            self.agents = self.firstImpl()
         else:
-            agents = self.secondImpl()
+            self.agents = self.secondImpl()
+
+    def runAgents(self):
+        while not self.allAgentTerminated():
+            for agent in self.agents:
+                if not agent.terminated:
+                    agent.move()
+
+        for agent in self.agents:
+            print(agent)

@@ -24,6 +24,8 @@ class Agent(object):
     def move(self, observations):
         print("not yet implemented for this agent")
 
+    def updateTime(self, weightOfMove):
+        self.timeSpent += weightOfMove
 
     def BFSShortestPath(self, adjMet, start, goal):
         explored = []
@@ -59,9 +61,17 @@ class Agent(object):
         return None, None
 
 
+    def __str__(self):
+        agent_str = "-------------------------\n"
+        agent_str += type(self).__name__ + "\n"
+        agent_str += "Score: " + str(self.score) + "\n"
+        agent_str += "time spent(total weight of edges: " + str(self.timeSpent) + "\n"
+        agent_str += "-------------------------\n"
+        return agent_str
+
 class StupidGreedy(Agent):
-    def __init__(self):
-        super(StupidGreedy, self).__init__()
+    def __init__(self, startingPosition):
+        super(StupidGreedy, self).__init__(startingPosition)
         print("stupid greedy constructor called")
 
     def move(self, observations):
@@ -73,6 +83,8 @@ class StupidGreedy(Agent):
 
     def computerShortestPath(self):
         return
+
+
 class Saboteur(Agent):
     def __init__(self, startPosition: Vertex.Vertex):
         super(Saboteur, self).__init__(startPosition)
@@ -123,6 +135,15 @@ class Saboteur(Agent):
             adjMet[a].append(b)
             adjMet[b].append(a)
         return adjMet
+
+
+class HumanAgent(Agent):
+    def __init__(self, startingPosition):
+        super(HumanAgent, self).__init__(startingPosition)
+        print("Human constructor called")
+
+    def move(self):
+        print("Current agent state : {}".format(self.state))
 
 
 class AIAgent(Agent):

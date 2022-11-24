@@ -19,6 +19,17 @@ class Graph(Singleton):
         self.toSave = []
         self.adjMatrix = None
 
+
+    def __str__(self):
+        graphPrint ="Edges :\n ------------------ \n"
+        for edge in self.edges:
+            graphPrint += str(edge)
+        graphPrint += "Vertexes :\n ------------------ \n"
+        for vertex in self.vertexes:
+            graphPrint += str(vertex
+                              )
+        return graphPrint
+
     def readCsvFillInfo(self, csvFilePath):
         with open(csvFilePath, newline='') as graophFileCsv:
             spamreader = csv.reader(graophFileCsv, delimiter=',')
