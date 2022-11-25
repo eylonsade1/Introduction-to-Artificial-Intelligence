@@ -59,14 +59,27 @@ class Graph(Singleton):
     def getAllBrittle(self):
         return self.brittles
 
+    def getAllBrittleNames(self):
+        brittle = []
+        for vertex in self.brittles:
+            brittle.append(vertex.name)
+        return brittle
+
     def getAllToSave(self):
         return self.toSave
+
+    def getAllToSaveNames(self):
+        toSave = []
+        for vertex in self.toSave:
+            toSave.append(vertex.name)
+        return toSave
 
     def getVertexByName(self, name):
         for vertex in self.vertexes:
             if vertex.name is name:
                 return vertex
         return None
+
 
     def deleteVertex(self, vertexToDelete: Vertex):
         for vertex in self.vertexes:
@@ -89,4 +102,3 @@ class Graph(Singleton):
             bCoordinate = int(edge.fromV.split(VERTEX_PREFIX)[1]) -1
             self.adjMatrix[aCoordinate][bCoordinate] = int(edge.weight)
             self.adjMatrix[bCoordinate][aCoordinate] = int(edge.weight)
-

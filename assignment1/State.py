@@ -1,5 +1,6 @@
 from Graph import Graph
 
+
 class State(object):
     def __init__(self, currentVertex, brokenVertexes, vertexWithPeopleToSave):
         self.currentVertex = currentVertex
