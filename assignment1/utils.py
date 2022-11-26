@@ -88,10 +88,13 @@ def reduceGraph(G, current):
             # print("neighbors",vertex, *neighbors)
             for neighbor1 in neighbors:
                 for neighbor2 in neighbors:
-                    if neighbor1 not in G[neighbor2].keys():
-                        newWeight = neighbors[neighbor1] + neighbors[neighbor2]
-                        print("type of ", type(newWeight))
-                        G.add_edge(neighbor1, neighbor2, weight=newWeight) #todo: if in neighbors get smaller weight
+                    # if neighbor1 not in G[neighbor2].keys():
+                    newWeight = neighbors[neighbor1] + neighbors[neighbor2]
+                    G.add_edge(neighbor1, neighbor2, weight=newWeight)
+                    # else:
+                    #     newWeight = neighbors[neighbor1] + neighbors[neighbor2]
+                    #     G.add_edge(neighbor1, neighbor2, weight=newWeight)
+
             G.remove_node(vertex)
    # printGraph(newGraph)
     return G
@@ -108,6 +111,7 @@ def printGraph(graph):
 def minTree(graphs, currentPos):
     # bestTree = None
     bestWeight = None
+    bestWeightNotValid = None
     toTravel = Graph().getAllToSaveByName()
     # print("toTravel -> ", toTravel)
     toTravel.append("#VV")
@@ -122,8 +126,8 @@ def minTree(graphs, currentPos):
         graph.add_edge("#VV", currentPos, weight=graphWeightExtra)
         path = nx.approximation.traveling_salesman_problem(graph, nodes=toTravel, cycle=False)
         graphWeight = nx.path_weight(graph, path, weight="weight")
-        print("path weight -> ", graphWeight)
-        print("path", path)
+        # print("path weight -> ", graphWeight)
+        # print("path", path)
         doubles = [item for item, count in collections.Counter(path).items() if count > 1]
         valid = True
         for vertex in doubles:
@@ -133,7 +137,12 @@ def minTree(graphs, currentPos):
         if (bestWeight is None or bestWeight > graphWeight) and valid:
             # bestTree = graph
             bestWeight = graphWeight
-    return bestWeight
+        elif (bestWeightNotValid is None or bestWeightNotValid > graphWeight) and not valid:
+            bestWeightNotValid = graphWeight
+    if bestWeight is not None:
+        return bestWeight
+    else:
+        return bestWeightNotValid
 
 
 if __name__ == '__main__':

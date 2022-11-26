@@ -108,7 +108,7 @@ class Assignment1(object):
             print(agent)
 
     def heauristicFunction(self, wrapper):
-        currentPos = wrapper.state.currentVertex
+        currentPos = wrapper.state.currentVertex.name
         s = utils.spanning_trees(Graph(), currentPos)
         minWeight = utils.minTree(s, currentPos)
         return minWeight

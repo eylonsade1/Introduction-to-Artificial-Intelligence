@@ -22,12 +22,12 @@ class PriorityQueue(object):
         min_element_index = 0
         min_value = self.f(self.queue[0])
         heuristic_values[self.queue[0]] = min_value
-        min_element_amount_to_save = self.queue[0].state.amount_to_save()
+        min_element_amount_to_save = self.queue[0].state.currentVertex.persons
         for i in range(len(self.queue)):
             queue_i_res = self.f(self.queue[i])
             heuristic_values[self.queue[i]] = queue_i_res
-            queue_i_amount_to_save = self.queue[i].state.amount_to_save()
-            if queue_i_res < min_value or (queue_i_res == min_value and queue_i_amount_to_save < min_element_amount_to_save) or (queue_i_res == min_value and queue_i_amount_to_save == min_element_amount_to_save and (self.queue[i].state.does_current_vertex_need_saving() and (not self.queue[min_element_index].state.does_current_vertex_need_saving()))):
+            queue_i_amount_to_save = self.queue[i].state.currentVertex.persons
+            if queue_i_res < min_value or (queue_i_res == min_value and queue_i_amount_to_save < min_element_amount_to_save) or (queue_i_res == min_value and queue_i_amount_to_save == min_element_amount_to_save and (self.queue[i].state.currentVertex.persons > 0 and (not self.queue[min_element_index].state.currentVertex.persons > 0))):
                 min_element_index = i
                 min_value = queue_i_res
                 min_element_amount_to_save = queue_i_amount_to_save

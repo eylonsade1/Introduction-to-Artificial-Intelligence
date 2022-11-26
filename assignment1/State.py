@@ -19,7 +19,7 @@ class State(object):
                 self.toSave[vertex] = False
 
     def saveVertex(self):
-        self.toSave[self.currentVertex] = True
+        self.toSave[self.currentVertex] = True #todo: are you sure this is the function?
 
     def areAllSaved(self):
         for vertex in self.toSave:

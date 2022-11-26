@@ -19,6 +19,7 @@ class Agent(object):
         self.terminated = False
         self.graph = Graph()
         self.state = State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
+        self.num_of_expansions = 0
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
@@ -210,7 +211,7 @@ class AIAgent(Agent):
         while not fringe.is_empty():
             vertexWrapperCurrent = fringe.pop()
             current_vertex = vertexWrapperCurrent.state.currentVertex
-            acc_weight = vertexWrapperCurrent.weight
+            acc_weight = vertexWrapperCurrent.accumelatedweight
             vertexWrapperCurrent.state.saveVertex()
             if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state):
                 self.actionSequence = self.generateSequence(vertexWrapperCurrent)
