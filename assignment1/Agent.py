@@ -71,10 +71,6 @@ class Agent(object):
         agent_str += "-------------------------\n"
         return agent_str
 
-    #todo - understand vertex wrapper and acc_weight
-    def weight(self, vertex):
-        return
-
 
 class StupidGreedy(Agent):
     def __init__(self, startingPosition):
@@ -228,6 +224,8 @@ class AIAgent(Agent):
         self.num_of_expansions += counter
         return counter
 
+    def weight(self, vertexWrapper: Vertex.VertexWrapper):
+        return vertexWrapper.accumelatedweight
 
 class greedyAgent(AIAgent):
     def __init__(self, h, startingPosition):
@@ -243,16 +241,16 @@ class AStarAgent(AIAgent):
         super(AStarAgent, self).__init__(h, startingPosition, A_STAR_LIMIT)
 
     def search(self):
-        fringe = PriorityQueue(lambda x: self.heauristic(x) + weight(x))
+        fringe = PriorityQueue(lambda x: self.heauristic(x) + self.weight(x))
         return self.limitedSearch(fringe)
 
 
 class AStarAgentDepth(AIAgent):
     def __init__(self, h, startingPosition):
-        super(AStarAgent, self).__init__(h, startingPosition, A_START_DEPTH_LIMIT)
+        super(AStarAgentDepth, self).__init__(h, startingPosition, A_START_DEPTH_LIMIT)
 
     def search(self):
-        fringe = PriorityQueue(lambda x: self.h(x) + g(x))
+        fringe = PriorityQueue(lambda x: self.heauristic(x) + self.weight(x))
         return self.limitedSearch(fringe)
 
 

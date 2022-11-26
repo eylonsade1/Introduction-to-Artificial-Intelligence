@@ -107,5 +107,5 @@ class Assignment1(object):
             print(agent)
 
     def heauristicFunction(self):
-        return
+        return 1
 
