@@ -53,7 +53,7 @@ def spanning_trees(G, currentPos):
         for edge in graph.edges:
             newGraph.add_edge(edge.fromV, edge.toV, weight=edge.weight)
         # nx.draw(newGraph)
-        # plt.show()
+        plt.show()
         return newGraph
 
     def build_tree(H, edges, currentPos):
