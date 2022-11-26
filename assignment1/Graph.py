@@ -70,8 +70,9 @@ class Graph(Singleton):
 
     def getAllToSaveByName(self):
         leftToSave = []
-        for toSave in self.toSave.keys():
-            leftToSave.append(toSave.name)
+        for vertex in self.vertexes:
+            if int(vertex.persons) > 0:
+                leftToSave.append(vertex.name)
         return leftToSave
 
     def getVertexByName(self, name):

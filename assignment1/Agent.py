@@ -163,10 +163,10 @@ class AIAgent(Agent):
             self.state.updateState()
             if len(self.actionSequence) == 0:
                 expansions_in_search = self.search()
-                self.terminated = len(self.act_sequence) == 0
-                print("Searched, output act sequence is: " + print(self.act_sequence))
-                self.time_passed += expansions_in_search
-            if not self.terminated and self.time_passed + 1 < TIME_LIMIT:
+                self.terminated = len(self.actionSequence) == 0
+                print("Searched, output act sequence is: " + print(self.actionSequence))
+                self.timeSpent += expansions_in_search
+            if not self.terminated and self.timeSpent + 1 < TIME_LIMIT:
                 self.move()
             else:
                 self.terminated = True
@@ -217,11 +217,11 @@ class AIAgent(Agent):
                 self.actionSequence = self.generateSequence(vertexWrapperCurrent)
                 break
             counter += 1
-            # for neighbor_tup in self.graph.expand(current_vertex):
-            #     neighbor_state = s.State(neighbor_tup[0], c.copy(current_vertex_wrapper.state.vertices_status))
-            #     neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper,
-            #                                               acc_weight + neighbor_tup[1])
-            #     fringe.insert(neighbor_vertex_wrapper)
+            for neighbor_tup in self.graph.getNeighborsList(current_vertex):
+                neighbor_state = State(neighbor_tup[0], copy.copy(vertexWrapperCurrent.state.toSave))
+                neighbor_vertex_wrapper = Vertex.VertexWrapper(neighbor_state, vertexWrapperCurrent,
+                                                          acc_weight + int(neighbor_tup[1]))
+                fringe.insert(neighbor_vertex_wrapper)
         self.num_of_expansions += counter
         return counter
 
