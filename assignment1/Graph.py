@@ -20,7 +20,6 @@ class Graph(Singleton):
         self.broken = []
         self.adjMatrix = None
 
-
     def __str__(self):
         graphPrint ="Edges :\n ------------------ \n"
         for edge in self.edges:
@@ -94,15 +93,19 @@ class Graph(Singleton):
             self.adjMatrix[aCoordinate][bCoordinate] = int(edge.weight)
             self.adjMatrix[bCoordinate][aCoordinate] = int(edge.weight)
 
-    # def getEdgeWeigtFromVertexes(self, vertexFrom: Vertex, vertexTo: Vertex):
-    #     for edge in self.edges:
-    #         if vertexFrom.name
+    def getEdgeWeigtFromVerName(self, vertexFrom, vertexTo):
+        for edge in self.edges:
+            if edge.fromV == vertexFrom and edge.toV == vertexTo:
+                return edge.weight
+        return 0
 
     def getNeighborsList(self, vertex: Vertex):
         neighbors = []
         for edge in self.edges:
             if edge.fromV == vertex.name:
-                neighbors.append(self.getVertexByName(edge.toV))
+                weight = self.getEdgeWeigtFromVerName(vertex.name, edge.toV)
+                neighbors.append(tuple((self.getVertexByName(edge.toV), weight)))
             elif edge.toV == vertex.name:
-                neighbors.append(self.getVertexByName(edge.fromV))
+                weight = self.getEdgeWeigtFromVerName(edge.fromV, vertex.name)
+                neighbors.append(tuple((self.getVertexByName(edge.toV), weight)))
         return neighbors

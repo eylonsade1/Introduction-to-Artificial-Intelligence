@@ -18,7 +18,7 @@ class Agent(object):
         self.timeSpent = 0
         self.terminated = False
         self.graph = Graph()
-        self.state = State(startingPosition, self.graph.getAllToSave())
+        self.state = State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
@@ -186,8 +186,8 @@ class AIAgent(Agent):
     def generateSequence(self, vertexWrapperCurrent: Vertex.VertexWrapper):
         if vertexWrapperCurrent.parentWraper is None:
             return []
-        edge_weight = self.graph.get_edge_weight(vertexWrapperCurrent.state.current_vertex,
-                                            vertexWrapperCurrent.parent_wrapper.state.current_vertex)
+        edge_weight = self.graph.getEdgeWeigtFromVerName(vertexWrapperCurrent.state.currentVertex.name,
+                                            vertexWrapperCurrent.parentWraper.state.currentVertex.name)
         current_move = []
         for i in range(edge_weight):
             current_move.append(vertexWrapperCurrent.state.current_vertex)
@@ -235,7 +235,7 @@ class greedyAgent(AIAgent):
 
     def search(self):
         fringe = PriorityQueue(self.heauristic)
-        return self.LimitedSearch(fringe)
+        return self.limitedSearch(fringe)
 
 
 class AStarAgent(AIAgent):
@@ -244,7 +244,7 @@ class AStarAgent(AIAgent):
 
     def search(self):
         fringe = PriorityQueue(lambda x: self.heauristic(x) + weight(x))
-        return self.LimitedSearch(fringe)
+        return self.limitedSearch(fringe)
 
 
 class AStarAgentDepth(AIAgent):
@@ -253,7 +253,7 @@ class AStarAgentDepth(AIAgent):
 
     def search(self):
         fringe = PriorityQueue(lambda x: self.h(x) + g(x))
-        return self.LimitedSearch(fringe)
+        return self.limitedSearch(fringe)
 
 
 
