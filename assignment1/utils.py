@@ -45,18 +45,18 @@ def dijkstra(graph, src):
     printSolution(graph, dist)
 
 
-def spanning_trees(G):
+def spanning_trees(G, currentPos):
     def buidNXGraph(graph):
         newGraph = nx.Graph()
         for vertex in graph.vertexes:
-            newGraph.add_node(vertex.name)
+            newGraph.add_node(vertex.name, isBrittle=vertex.isBrittle, toSave=vertex.persons)
         for edge in graph.edges:
             newGraph.add_edge(edge.fromV, edge.toV, weight=edge.weight)
         # nx.draw(newGraph)
         # plt.show()
         return newGraph
 
-    def build_tree(H, edges):
+    def build_tree(H, edges, currentPos):
         if nx.is_connected(H):
             yield H
         else:
@@ -65,38 +65,42 @@ def spanning_trees(G):
                     H1 = nx.Graph(H)
                     H1.add_edge(*edges[i][0], weight=edges[i][1])
                     # print("*edges[i] = ", *edges[i])
-                    for H2 in build_tree(H1, edges[i+1:]):
+                    for H2 in build_tree(H1, edges[i+1:], currentPos):
                         yield H2
 
     graph = buidNXGraph(G)
-    reducedGraph = reduceGraph(graph)
+    reducedGraph = reduceGraph(graph, "#V1")
     E = nx.Graph()
     E.add_nodes_from(reducedGraph)
-    return build_tree(E, [(e, weight) for e, weight in nx.get_edge_attributes(reducedGraph,'weight').items()])
+    return build_tree(E, [(e, weight) for e, weight in nx.get_edge_attributes(reducedGraph,'weight').items()], currentPos)
 
 
-def reduceGraph(G):
-    newGraph = deepcopy(G)
-    # weights = nx.get_edge_attributes(G, 'weight')
-    for vertex in nx.nodes(G):
-        if vertex not in Graph().getAllBrittleNames() and vertex not in Graph().getAllToSaveNames():
-            neighbors = nx.all_neighbors(newGraph, vertex)
+def reduceGraph(G, current):
+    # newGraph = deepcopy(G)
+    verticesNweight = nx.get_node_attributes(G, 'isBrittle')
+    verticesNpeople = nx.get_node_attributes(G, 'toSave')
+    print("verticesNweight", verticesNweight)
+    print("verticesNpeople", verticesNpeople)
+    for vertex in verticesNweight:
+        print("vertex", vertex)
+        if not bool(verticesNweight[vertex]) and int(verticesNpeople[vertex]) < 1 and not str(vertex) == current:
+            neighbors = nx.all_neighbors(G, vertex)
             print("neighbors",vertex, *neighbors)
             for neighbor1 in neighbors:
                 for neighbor2 in neighbors:
                     if neighbor1 not in G[neighbor2].keys():
                         newWeight = neighbors[neighbor1] + neighbors[neighbor2]
-                        newGraph.add_edge(neighbor1, neighbor2, weight=newWeight)
-            newGraph.remove_node(vertex)
+                        G.add_edge(neighbor1, neighbor2, weight=newWeight)
+            G.remove_node(vertex)
    # printGraph(newGraph)
-    return newGraph
+    return G
 
 
 def printGraph(graph):
     pos = nx.spring_layout(graph)
     nx.draw_networkx(graph, pos, with_labels=True, font_weight='bold')
-    labels = nx.get_edge_attributes(graph, 'weight')
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=labels)
+    weightLabels = nx.get_edge_attributes(graph, 'weight')
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=weightLabels)
     plt.show()
 
 
@@ -115,9 +119,11 @@ if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     print(Graph().adjMatrix)
     dijkstra(Graph(),0)
-    s = spanning_trees(Graph())
-    print("next(s) = ", next(s))
+    s = spanning_trees(Graph(), "#V1")
+    # print("next(s) = ", next(s))
     while s:
-        printGraph(next(s))
+        g = next(s)
+        print(g)
+        printGraph(g)
 
 
