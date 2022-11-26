@@ -2,20 +2,27 @@ from Graph import Graph
 
 
 class State(object):
-    def __init__(self, currentVertex, brokenVertexes, vertexWithPeopleToSave):
+    def __init__(self, currentVertex, vertexWithPeopleToSave):
         self.currentVertex = currentVertex
-
-        #############################################
-        # SingleImplementation - to consider change #
-        #############################################
-        self.broken = brokenVertexes
         self.toSave = vertexWithPeopleToSave
         self.graph = Graph()
 
-        #################################
-        # None singleton implemantation #
-        #################################
-        # self.graph = graph
-
     def __str__(self):
         return "Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
+
+    def updateState(self):
+        graphState = self.graph.getAllToSave()
+        for vertex in graphState:
+            if graphState[vertex]:
+                self.toSave[vertex] = True
+            else:
+                self.toSave[vertex] = False
+
+    def saveVertex(self):
+        self.toSave[self.currentVertex] = True
+
+    def areAllSaved(self):
+        for vertex in self.toSave:
+            if not self.toSave[vertex]:
+                return False
+        return True

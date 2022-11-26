@@ -16,7 +16,8 @@ class Graph(Singleton):
         self.vertexes = []
         self.edges = []
         self.brittles = []
-        self.toSave = []
+        self.toSave = dict()
+        self.broken = []
         self.adjMatrix = None
 
 
@@ -51,7 +52,9 @@ class Graph(Singleton):
                     if isBrittle:
                         self.brittles.append(vertex)
                     if peopleToSave:
-                        self.toSave.append(vertex)
+                        self.toSave[vertex] = False
+                    # else:
+                    #     self.toSave[vertex] = True
                     self.vertexes.append(vertex)
                 elif row[0].startswith(EDGE_PREFIX):
                     self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1]))
@@ -59,27 +62,14 @@ class Graph(Singleton):
     def getAllBrittle(self):
         return self.brittles
 
-    def getAllBrittleNames(self):
-        brittle = []
-        for vertex in self.brittles:
-            brittle.append(vertex.name)
-        return brittle
-
     def getAllToSave(self):
         return self.toSave
 
-    def getAllToSaveNames(self):
-        toSave = []
-        for vertex in self.toSave:
-            toSave.append(vertex.name)
-        return toSave
-
     def getVertexByName(self, name):
         for vertex in self.vertexes:
-            if vertex.name is name:
+            if vertex.name == name:
                 return vertex
         return None
-
 
     def deleteVertex(self, vertexToDelete: Vertex):
         for vertex in self.vertexes:
@@ -94,6 +84,7 @@ class Graph(Singleton):
         for edge in self.edges:
             if edge.fromV == vertexToDelete.name or edge.toV == vertexToDelete.name:
                 self.edges.remove(edge)
+        self.broken.append(vertexToDelete)
 
     def buildMatrix(self):
         self.adjMatrix = [[0 for x in self.vertexes] for x in self.vertexes]
@@ -102,3 +93,16 @@ class Graph(Singleton):
             bCoordinate = int(edge.fromV.split(VERTEX_PREFIX)[1]) -1
             self.adjMatrix[aCoordinate][bCoordinate] = int(edge.weight)
             self.adjMatrix[bCoordinate][aCoordinate] = int(edge.weight)
+
+    # def getEdgeWeigtFromVertexes(self, vertexFrom: Vertex, vertexTo: Vertex):
+    #     for edge in self.edges:
+    #         if vertexFrom.name
+
+    def getNeighborsList(self, vertex: Vertex):
+        neighbors = []
+        for edge in self.edges:
+            if edge.fromV == vertex.name:
+                neighbors.append(self.getVertexByName(edge.toV))
+            elif edge.toV == vertex.name:
+                neighbors.append(self.getVertexByName(edge.fromV))
+        return neighbors

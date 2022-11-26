@@ -1,6 +1,5 @@
 from Graph import Graph
 import time
-import os
 import OutputStrings as out
 import Agent
 
@@ -61,11 +60,11 @@ class Assignment1(object):
 
     def createAgent2(self, agentType, position):
         if agentType == 1:
-            return # Greedy search agent
+            return Agent.greedyAgent(self.heauristicFunction, position)
         elif agentType == 2:
-            return # A* search agent
+            return Agent.AStarAgent(self.heauristicFunction, position)
         elif agentType == 3:
-            return # Real time A* agent with L expansions
+            return Agent.AStarAgentDepth(self.heauristicFunction, position)
 
     def firstImpl(self):
         agents = []
@@ -78,6 +77,7 @@ class Assignment1(object):
         position = self.initPosition()
         newAgent = self.createAgent1(agentType, position)
         agents.append(newAgent)
+        return agents
 
     def secondImpl(self):
         numOfAgents = self.numInput(out.CHOOSE_NUM_OF_AGENTS, 1000)
@@ -87,6 +87,7 @@ class Assignment1(object):
             position = self.initPosition()
             newAgent = self.createAgent2(agentType, position)
             agents.append(newAgent)
+        return agents
 
     def userInit(self):
         print(out.WELCOME_HURRICANE)
@@ -100,7 +101,11 @@ class Assignment1(object):
         while not self.allAgentTerminated():
             for agent in self.agents:
                 if not agent.terminated:
-                    agent.move()
+                    agent.act()
 
         for agent in self.agents:
             print(agent)
+
+    def heauristicFunction(self):
+        return
+

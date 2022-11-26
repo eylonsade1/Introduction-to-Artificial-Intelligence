@@ -15,5 +15,6 @@ if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     ass1 = Assignment1()
     ass1.userInit()
-    # program
+    ass1.runAgents()
+    print("End state of the graph: {}".format(Graph()))
 

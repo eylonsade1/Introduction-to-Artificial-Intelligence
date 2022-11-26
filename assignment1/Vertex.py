@@ -7,3 +7,9 @@ class Vertex(object):
 
     def __str__(self):
         return "[{}:persons:{}--brittle:{}]\n".format(self.name, self.persons, self.isBrittle)
+
+class VertexWrapper(object):
+    def __init__(self, state, parentWraper, weight):
+        self.state = state
+        self.parentWraper = parentWraper
+        self.weight = weight

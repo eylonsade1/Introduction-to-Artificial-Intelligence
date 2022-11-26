@@ -1,13 +1,15 @@
-import sys
 from collections import defaultdict
 import Vertex
-import Graph
+from Graph import Graph
 from State import State
-import os
-import utils
+from PriorityQueue import PriorityQueue
+import copy
 
 SCORE_MULTIPLYER = 1000
-
+GREEDY_LIMIT = 1
+A_STAR_LIMIT = 10000
+A_START_DEPTH_LIMIT = 10
+TIME_LIMIT = 400
 
 class Agent(object):
     def __init__(self, startingPosition):
@@ -15,13 +17,13 @@ class Agent(object):
         self.amountOfPeopleSaved = 0
         self.timeSpent = 0
         self.terminated = False
-        self.state = State(startingPosition)
         self.graph = Graph()
+        self.state = State(startingPosition, self.graph.getAllToSave())
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
-    def move(self, observations):
+    def move(self):
         print("not yet implemented for this agent")
 
     def updateTime(self, weightOfMove):
@@ -69,12 +71,17 @@ class Agent(object):
         agent_str += "-------------------------\n"
         return agent_str
 
+    #todo - understand vertex wrapper and acc_weight
+    def weight(self, vertex):
+        return
+
+
 class StupidGreedy(Agent):
     def __init__(self, startingPosition):
         super(StupidGreedy, self).__init__(startingPosition)
         print("stupid greedy constructor called")
 
-    def move(self, observations):
+    def move(self):
         if not self.terminated:
             if not self.computerShortestPath():
                 self.terminated = True
@@ -147,8 +154,106 @@ class HumanAgent(Agent):
 
 
 class AIAgent(Agent):
-    def __init__(self, h):
+    def __init__(self, h, startingPosition, movesLimit):
+        self.actionSequence = []
         self.heauristic = h
+        self.movesLimit = movesLimit
+        super(AIAgent, self).__init__(startingPosition)
+
+    def act(self):
+        print("------ {} ------".format(type(self).__name__))
+        if not self.terminated:
+            self.state.updateState()
+            if len(self.actionSequence) == 0:
+                expansions_in_search = self.search()
+                self.terminated = len(self.act_sequence) == 0
+                print("Searched, output act sequence is: " + print(self.act_sequence))
+                self.time_passed += expansions_in_search
+            if not self.terminated and self.time_passed + 1 < TIME_LIMIT:
+                self.move()
+            else:
+                self.terminated = True
+                print("TERMINATED\n")
+        else:
+            print("TERMINATED\n")
+
+    def search(self):
+        print("not yet implemented")
+
+    def reachedGoal(self,stateOfVertexWrapper: State):
+        return stateOfVertexWrapper.areAllSaved()
+
+    def generateSequence(self, vertexWrapperCurrent: Vertex.VertexWrapper):
+        if vertexWrapperCurrent.parentWraper is None:
+            return []
+        edge_weight = self.graph.get_edge_weight(vertexWrapperCurrent.state.current_vertex,
+                                            vertexWrapperCurrent.parent_wrapper.state.current_vertex)
+        current_move = []
+        for i in range(edge_weight):
+            current_move.append(vertexWrapperCurrent.state.current_vertex)
+        current_sequence = self.generateSequence(vertexWrapperCurrent.parent_wrapper)
+        current_sequence.extend(current_move)
+        return current_sequence
+
+    def generateSequence(self, vertexWrapper: Vertex.VertexWrapper):
+        if vertexWrapper.parentWraper is None:
+            return []
+        edge_weight = self.graph().getEdgeWeigtFromVertexes(vertexWrapper.state.current_vertex,
+                                            vertexWrapper.parent_wrapper.state.current_vertex)
+        current_move = []
+        for i in range(edge_weight):
+            current_move.append(vertexWrapper.state.current_vertex)
+        current_sequence = self.generateSequence(vertexWrapper.parent_wrapper)
+        current_sequence.extend(current_move)
+        return current_sequence
+
+    def limitedSearch(self, fringe):
+        counter = 0
+        vertexWrapperSelf = Vertex.VertexWrapper(copy.copy(self.state), None, 0)
+        fringe.insert(vertexWrapperSelf)
+        while not fringe.is_empty():
+            vertexWrapperCurrent = fringe.pop()
+            current_vertex = vertexWrapperCurrent.state.currentVertex
+            acc_weight = vertexWrapperCurrent.weight
+            vertexWrapperCurrent.state.saveVertex()
+            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state):
+                self.actionSequence = self.generateSequence(vertexWrapperCurrent)
+                break
+            counter += 1
+            # for neighbor_tup in self.graph.expand(current_vertex):
+            #     neighbor_state = s.State(neighbor_tup[0], c.copy(current_vertex_wrapper.state.vertices_status))
+            #     neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper,
+            #                                               acc_weight + neighbor_tup[1])
+            #     fringe.insert(neighbor_vertex_wrapper)
+        self.num_of_expansions += counter
+        return counter
+
+
+class greedyAgent(AIAgent):
+    def __init__(self, h, startingPosition):
+        super(greedyAgent, self).__init__(h, startingPosition, GREEDY_LIMIT)
+
+    def search(self):
+        fringe = PriorityQueue(self.heauristic)
+        return self.LimitedSearch(fringe)
+
+
+class AStarAgent(AIAgent):
+    def __init__(self,h ,startingPosition):
+        super(AStarAgent, self).__init__(h, startingPosition, A_STAR_LIMIT)
+
+    def search(self):
+        fringe = PriorityQueue(lambda x: self.heauristic(x) + weight(x))
+        return self.LimitedSearch(fringe)
+
+
+class AStarAgentDepth(AIAgent):
+    def __init__(self, h, startingPosition):
+        super(AStarAgent, self).__init__(h, startingPosition, A_START_DEPTH_LIMIT)
+
+    def search(self):
+        fringe = PriorityQueue(lambda x: self.h(x) + g(x))
+        return self.LimitedSearch(fringe)
 
 
 
