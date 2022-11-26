@@ -61,8 +61,18 @@ class Graph(Singleton):
     def getAllBrittle(self):
         return self.brittles
 
+    def checkIfBrittle(self, name):
+        vertex = self.getVertexByName(name)
+        return vertex.isBrittle
+
     def getAllToSave(self):
         return self.toSave
+
+    def getAllToSaveByName(self):
+        leftToSave = []
+        for toSave in self.toSave.keys():
+            leftToSave.append(toSave.name)
+        return leftToSave
 
     def getVertexByName(self, name):
         for vertex in self.vertexes:

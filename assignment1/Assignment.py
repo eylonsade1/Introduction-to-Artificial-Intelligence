@@ -2,6 +2,7 @@ from Graph import Graph
 import time
 import OutputStrings as out
 import Agent
+import utils
 
 class Assignment1(object):
     def __init__(self):
@@ -106,6 +107,9 @@ class Assignment1(object):
         for agent in self.agents:
             print(agent)
 
-    def heauristicFunction(self):
-        return
+    def heauristicFunction(self, wrapper):
+        currentPos = wrapper.state.currentVertex
+        s = utils.spanning_trees(Graph(), currentPos)
+        minWeight = utils.minTree(s, currentPos)
+        return minWeight
 

@@ -3,7 +3,7 @@ import os
 from Graph import Graph
 import networkx as nx
 import matplotlib.pyplot as plt
-from copy import deepcopy
+import collections
 
 def createGraph(pathToGraph):
     if os.path.isfile(pathToGraph):
@@ -63,13 +63,13 @@ def spanning_trees(G, currentPos):
             for i in range(len(edges)):
                 if edges[i][0][1] not in nx.algorithms.descendants(H, edges[i][0][0]):
                     H1 = nx.Graph(H)
-                    H1.add_edge(*edges[i][0], weight=edges[i][1])
+                    H1.add_edge(*edges[i][0], weight=int(edges[i][1]))
                     # print("*edges[i] = ", *edges[i])
                     for H2 in build_tree(H1, edges[i+1:], currentPos):
                         yield H2
 
     graph = buidNXGraph(G)
-    reducedGraph = reduceGraph(graph, "#V1")
+    reducedGraph = reduceGraph(graph, currentPos)
     E = nx.Graph()
     E.add_nodes_from(reducedGraph)
     return build_tree(E, [(e, weight) for e, weight in nx.get_edge_attributes(reducedGraph,'weight').items()], currentPos)
@@ -77,20 +77,21 @@ def spanning_trees(G, currentPos):
 
 def reduceGraph(G, current):
     # newGraph = deepcopy(G)
-    verticesNweight = nx.get_node_attributes(G, 'isBrittle')
+    verticesNbrittle = nx.get_node_attributes(G, 'isBrittle')
     verticesNpeople = nx.get_node_attributes(G, 'toSave')
-    print("verticesNweight", verticesNweight)
-    print("verticesNpeople", verticesNpeople)
-    for vertex in verticesNweight:
-        print("vertex", vertex)
-        if not bool(verticesNweight[vertex]) and int(verticesNpeople[vertex]) < 1 and not str(vertex) == current:
+    # print("verticesNweight", verticesNbrittle)
+    # print("verticesNpeople", verticesNpeople)
+    for vertex in verticesNbrittle:
+        # print("vertex", vertex)
+        if not bool(verticesNbrittle[vertex]) and int(verticesNpeople[vertex]) < 1 and not str(vertex) == current:
             neighbors = nx.all_neighbors(G, vertex)
-            print("neighbors",vertex, *neighbors)
+            # print("neighbors",vertex, *neighbors)
             for neighbor1 in neighbors:
                 for neighbor2 in neighbors:
                     if neighbor1 not in G[neighbor2].keys():
                         newWeight = neighbors[neighbor1] + neighbors[neighbor2]
-                        G.add_edge(neighbor1, neighbor2, weight=newWeight)
+                        print("type of ", type(newWeight))
+                        G.add_edge(neighbor1, neighbor2, weight=newWeight) #todo: if in neighbors get smaller weight
             G.remove_node(vertex)
    # printGraph(newGraph)
     return G
@@ -104,15 +105,35 @@ def printGraph(graph):
     plt.show()
 
 
-def minTree(graphs):
-    bestTree = None
+def minTree(graphs, currentPos):
+    # bestTree = None
     bestWeight = None
+    toTravel = Graph().getAllToSaveByName()
+    # print("toTravel -> ", toTravel)
+    toTravel.append("#VV")
+    # print("toTravel -> ", toTravel)
+    if currentPos not in toTravel:
+        toTravel.append(currentPos)
+        # print("toTravel -> ", toTravel)
     for graph in graphs:
-        graphWeight = graph.size(weight="weight")
-        if bestTree is None or bestWeight > graphWeight: # todo: check if brittle node is visited twice
-            bestTree = graph
+        # print("graph", graph)
+        graphWeightExtra = graph.size(weight="weight")
+        graph.add_node("#VV")
+        graph.add_edge("#VV", currentPos, weight=graphWeightExtra)
+        path = nx.approximation.traveling_salesman_problem(graph, nodes=toTravel, cycle=False)
+        graphWeight = nx.path_weight(graph, path, weight="weight")
+        print("path weight -> ", graphWeight)
+        print("path", path)
+        doubles = [item for item, count in collections.Counter(path).items() if count > 1]
+        valid = True
+        for vertex in doubles:
+            if Graph().checkIfBrittle(vertex):
+                valid = False
+        graphWeight -= graphWeightExtra
+        if (bestWeight is None or bestWeight > graphWeight) and valid:
+            # bestTree = graph
             bestWeight = graphWeight
-    return bestTree
+    return bestWeight
 
 
 if __name__ == '__main__':
@@ -120,10 +141,6 @@ if __name__ == '__main__':
     print(Graph().adjMatrix)
     dijkstra(Graph(),0)
     s = spanning_trees(Graph(), "#V1")
-    # print("next(s) = ", next(s))
-    while s:
-        g = next(s)
-        print(g)
-        printGraph(g)
+    minWeight = minTree(s, "#V1")
 
 
