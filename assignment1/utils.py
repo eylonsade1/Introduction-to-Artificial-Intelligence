@@ -61,9 +61,10 @@ def spanning_trees(G):
             yield H
         else:
             for i in range(len(edges)):
-                if edges[i][1] not in nx.algorithms.descendants(H, edges[i][0]):
+                if edges[i][0][1] not in nx.algorithms.descendants(H, edges[i][0][0]):
                     H1 = nx.Graph(H)
-                    H1.add_edge(*edges[i])
+                    H1.add_edge(*edges[i][0], weight=edges[i][1])
+                    # print("*edges[i] = ", *edges[i])
                     for H2 in build_tree(H1, edges[i+1:]):
                         yield H2
 
@@ -71,7 +72,7 @@ def spanning_trees(G):
     reducedGraph = reduceGraph(graph)
     E = nx.Graph()
     E.add_nodes_from(reducedGraph)
-    return build_tree(E, [e for e in reducedGraph.edges])
+    return build_tree(E, [(e, weight) for e, weight in nx.get_edge_attributes(reducedGraph,'weight').items()])
 
 
 def reduceGraph(G):
@@ -87,21 +88,27 @@ def reduceGraph(G):
                         newWeight = neighbors[neighbor1] + neighbors[neighbor2]
                         newGraph.add_edge(neighbor1, neighbor2, weight=newWeight)
             newGraph.remove_node(vertex)
+   # printGraph(newGraph)
     return newGraph
-                # neighbor2 = G[neighbor1].keys()
-                #
-                # weights = nx.get_edge_attributes(G, 'weight')
-                # print("weight", weight1)
-                # print("neighbor1", neighbor1, G[neighbor1])
-                # for neighbor2 in reversed(neighbors):
-                #     if neighbor1 is neighbor2:
-                #         stop = True
-                #     else:
-                #         G.add_edge(neighbor1, neighbor2)
 
 
+def printGraph(graph):
+    pos = nx.spring_layout(graph)
+    nx.draw_networkx(graph, pos, with_labels=True, font_weight='bold')
+    labels = nx.get_edge_attributes(graph, 'weight')
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=labels)
+    plt.show()
 
 
+def minTree(graphs):
+    bestTree = None
+    bestWeight = None
+    for graph in graphs:
+        graphWeight = graph.size(weight="weight")
+        if bestTree is None or bestWeight > graphWeight: # todo: check if brittle node is visited twice
+            bestTree = graph
+            bestWeight = graphWeight
+    return bestTree
 
 
 if __name__ == '__main__':
@@ -109,8 +116,8 @@ if __name__ == '__main__':
     print(Graph().adjMatrix)
     dijkstra(Graph(),0)
     s = spanning_trees(Graph())
-    for tree in s:
-        nx.draw(next(s))
-        plt.show()
+    print("next(s) = ", next(s))
+    while s:
+        printGraph(next(s))
 
 
