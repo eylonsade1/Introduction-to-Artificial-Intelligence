@@ -106,8 +106,8 @@ class Graph(Singleton):
 
     def getEdgeWeigtFromVerName(self, vertexFrom, vertexTo):
         for edge in self.edges:
-            if edge.fromV == vertexFrom and edge.toV == vertexTo:
-                return edge.weight
+            if (edge.fromV == vertexFrom and edge.toV == vertexTo) or (edge.fromV == vertexTo and edge.toV == vertexFrom) :
+                return int(edge.weight)
         return 0
 
     def getNeighborsList(self, vertex: Vertex):

@@ -25,7 +25,7 @@ class Agent(object):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
     def move(self):
-        print("not yet implemented for this agent")
+        print("move not yet implemented for this agent")
 
     def updateTime(self, weightOfMove):
         self.timeSpent += weightOfMove
@@ -164,7 +164,7 @@ class AIAgent(Agent):
             if len(self.actionSequence) == 0:
                 expansions_in_search = self.search()
                 self.terminated = len(self.actionSequence) == 0
-                print("Searched, output act sequence is: " + print(self.actionSequence))
+                # print("Searched, output act sequence is: " + str(self.actionSequence))
                 self.timeSpent += expansions_in_search
             if not self.terminated and self.timeSpent + 1 < TIME_LIMIT:
                 self.move()
@@ -186,43 +186,53 @@ class AIAgent(Agent):
         edge_weight = self.graph.getEdgeWeigtFromVerName(vertexWrapperCurrent.state.currentVertex.name,
                                             vertexWrapperCurrent.parentWraper.state.currentVertex.name)
         current_move = []
+        # print(" int generate sequence, edge, edge weight -> ", edge_weight)
         for i in range(edge_weight):
-            current_move.append(vertexWrapperCurrent.state.current_vertex)
-        current_sequence = self.generateSequence(vertexWrapperCurrent.parent_wrapper)
+            current_move.append(vertexWrapperCurrent.state.currentVertex)
+        current_sequence = self.generateSequence(vertexWrapperCurrent.parentWraper)
         current_sequence.extend(current_move)
         return current_sequence
 
-    def generateSequence(self, vertexWrapper: Vertex.VertexWrapper):
-        if vertexWrapper.parentWraper is None:
-            return []
-        edge_weight = self.graph().getEdgeWeigtFromVertexes(vertexWrapper.state.current_vertex,
-                                            vertexWrapper.parent_wrapper.state.current_vertex)
-        current_move = []
-        for i in range(edge_weight):
-            current_move.append(vertexWrapper.state.current_vertex)
-        current_sequence = self.generateSequence(vertexWrapper.parent_wrapper)
-        current_sequence.extend(current_move)
-        return current_sequence
+    # def generateSequence(self, vertexWrapper: Vertex.VertexWrapper):
+    #     if vertexWrapper.parentWraper is None:
+    #         return []
+    #     edge_weight = self.graph().getEdgeWeigtFromVertexes(vertexWrapper.state.current_vertex,
+    #                                         vertexWrapper.parent_wrapper.state.current_vertex)
+    #     current_move = []
+    #     for i in range(edge_weight):
+    #         current_move.append(vertexWrapper.state.current_vertex)
+    #     current_sequence = self.generateSequence(vertexWrapper.parent_wrapper)
+    #     current_sequence.extend(current_move)
+    #     return current_sequence
 
     def limitedSearch(self, fringe):
+        # print("in limited search")
         counter = 0
         vertexWrapperSelf = Vertex.VertexWrapper(copy.copy(self.state), None, 0)
+        # print("VertexWrapper copied, next insert to fringe")
         fringe.insert(vertexWrapperSelf)
         while not fringe.is_empty():
+            # print("fringe not empy -> ", *fringe.queue.__str__())
             vertexWrapperCurrent = fringe.pop()
+            # print("vertexWrapperCurrent -> ", vertexWrapperCurrent)
             current_vertex = vertexWrapperCurrent.state.currentVertex
             acc_weight = vertexWrapperCurrent.accumelatedweight
+            # print("acc_weight -> ", acc_weight)
             vertexWrapperCurrent.state.saveVertex()
+            # print("after save vertex")
             if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state):
                 self.actionSequence = self.generateSequence(vertexWrapperCurrent)
+                # print("found action sequence -> ", self.actionSequence)
                 break
             counter += 1
             for neighbor_tup in self.graph.getNeighborsList(current_vertex):
-                neighbor_state = State(neighbor_tup[0], copy.copy(vertexWrapperCurrent.state.toSave))
+                # print("in for neightbur_tup")
+                neighbor_state = State(neighbor_tup[0], vertexWrapperCurrent.state.toSave)
                 neighbor_vertex_wrapper = Vertex.VertexWrapper(neighbor_state, vertexWrapperCurrent,
                                                           acc_weight + int(neighbor_tup[1]))
                 fringe.insert(neighbor_vertex_wrapper)
         self.num_of_expansions += counter
+        # print("return counter -> ", counter)
         return counter
 
     def weight(self, vertexWrapper: Vertex.VertexWrapper):

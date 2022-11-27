@@ -13,3 +13,6 @@ class VertexWrapper(object):
         self.state = state
         self.parentWraper = parentWraper
         self.accumelatedweight = accumelatedweight
+
+    def __str__(self):
+        return self.state.currentVertex.__str__()

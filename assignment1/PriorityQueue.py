@@ -7,7 +7,7 @@ class PriorityQueue(object):
         self.f = f
 
     def __str__(self):
-        return ' '.join([str(i) for i in self.queue])
+        return ' '.join([i.__str__() for i in self.queue])
 
     def is_empty(self):
         return len(self.queue) == 0
