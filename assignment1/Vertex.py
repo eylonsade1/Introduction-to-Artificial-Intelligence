@@ -1,7 +1,7 @@
 class Vertex(object):
     def __init__(self, name, numberOfPersons:int , isBrittle = False, isBlocked = False):
         self.name = name
-        self.persons = numberOfPersons
+        self.persons = int(numberOfPersons) #todo check if casting for int required
         self.isBrittle = isBrittle
         self.isBlocked = isBlocked
 

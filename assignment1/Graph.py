@@ -114,8 +114,8 @@ class Graph(Singleton):
         for edge in self.edges:
             if edge.fromV == vertex.name:
                 weight = self.getEdgeWeigtFromVerName(vertex.name, edge.toV)
-                neighbors.append(tuple((self.getVertexByName(edge.toV), weight)))
+                neighbors.append(tuple((self.getVertexByName(edge.toV), int(weight))))
             elif edge.toV == vertex.name:
                 weight = self.getEdgeWeigtFromVerName(edge.fromV, vertex.name)
-                neighbors.append(tuple((self.getVertexByName(edge.toV), weight)))
+                neighbors.append(tuple((self.getVertexByName(edge.toV), int(weight))))
         return neighbors

@@ -113,3 +113,8 @@ class Assignment1(object):
         minWeight = utils.minTree(s, currentPos)
         return minWeight
 
+    def printAgentsState(self):
+        for agent in self.agents:
+            print(agent)
+
+

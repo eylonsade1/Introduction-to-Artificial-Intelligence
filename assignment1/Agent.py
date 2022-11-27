@@ -19,7 +19,9 @@ class Agent(object):
         self.terminated = False
         self.graph = Graph()
         self.state = State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
-        self.num_of_expansions = 0
+        # new - to test
+        self.expansionsAmount = 0
+        self.movementAmount = 0
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
@@ -27,6 +29,7 @@ class Agent(object):
     def move(self):
         print("not yet implemented for this agent")
 
+    #todo connect update time instead of 1 update each move
     def updateTime(self, weightOfMove):
         self.timeSpent += weightOfMove
 
@@ -65,12 +68,16 @@ class Agent(object):
 
 
     def __str__(self):
-        agent_str = "-------------------------\n"
-        agent_str += type(self).__name__ + "\n"
-        agent_str += "Score: " + str(self.score) + "\n"
-        agent_str += "time spent(total weight of edges: " + str(self.timeSpent) + "\n"
-        agent_str += "-------------------------\n"
-        return agent_str
+        agentString = "---------------\n" \
+                      "{}\n" \
+                      "score: {}\n" \
+                      "time spent (weight of edges): {}\n" \
+                      "expansions performed: {}\n" \
+                      "people saved: {}\n" \
+                      "---------------\n".format(type(self).__name__, self.calcualteScore(),
+                                                 self.timeSpent, self.expansionsAmount,
+                                                 self.amountOfPeopleSaved)
+        return agentString
 
 
 class StupidGreedy(Agent):
@@ -163,10 +170,10 @@ class AIAgent(Agent):
             self.state.updateState()
             if len(self.actionSequence) == 0:
                 expansions_in_search = self.search()
-                self.terminated = len(self.act_sequence) == 0
-                print("Searched, output act sequence is: " + print(self.act_sequence))
-                self.time_passed += expansions_in_search
-            if not self.terminated and self.time_passed + 1 < TIME_LIMIT:
+                self.terminated = len(self.actionSequence) == 0
+                print("Searched, output act sequence is: " + print(self.actionSequence)) #test this
+                self.timeSpent += expansions_in_search
+            if not self.terminated and self.timeSpent + 1 < TIME_LIMIT:
                 self.move()
             else:
                 self.terminated = True
@@ -217,17 +224,46 @@ class AIAgent(Agent):
                 self.actionSequence = self.generateSequence(vertexWrapperCurrent)
                 break
             counter += 1
-            # for neighbor_tup in self.graph.expand(current_vertex):
-            #     neighbor_state = s.State(neighbor_tup[0], c.copy(current_vertex_wrapper.state.vertices_status))
-            #     neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper,
-            #                                               acc_weight + neighbor_tup[1])
-            #     fringe.insert(neighbor_vertex_wrapper)
-        self.num_of_expansions += counter
+            for neighbor_tup in self.graph.getNeighborsList(current_vertex):
+                neighbor_state = State(neighbor_tup[0], copy.copy(vertexWrapperCurrent.state.toSave))
+                neighbor_vertex_wrapper = Vertex.VertexWrapper(neighbor_state, vertexWrapperCurrent,
+                                                          acc_weight + neighbor_tup[1])
+                fringe.insert(neighbor_vertex_wrapper)
+        self.expansionsAmount += counter
         return counter
 
     def weight(self, vertexWrapper: Vertex.VertexWrapper):
         return vertexWrapper.accumelatedweight
 
+    def saveVertexOnMove(self):
+        if self.state.currentVertex.persons > 0:
+            print("Saving: " + str(self.state.currentVertex))
+            self.score += self.state.currentVertex.persons
+            self.state.currentVertex.persons = 0
+
+    def translateSequenceToString(self, actionSequence):
+        s = "[ "
+        for vertex in actionSequence:
+            s += str(vertex) + ", "
+        last_index_of_comma = s.rfind(",")
+        if last_index_of_comma != -1:
+            s = s[:last_index_of_comma] + s[last_index_of_comma + 1:]
+
+        return s + "]"
+
+    def move(self):
+        self.movementAmount += 1
+        print("Current sequence: " + self.translateSequenceToString(self.actionSequence))
+        next_vertex = self.actionSequence[0]
+        print("Current Vertex: " + str(self.state.currentVertex))
+        print("Moving to: " + str(next_vertex))
+        if next_vertex != self.state.currentVertex:
+            self.saveVertexOnMove()
+        self.state.current_vertex = next_vertex
+        self.timeSpent += 1
+        self.actionSequence = self.actionSequence[1:]
+        if len(self.actionSequence) == 0:
+            self.saveVertexOnMove()
 class greedyAgent(AIAgent):
     def __init__(self, h, startingPosition):
         super(greedyAgent, self).__init__(h, startingPosition, GREEDY_LIMIT)
