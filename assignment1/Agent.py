@@ -200,18 +200,6 @@ class AIAgent(Agent):
         current_sequence.extend(current_move)
         return current_sequence
 
-    # def generateSequence(self, vertexWrapper: Vertex.VertexWrapper):
-    #     if vertexWrapper.parentWraper is None:
-    #         return []
-    #     edge_weight = self.graph.getEdgeWeigtFromVerName(vertexWrapper.state.currentVertex.name,
-    #                                         vertexWrapper.parentWraper.state.currentVertex.name)
-    #     current_move = []
-    #     for i in range(edge_weight):
-    #         current_move.append(vertexWrapper.state.currentVertex)
-    #     current_sequence = self.generateSequence(vertexWrapper.parentWraper)
-    #     current_sequence.extend(current_move)
-    #     return current_sequence
-
     def limitedSearch(self, fringe):
         counter = 0
         vertexWrapperSelf = Vertex.VertexWrapper(copy.copy(self.state), None, 0)
