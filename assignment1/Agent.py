@@ -178,10 +178,9 @@ class AIAgent(Agent):
         if not self.terminated:
             self.state.updateState()
             if len(self.actionSequence) == 0:
-                expansions_in_search = self.search()
+                self.search()
                 self.terminated = len(self.actionSequence) == 0
                 print("Searched, output act sequence is: " + self.strFromSequence())
-                # self.timeSpent += expansions_in_search
             if not self.terminated and self.timeSpent + 1 < TIME_LIMIT:
                 self.move()
             else:
@@ -221,7 +220,7 @@ class AIAgent(Agent):
             current_vertex = vertexWrapperCurrent.state.currentVertex
             acc_weight = vertexWrapperCurrent.accumelatedweight
             vertexWrapperCurrent.state.saveVertex()
-            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state) or self.impossibleToReachGoal(vertexWrapperCurrent.state):
+            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state): #or self.impossibleToReachGoal(vertexWrapperCurrent.state):
                 self.actionSequence = self.generateSequence(vertexWrapperCurrent)
                 break
             counter += 1
@@ -253,7 +252,6 @@ class AIAgent(Agent):
         last_index_of_comma = s.rfind(",")
         if last_index_of_comma != -1:
             s = s[:last_index_of_comma] + s[last_index_of_comma + 1:]
-
         return s + "]"
 
     def move(self):

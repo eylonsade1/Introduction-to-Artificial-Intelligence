@@ -1,4 +1,5 @@
 from Graph import Graph
+import utils
 
 
 class State(object):
@@ -7,7 +8,7 @@ class State(object):
         self.toSave = vertexWithPeopleToSave
         self.graph = Graph()
         self.possibleToReachGoal = None
-        self.reachable = self.graph.getReachable(self.currentVertex)
+        self.reachable = utils.getReachable(currentVertex)
 
     def __str__(self):
         return "Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
@@ -20,12 +21,12 @@ class State(object):
             else:
                 self.toSave[vertex] = False
 
-        reachAbleState = self.graph.getAllReachable(self.currentVertex)
-        for vertex in reachAbleState:
-            if reachAbleState[vertex]:
-                self.reachable[vertex] = True
-            else:
-                self.reachable[vertex] = False
+        # reachAbleState = self.graph.getAllReachable(self.currentVertex)
+        # for vertex in reachAbleState:
+        #     if reachAbleState[vertex]:
+        #         self.reachable[vertex] = True
+        #     else:
+        #         self.reachable[vertex] = False
 
     def saveVertex(self):
         self.toSave[self.currentVertex] = True

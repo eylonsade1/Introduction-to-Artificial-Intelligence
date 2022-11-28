@@ -4,6 +4,7 @@ from Graph import Graph
 import networkx as nx
 import matplotlib.pyplot as plt
 import collections
+from Vertex import Vertex
 
 def createGraph(pathToGraph):
     if os.path.isfile(pathToGraph):
@@ -11,12 +12,10 @@ def createGraph(pathToGraph):
         graph.readCsvFillInfo(pathToGraph)
         graph.buildMatrix()
 
-
 def printSolution(graph, dist):
     print("Vertex \t Distance from Source")
     for node in range(len(graph.vertexes)):
         print(node, "\t\t", dist[node])
-
 
 def minDistance(graph, dist, sptSet):
     min = sys.maxsize
@@ -27,6 +26,25 @@ def minDistance(graph, dist, sptSet):
 
     return min_index
 
+def getReachableToSave(vertex:Vertex):
+    reachables = {}
+    graph = Graph()
+    toSave = graph.toSave
+    vertexNumber = graph.getVertexNumber(vertex)
+    dists = dijkstra(graph, vertexNumber)
+    for vertexNumber in range(len(dists)):
+        vertexName  = "#V{}".format(vertexNumber+1)
+        vertexObject = graph.getVertexByName(vertexName)
+        try:
+            #this if means the vertex has peoples to save
+            if not toSave[vertexObject]:
+                if dists[vertexNumber] == 1e7:
+                    reachables[vertexObject] = False
+                else:
+                    reachables[vertexObject] = True
+        except: #this is because we can't know at this stage if toSave[vertexObject] is defined.
+            continue
+    return reachables
 
 def dijkstra(graph, src):
     dist = [1e7] * len(graph.vertexes)
@@ -42,8 +60,8 @@ def dijkstra(graph, src):
                     dist[v] > dist[u] + graph.adjMatrix[u][v]):
                 dist[v] = dist[u] + graph.adjMatrix[u][v]
 
-    printSolution(graph, dist)
-
+    # printSolution(graph, dist) only for debugging
+    return dist
 
 def spanning_trees(G, currentPos):
     def buidNXGraph(graph):
@@ -150,7 +168,8 @@ def minTree(graphs, currentPos):
 if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     print(Graph().adjMatrix)
-    dijkstra(Graph(),0)
+    # dijkstra(Graph(),0)
+    getReachableToSave(Graph().getVertexByName("#V1"))
     s = spanning_trees(Graph(), "#V1")
     minWeight = minTree(s, "#V1")
 
