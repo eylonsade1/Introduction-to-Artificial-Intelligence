@@ -91,7 +91,7 @@ def reduceGraph(G, current):
                 for neighbor2 in neighbors:
                     # if neighbor1 not in G[neighbor2].keys():
                     # weight1 = Graph().getEdgeWeigtFromVerName(neighbor1)
-                    newWeight = neighbors[neighbor1] + neighbors[neighbor2]
+                    newWeight = int(G.edges[vertex, neighbor1]['weight']) + int(G.edges[vertex, neighbor2]['weight'])
                     G.add_edge(neighbor1, neighbor2, weight=newWeight)
                     # else:
                     #     newWeight = neighbors[neighbor1] + neighbors[neighbor2]
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     print(Graph().adjMatrix)
     dijkstra(Graph(),0)
-    # s = spanning_trees(Graph(), "#V1")
-    # minWeight = minTree(s, "#V1")
+    s = spanning_trees(Graph(), "#V1")
+    minWeight = minTree(s, "#V1")
 
 
