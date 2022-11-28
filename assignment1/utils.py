@@ -1,3 +1,4 @@
+import copy
 import sys
 import os
 from Graph import Graph
@@ -133,33 +134,35 @@ def minTree(graphs, currentPos, currentState):
     bestWeight = None
     bestWeightNotValid = None
     # toTravel = all nodes with people to save
-    toTravel = realGraph.getAllToSaveByName()
+    allToSave = currentState.getAllToSaveByName()
+    toTravel = copy.copy(allToSave)
     # add the current position to the vertexes that need to be in path
     if currentPos not in toTravel:
         toTravel.append(currentPos)
+    toTravel.append("#VV")
     # go over all generated tree graphs (from spanning_trees)
     for graph in graphs:
         # weight for the edge connecting the fake node to start position - vertex '#VV'
         graphWeightExtra = graph.size(weight="weight")
         # connect non-existing node to current position - control starting position of path
-        toTravel.append("#VV")
         graph.add_node("#VV")
         graph.add_edge("#VV", currentPos, weight=graphWeightExtra)
         # make a list with vertexes with people to save & that are reachable from current position
-        toTravelReal = toTravel
+        toTravelReal = copy.copy(toTravel)
         reachableOrNot = dict()
         for vertex in toTravel:
             if not vertex == "#VV":
                 vertexObj = realGraph.getVertexByName(vertex)
-                if not graph.has_node(vertex):
-                    toTravelReal.remove(vertex)
-                    reachableOrNot[vertexObj] = False
-                else:
-                     reachableOrNot[vertexObj] = True
+                if vertex in allToSave:
+                    if not graph.has_node(vertex):
+                        toTravelReal.remove(vertex)
+                        reachableOrNot[vertexObj] = False
+                    else:
+                         reachableOrNot[vertexObj] = True
         # update in state for current vertex: {vertexToSave1: bool (indicates if reachable or not), ...}
         currentState.setReachableFromVertex(reachableOrNot)
         # approximate path & get the path's weight
-        path = nx.approximation.traveling_salesman_problem(graph, nodes=toTravel, cycle=False)
+        path = nx.approximation.traveling_salesman_problem(graph, nodes=toTravelReal, cycle=False)
         graphWeight = nx.path_weight(graph, path, weight="weight")
         # check if a brittle node is passed twice in the path
         doubles = [item for item, count in collections.Counter(path).items() if count > 1]
