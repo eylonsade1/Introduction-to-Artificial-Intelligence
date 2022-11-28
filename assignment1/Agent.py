@@ -68,14 +68,14 @@ class Agent(object):
 
 
     def __str__(self):
-        score = self.calcualteScore()
+        self.calcualteScore()
         agentString = "---------------\n" \
                       "{}\n" \
                       "score: {}\n" \
                       "time spent (weight of edges): {}\n" \
                       "expansions performed: {}\n" \
                       "people saved: {}\n" \
-                      "---------------\n".format(type(self).__name__, score,
+                      "---------------\n".format(type(self).__name__, self.score,
                                                  self.timeSpent, self.expansionsAmount,
                                                  self.amountOfPeopleSaved)
         return agentString
@@ -237,11 +237,12 @@ class AIAgent(Agent):
         return vertexWrapper.accumelatedweight
 
     def saveVertexOnMove(self):
-        if self.state.currentVertex.persons > 0:
+        currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
+        if currentVertex.persons > 0:
             print("Saving: " + str(self.state.currentVertex))
             self.score += self.state.currentVertex.persons
+            self.amountOfPeopleSaved += currentVertex.persons
             self.state.currentVertex.persons = 0
-            currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
             currentVertex.persons = 0
 
     def translateSequenceToString(self, actionSequence):
