@@ -16,5 +16,6 @@ if __name__ == '__main__':
     ass1 = Assignment1()
     ass1.userInit()
     ass1.runAgents()
+    ass1.printAgentsState()
     print("End state of the graph: {}".format(Graph()))
 

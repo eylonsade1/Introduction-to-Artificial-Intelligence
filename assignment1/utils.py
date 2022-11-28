@@ -87,8 +87,10 @@ def reduceGraph(G, current):
             neighbors = nx.all_neighbors(G, vertex)
             # print("neighbors",vertex, *neighbors)
             for neighbor1 in neighbors:
+                #todo verify issue here
                 for neighbor2 in neighbors:
                     # if neighbor1 not in G[neighbor2].keys():
+                    # weight1 = Graph().getEdgeWeigtFromVerName(neighbor1)
                     newWeight = neighbors[neighbor1] + neighbors[neighbor2]
                     G.add_edge(neighbor1, neighbor2, weight=newWeight)
                     # else:
