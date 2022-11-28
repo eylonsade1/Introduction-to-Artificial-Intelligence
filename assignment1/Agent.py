@@ -208,7 +208,12 @@ class AIAgent(Agent):
         return current_sequence
 
 
-    # def impossibleToReachGoal(self, stateOfVertex):
+    def impossibleToReachGoal(self, stateOfVertex):
+        reachableToSave = stateOfVertex.reachableFromPosition()
+        for vertex, reachable in reachableToSave:
+            if reachable:
+                return False
+        return True
 
 
     def limitedSearch(self, fringe):

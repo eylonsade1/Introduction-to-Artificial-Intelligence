@@ -64,14 +64,18 @@ def dijkstra(graph, src):
     return dist
 
 def spanning_trees(G, currentPos):
-    def buidNXGraph(graph):
+    def buidNXGraph(graph, currentPos):
         newGraph = nx.Graph()
         for vertex in graph.vertexes:
             newGraph.add_node(vertex.name, isBrittle=vertex.isBrittle, toSave=vertex.persons)
         for edge in graph.edges:
             newGraph.add_edge(edge.fromV, edge.toV, weight=edge.weight)
         # nx.draw(newGraph)
-        plt.show()
+        # plt.show()
+        onlyConnected = nx.node_connected_component(newGraph, currentPos)
+        for vert in graph.vertexes:
+            if vert.name not in onlyConnected:
+                newGraph.remove_node(vert.name)
         return newGraph
 
     def build_tree(H, edges, currentPos):
@@ -86,7 +90,7 @@ def spanning_trees(G, currentPos):
                     for H2 in build_tree(H1, edges[i+1:], currentPos):
                         yield H2
 
-    graph = buidNXGraph(G)
+    graph = buidNXGraph(G, currentPos)
     reducedGraph = reduceGraph(graph, currentPos)
     E = nx.Graph()
     E.add_nodes_from(reducedGraph)
@@ -94,18 +98,13 @@ def spanning_trees(G, currentPos):
 
 
 def reduceGraph(G, current):
-    # newGraph = deepcopy(G)
     verticesNbrittle = nx.get_node_attributes(G, 'isBrittle')
     verticesNpeople = nx.get_node_attributes(G, 'toSave')
-    # print("verticesNweight", verticesNbrittle)
-    # print("verticesNpeople", verticesNpeople)
     for vertex in verticesNbrittle:
-        # print("vertex", vertex)
         if not bool(verticesNbrittle[vertex]) and int(verticesNpeople[vertex]) < 1 and not str(vertex) == current:
             neighbors = nx.all_neighbors(G, vertex)
-            # print("neighbors",vertex, *neighbors)
             for neighbor1 in neighbors:
-                #todo verify issue here
+                # todo verify issue here
                 for neighbor2 in neighbors:
                     # if neighbor1 not in G[neighbor2].keys():
                     # weight1 = Graph().getEdgeWeigtFromVerName(neighbor1)
@@ -128,37 +127,55 @@ def printGraph(graph):
     plt.show()
 
 
-def minTree(graphs, currentPos):
-    # bestTree = None
+# get the minimum weight of a path in tree that saves all people
+def minTree(graphs, currentPos, currentState):
+    realGraph = Graph()
     bestWeight = None
     bestWeightNotValid = None
-    toTravel = Graph().getAllToSaveByName()
-    # print("toTravel -> ", toTravel)
-    toTravel.append("#VV")
-    # print("toTravel -> ", toTravel)
+    # toTravel = all nodes with people to save
+    toTravel = realGraph.getAllToSaveByName()
+    # add the current position to the vertexes that need to be in path
     if currentPos not in toTravel:
         toTravel.append(currentPos)
-        # print("toTravel -> ", toTravel)
+    # go over all generated tree graphs (from spanning_trees)
     for graph in graphs:
-        # print("graph", graph)
+        # weight for the edge connecting the fake node to start position - vertex '#VV'
         graphWeightExtra = graph.size(weight="weight")
+        # connect non-existing node to current position - control starting position of path
+        toTravel.append("#VV")
         graph.add_node("#VV")
         graph.add_edge("#VV", currentPos, weight=graphWeightExtra)
+        # make a list with vertexes with people to save & that are reachable from current position
+        toTravelReal = toTravel
+        reachableOrNot = dict()
+        for vertex in toTravel:
+            if not vertex == "#VV":
+                if not graph.has_node(vertex):
+                    toTravelReal.remove(vertex)
+                    reachableOrNot[vertex] = False
+                else:
+                     reachableOrNot[vertex] = True
+        # update in state for current vertex: {vertexToSave1: bool (indicates if reachable or not), ...}
+        currentState.setReachableFromVertex(reachableOrNot)
+        # approximate path & get the path's weight
         path = nx.approximation.traveling_salesman_problem(graph, nodes=toTravel, cycle=False)
         graphWeight = nx.path_weight(graph, path, weight="weight")
-        # print("path weight -> ", graphWeight)
-        # print("path", path)
+        # check if a brittle node is passed twice in the path
         doubles = [item for item, count in collections.Counter(path).items() if count > 1]
         valid = True
         for vertex in doubles:
-            if Graph().checkIfBrittle(vertex):
+            if realGraph.checkIfBrittle(vertex):
                 valid = False
+        # reduce the extra weight from the non-existing vertex (added before)
         graphWeight -= graphWeightExtra
+        # save minimum value of a valid path
         if (bestWeight is None or bestWeight > graphWeight) and valid:
             # bestTree = graph
             bestWeight = graphWeight
+        # save minimum value of a non-valid path (in case there isn't a valid one)
         elif (bestWeightNotValid is None or bestWeightNotValid > graphWeight) and not valid:
             bestWeightNotValid = graphWeight
+    # return the minimum valid path weight if exists, else return the minimum non-valid path
     if bestWeight is not None:
         return bestWeight
     else:
@@ -170,7 +187,7 @@ if __name__ == '__main__':
     print(Graph().adjMatrix)
     # dijkstra(Graph(),0)
     getReachableToSave(Graph().getVertexByName("#V1"))
-    s = spanning_trees(Graph(), "#V1")
-    minWeight = minTree(s, "#V1")
+    # s = spanning_trees(Graph(), "#V1")
+    # minWeight = minTree(s, "#V1")
 
 

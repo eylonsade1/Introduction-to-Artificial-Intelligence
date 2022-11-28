@@ -8,7 +8,7 @@ class State(object):
         self.toSave = vertexWithPeopleToSave
         self.graph = Graph()
         self.possibleToReachGoal = None
-        self.reachable = utils.getReachable(currentVertex)
+        self.reachable = utils.getReachableToSave(currentVertex)
 
     def __str__(self):
         return "Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
@@ -36,4 +36,10 @@ class State(object):
             if not self.toSave[vertex]:
                 return False
         return True
+
+    def reachableFromPosition(self):
+        return self.reachable
+
+    def setReachableFromVertex(self, reachableList):
+        self.reachable = reachableList
 

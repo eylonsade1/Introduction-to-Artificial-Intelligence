@@ -26,8 +26,7 @@ class Graph(Singleton):
             graphPrint += str(edge)
         graphPrint += "Vertexes :\n ------------------ \n"
         for vertex in self.vertexes:
-            graphPrint += str(vertex
-                              )
+            graphPrint += str(vertex)
         return graphPrint
 
     def readCsvFillInfo(self, csvFilePath):
@@ -127,6 +126,7 @@ class Graph(Singleton):
                 weight = self.getEdgeWeigtFromVerName(edge.fromV, vertex.name)
                 neighbors.append(tuple((self.getVertexByName(edge.toV), int(weight))))
         return neighbors
+
 
     def getVertexNumber(self, vertex: Vertex):
         for vertexNumber in range(len(self.vertexes)):
