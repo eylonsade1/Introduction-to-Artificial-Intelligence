@@ -150,11 +150,12 @@ def minTree(graphs, currentPos, currentState):
         reachableOrNot = dict()
         for vertex in toTravel:
             if not vertex == "#VV":
+                vertexObj = realGraph.getVertexByName(vertex)
                 if not graph.has_node(vertex):
                     toTravelReal.remove(vertex)
-                    reachableOrNot[vertex] = False
+                    reachableOrNot[vertexObj] = False
                 else:
-                     reachableOrNot[vertex] = True
+                     reachableOrNot[vertexObj] = True
         # update in state for current vertex: {vertexToSave1: bool (indicates if reachable or not), ...}
         currentState.setReachableFromVertex(reachableOrNot)
         # approximate path & get the path's weight

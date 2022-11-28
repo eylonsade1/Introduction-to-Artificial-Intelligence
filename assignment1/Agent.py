@@ -210,7 +210,7 @@ class AIAgent(Agent):
 
     def impossibleToReachGoal(self, stateOfVertex):
         reachableToSave = stateOfVertex.reachableFromPosition()
-        for vertex, reachable in reachableToSave:
+        for reachable in reachableToSave.values():
             if reachable:
                 return False
         return True
@@ -225,7 +225,7 @@ class AIAgent(Agent):
             current_vertex = vertexWrapperCurrent.state.currentVertex
             acc_weight = vertexWrapperCurrent.accumelatedweight
             vertexWrapperCurrent.state.saveVertex()
-            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state): #or self.impossibleToReachGoal(vertexWrapperCurrent.state):
+            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state) or self.impossibleToReachGoal(vertexWrapperCurrent.state):
                 self.actionSequence = self.generateSequence(vertexWrapperCurrent)
                 break
             counter += 1
