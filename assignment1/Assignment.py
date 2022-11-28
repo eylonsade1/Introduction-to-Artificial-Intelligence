@@ -45,6 +45,18 @@ class Assignment1(object):
         position = self.numInput(positions, numOfVert + 1)
         return position - 1
 
+    def getDepth(self):
+        valid = False
+        userVal = 0
+        while not valid:
+            userVal = input("Choose A-Star depth limit")
+            if userVal > 0:
+                valid = True
+            else:
+                print("We wish our AI could perform moves looking at negative amount of moves\n"
+                      "choose a positive number")
+        return userVal
+
     def allAgentTerminated(self):
         for agent in self.agents:
             if not agent.terminated:
@@ -65,7 +77,8 @@ class Assignment1(object):
         elif agentType == 2:
             return Agent.AStarAgent(self.heauristicFunction, position)
         elif agentType == 3:
-            return Agent.AStarAgentDepth(self.heauristicFunction, position)
+            depth = self.getDepth()
+            return Agent.AStarAgentDepth(self.heauristicFunction, position, depth)
 
     def firstImpl(self):
         agents = []

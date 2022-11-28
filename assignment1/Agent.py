@@ -261,7 +261,7 @@ class AIAgent(Agent):
 
     def move(self):
         self.movementAmount += 1
-        print("Current sequence: " + self.translateSequenceToString(self.actionSequence))
+        # print("Current sequence: " + self.translateSequenceToString(self.actionSequence))
         next_vertex = self.actionSequence[0]
         print("Current Vertex: " + str(self.state.currentVertex))
         print("Moving to: " + str(next_vertex))
@@ -275,6 +275,9 @@ class AIAgent(Agent):
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
             self.saveVertexOnMove()
+        #todo verify if this is needed
+        # if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
+        #     self.terminated = True
 
 
 class greedyAgent(AIAgent):
@@ -296,8 +299,8 @@ class AStarAgent(AIAgent):
 
 
 class AStarAgentDepth(AIAgent):
-    def __init__(self, h, startingPosition):
-        super(AStarAgentDepth, self).__init__(h, startingPosition, A_START_DEPTH_LIMIT)
+    def __init__(self, h, startingPosition, newLimit = A_START_DEPTH_LIMIT):
+        super(AStarAgentDepth, self).__init__(h, startingPosition, newLimit)
 
     def search(self):
         fringe = PriorityQueue(lambda x: self.heauristic(x) + self.weight(x))

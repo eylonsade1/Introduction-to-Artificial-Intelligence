@@ -21,13 +21,6 @@ class State(object):
             else:
                 self.toSave[vertex] = False
 
-        # reachAbleState = self.graph.getAllReachable(self.currentVertex)
-        # for vertex in reachAbleState:
-        #     if reachAbleState[vertex]:
-        #         self.reachable[vertex] = True
-        #     else:
-        #         self.reachable[vertex] = False
-
     def saveVertex(self):
         self.toSave[self.currentVertex] = True
 

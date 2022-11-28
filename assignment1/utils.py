@@ -186,7 +186,6 @@ def minTree(graphs, currentPos, currentState):
 if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     print(Graph().adjMatrix)
-    # dijkstra(Graph(),0)
     getReachableToSave(Graph().getVertexByName("#V1"))
     # s = spanning_trees(Graph(), "#V1")
     # minWeight = minTree(s, "#V1")
