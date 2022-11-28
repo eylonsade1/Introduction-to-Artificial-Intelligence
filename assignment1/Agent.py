@@ -29,6 +29,9 @@ class Agent(object):
     def move(self):
         print("not yet implemented for this agent")
 
+    def doNoOp(self):
+        print("No-Op")
+
     #todo connect update time instead of 1 update each move
     def updateTime(self, weightOfMove):
         self.timeSpent += weightOfMove
@@ -177,7 +180,10 @@ class AIAgent(Agent):
         print("------ {} ------".format(type(self).__name__))
         if not self.terminated:
             self.state.updateState()
-            if len(self.actionSequence) == 0:
+            if self.state.currentVertex in self.graph.broken:
+                self.doNoOp()
+                self.terminated = True
+            elif len(self.actionSequence) == 0:
                 self.search()
                 self.terminated = len(self.actionSequence) == 0
                 print("Searched, output act sequence is: " + self.strFromSequence())
@@ -243,7 +249,8 @@ class AIAgent(Agent):
     #todo : casuses crash because moving from same vertex to same vertex - tofix heaurstic to avoid issue here
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
-        if currentVertex.persons > 0:
+        #todo add if current vertex is none - > possibly broken -> do no-op
+        if currentVertex is not None and currentVertex.persons > 0:
             print("Saving: " + str(self.state.currentVertex))
             self.score += self.state.currentVertex.persons
             self.amountOfPeopleSaved += currentVertex.persons

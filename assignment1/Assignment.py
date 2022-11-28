@@ -117,8 +117,8 @@ class Assignment1(object):
                 if not agent.terminated:
                     agent.act()
 
-        for agent in self.agents:
-            print(agent)
+        # for agent in self.agents:
+        #     print(agent)
 
     def heauristicFunction(self, wrapper):
         currentPos = wrapper.state.currentVertex.name
