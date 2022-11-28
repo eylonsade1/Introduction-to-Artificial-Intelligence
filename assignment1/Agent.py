@@ -249,6 +249,7 @@ class AIAgent(Agent):
             self.amountOfPeopleSaved += currentVertex.persons
             self.state.currentVertex.persons = 0
             currentVertex.persons = 0
+        self.state.saveVertex()
 
     def translateSequenceToString(self, actionSequence):
         s = "[ "
@@ -275,9 +276,9 @@ class AIAgent(Agent):
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
             self.saveVertexOnMove()
-        #todo verify if this is needed
-        # if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
-        #     self.terminated = True
+        # todo verify if this is needed
+        if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
+            self.terminated = True
 
 
 class greedyAgent(AIAgent):
