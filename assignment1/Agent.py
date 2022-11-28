@@ -68,13 +68,14 @@ class Agent(object):
 
 
     def __str__(self):
+        score = self.calcualteScore()
         agentString = "---------------\n" \
                       "{}\n" \
                       "score: {}\n" \
                       "time spent (weight of edges): {}\n" \
                       "expansions performed: {}\n" \
                       "people saved: {}\n" \
-                      "---------------\n".format(type(self).__name__, self.calcualteScore(),
+                      "---------------\n".format(type(self).__name__, score,
                                                  self.timeSpent, self.expansionsAmount,
                                                  self.amountOfPeopleSaved)
         return agentString
@@ -171,7 +172,7 @@ class AIAgent(Agent):
             if len(self.actionSequence) == 0:
                 expansions_in_search = self.search()
                 self.terminated = len(self.actionSequence) == 0
-                print("Searched, output act sequence is: " + print(self.actionSequence)) #test this
+                print("Searched, output act sequence is: " + str(self.actionSequence)) #test this
                 self.timeSpent += expansions_in_search
             if not self.terminated and self.timeSpent + 1 < TIME_LIMIT:
                 self.move()
@@ -194,22 +195,22 @@ class AIAgent(Agent):
                                             vertexWrapperCurrent.parentWraper.state.currentVertex.name)
         current_move = []
         for i in range(edge_weight):
-            current_move.append(vertexWrapperCurrent.state.current_vertex)
-        current_sequence = self.generateSequence(vertexWrapperCurrent.parent_wrapper)
+            current_move.append(vertexWrapperCurrent.state.currentVertex)
+        current_sequence = self.generateSequence(vertexWrapperCurrent.parentWraper)
         current_sequence.extend(current_move)
         return current_sequence
 
-    def generateSequence(self, vertexWrapper: Vertex.VertexWrapper):
-        if vertexWrapper.parentWraper is None:
-            return []
-        edge_weight = self.graph().getEdgeWeigtFromVertexes(vertexWrapper.state.current_vertex,
-                                            vertexWrapper.parent_wrapper.state.current_vertex)
-        current_move = []
-        for i in range(edge_weight):
-            current_move.append(vertexWrapper.state.current_vertex)
-        current_sequence = self.generateSequence(vertexWrapper.parent_wrapper)
-        current_sequence.extend(current_move)
-        return current_sequence
+    # def generateSequence(self, vertexWrapper: Vertex.VertexWrapper):
+    #     if vertexWrapper.parentWraper is None:
+    #         return []
+    #     edge_weight = self.graph.getEdgeWeigtFromVerName(vertexWrapper.state.currentVertex.name,
+    #                                         vertexWrapper.parentWraper.state.currentVertex.name)
+    #     current_move = []
+    #     for i in range(edge_weight):
+    #         current_move.append(vertexWrapper.state.currentVertex)
+    #     current_sequence = self.generateSequence(vertexWrapper.parentWraper)
+    #     current_sequence.extend(current_move)
+    #     return current_sequence
 
     def limitedSearch(self, fringe):
         counter = 0
@@ -240,6 +241,8 @@ class AIAgent(Agent):
             print("Saving: " + str(self.state.currentVertex))
             self.score += self.state.currentVertex.persons
             self.state.currentVertex.persons = 0
+            currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
+            currentVertex.persons = 0
 
     def translateSequenceToString(self, actionSequence):
         s = "[ "
@@ -259,11 +262,14 @@ class AIAgent(Agent):
         print("Moving to: " + str(next_vertex))
         if next_vertex != self.state.currentVertex:
             self.saveVertexOnMove()
-        self.state.current_vertex = next_vertex
-        self.timeSpent += 1
+        moveCost = self.graph.getEdgeWeigtFromVerName(self.state.currentVertex, next_vertex)
+        self.state.currentVertex = next_vertex
+        self.updateTime(moveCost)
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
             self.saveVertexOnMove()
+
+
 class greedyAgent(AIAgent):
     def __init__(self, h, startingPosition):
         super(greedyAgent, self).__init__(h, startingPosition, GREEDY_LIMIT)

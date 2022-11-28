@@ -66,6 +66,9 @@ class Graph(Singleton):
         return vertex.isBrittle
 
     def getAllToSave(self):
+        for vertex in self.vertexes:
+            if int(vertex.persons) == 0:
+                self.toSave[vertex] = True
         return self.toSave
 
     def getAllToSaveByName(self):
