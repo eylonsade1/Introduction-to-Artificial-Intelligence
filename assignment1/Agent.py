@@ -165,6 +165,14 @@ class AIAgent(Agent):
         self.movesLimit = movesLimit
         super(AIAgent, self).__init__(startingPosition)
 
+
+    def strFromSequence(self):
+        sequenceString = "["
+        for vertex in self.actionSequence:
+            sequenceString += str(vertex)
+        sequenceString += "]"
+        return sequenceString
+
     def act(self):
         print("------ {} ------".format(type(self).__name__))
         if not self.terminated:
@@ -172,8 +180,8 @@ class AIAgent(Agent):
             if len(self.actionSequence) == 0:
                 expansions_in_search = self.search()
                 self.terminated = len(self.actionSequence) == 0
-                print("Searched, output act sequence is: " + str(self.actionSequence)) #test this
-                self.timeSpent += expansions_in_search
+                print("Searched, output act sequence is: " + self.strFromSequence())
+                # self.timeSpent += expansions_in_search
             if not self.terminated and self.timeSpent + 1 < TIME_LIMIT:
                 self.move()
             else:
@@ -200,6 +208,10 @@ class AIAgent(Agent):
         current_sequence.extend(current_move)
         return current_sequence
 
+
+    # def impossibleToReachGoal(self, stateOfVertex):
+
+
     def limitedSearch(self, fringe):
         counter = 0
         vertexWrapperSelf = Vertex.VertexWrapper(copy.copy(self.state), None, 0)
@@ -209,7 +221,7 @@ class AIAgent(Agent):
             current_vertex = vertexWrapperCurrent.state.currentVertex
             acc_weight = vertexWrapperCurrent.accumelatedweight
             vertexWrapperCurrent.state.saveVertex()
-            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state):
+            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state) or self.impossibleToReachGoal(vertexWrapperCurrent.state):
                 self.actionSequence = self.generateSequence(vertexWrapperCurrent)
                 break
             counter += 1
@@ -224,6 +236,7 @@ class AIAgent(Agent):
     def weight(self, vertexWrapper: Vertex.VertexWrapper):
         return vertexWrapper.accumelatedweight
 
+    #todo : casuses crash because moving from same vertex to same vertex - tofix heaurstic to avoid issue here
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
         if currentVertex.persons > 0:
@@ -251,7 +264,9 @@ class AIAgent(Agent):
         print("Moving to: " + str(next_vertex))
         if next_vertex != self.state.currentVertex:
             self.saveVertexOnMove()
-        moveCost = self.graph.getEdgeWeigtFromVerName(self.state.currentVertex, next_vertex)
+        moveCost = self.graph.getEdgeWeigtFromVerName(self.state.currentVertex.name, next_vertex.name)
+        if self.state.currentVertex.isBrittle:
+            self.graph.deleteVertex(self.state.currentVertex)
         self.state.currentVertex = next_vertex
         self.updateTime(moveCost)
         self.actionSequence = self.actionSequence[1:]

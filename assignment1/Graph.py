@@ -85,15 +85,19 @@ class Graph(Singleton):
         return None
 
     def deleteVertex(self, vertexToDelete: Vertex):
+        print("Agent moved from brittle vertex - updating graph")
         for vertex in self.vertexes:
             if vertex == vertexToDelete:
                 self.vertexes.remove(vertex)
         for vertex in self.brittles:
             if vertex == vertexToDelete:
                 self.brittles.remove(vertex)
-        for vertex in self.toSave:
-            if vertex == vertexToDelete:
-                self.toSave.remove(vertex)
+        #I decided not to update the list of vertexes to save -
+        # as it moved from a saved vertex meaning it is already set to true
+        #todo verify behavior:
+        # for vertex in self.toSave:
+        #     if vertex == vertexToDelete:
+        #         self.toSave.remove(vertex)
         for edge in self.edges:
             if edge.fromV == vertexToDelete.name or edge.toV == vertexToDelete.name:
                 self.edges.remove(edge)
