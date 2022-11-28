@@ -7,7 +7,6 @@ class State(object):
         self.currentVertex = currentVertex
         self.toSave = vertexWithPeopleToSave
         self.graph = Graph()
-        self.possibleToReachGoal = None
         self.reachable = utils.getReachableToSave(currentVertex)
 
     def __str__(self):
@@ -36,3 +35,9 @@ class State(object):
     def setReachableFromVertex(self, reachableList):
         self.reachable = reachableList
 
+    def getAllToSaveByName(self):
+        needSave = []
+        for key, value in self.toSave.items():
+            if not value:
+                needSave.append(key.name)
+        return needSave

@@ -127,7 +127,6 @@ class Graph(Singleton):
                 neighbors.append(tuple((self.getVertexByName(edge.toV), int(weight))))
         return neighbors
 
-
     def getVertexNumber(self, vertex: Vertex):
         for vertexNumber in range(len(self.vertexes)):
             if self.vertexes[vertexNumber] == vertex:
