@@ -183,8 +183,10 @@ class AIAgent(Agent):
             if self.state.currentVertex in self.graph.broken:
                 self.doNoOp()
                 self.terminated = True
-            elif len(self.actionSequence) == 0:
+            else:
                 self.search()
+            if len(self.actionSequence) == 0:
+                # self.search()
                 self.terminated = len(self.actionSequence) == 0
                 print("Searched, output act sequence is: " + self.strFromSequence())
             if not self.terminated and self.timeSpent + 1 < TIME_LIMIT:
