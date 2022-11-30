@@ -129,7 +129,7 @@ class Graph(Singleton):
                 neighbors.append(tuple((self.getVertexByName(edge.toV), int(weight))))
             elif edge.toV == vertex.name:
                 weight = self.getEdgeWeigtFromVerName(edge.fromV, vertex.name)
-                neighbors.append(tuple((self.getVertexByName(edge.toV), int(weight))))
+                neighbors.append(tuple((self.getVertexByName(edge.fromV), int(weight))))
         return neighbors
 
     def getVertexNumber(self, vertex: Vertex):
