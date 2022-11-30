@@ -97,9 +97,14 @@ class Graph(Singleton):
         # for vertex in self.toSave:
         #     if vertex == vertexToDelete:
         #         self.toSave.remove(vertex)
+        edgesToDelete = []
         for edge in self.edges:
             if edge.fromV == vertexToDelete.name or edge.toV == vertexToDelete.name:
-                self.edges.remove(edge)
+                edgesToDelete.append(edge)
+
+        for toBreak in edgesToDelete:
+            self.edges.remove(toBreak)
+
         self.broken.append(vertexToDelete)
 
     def buildMatrix(self):
