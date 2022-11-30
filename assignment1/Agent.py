@@ -87,17 +87,67 @@ class Agent(object):
 class StupidGreedy(Agent):
     def __init__(self, startingPosition):
         super(StupidGreedy, self).__init__(startingPosition)
-        print("stupid greedy constructor called")
+        # print("stupid greedy constructor called")
 
-    def move(self):
-        if not self.terminated:
-            if not self.computerShortestPath():
-                self.terminated = True
-        else:
-            print("Stupid greedy agent cannot move - terminated")
+    def saveVertexOnMove(self):
+        currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
+        #todo add if current vertex is none - > possibly broken -> do no-op
+        if currentVertex is not None and currentVertex.persons > 0:
+            print("Saving: " + str(self.state.currentVertex))
+            self.score += self.state.currentVertex.persons
+            self.amountOfPeopleSaved += currentVertex.persons
+            self.state.currentVertex.persons = 0
+            currentVertex.persons = 0
+        self.state.saveVertex()
 
-    def computerShortestPath(self):
-        return
+    def search(self):
+        startPosition = self.state.currentVertex
+        needToSave = self.graph.getAllLeftToSave()
+        if len(needToSave) == 0:
+            return None, None
+        minDist = None
+        path = None
+        adjMet = self.buildAdjMatrix(self.graph)
+        startPos = startPosition.name
+        for vertex in needToSave:
+            newPath, dist = self.BFSShortestPath(adjMet, startPos, vertex.name)
+            if newPath is None:
+                continue
+            elif dist > 1 and (path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2])):
+                minDist = dist
+                path = newPath
+        return path, minDist
+
+    def act(self):
+        path, dist = self.search()
+        if path is None:
+            self.terminated = True
+            self.doNoOp()
+            # print(self)
+        elif dist == 2:  # path of length 1 - move one vertex then break it
+            self.state.currentVertex = self.graph.getVertexByName(path[1])
+            self.saveVertexOnMove()
+            # print(self)
+        else:  # move to next vertex, don't break it
+            self.state.currentVertex = self.graph.getVertexByName(path[1])
+            # print(self)
+
+    def buildAdjMatrix(self, graph):
+        adjMet = defaultdict(list)
+        for edge in graph.edges:
+            a = edge.toV
+            b = edge.fromV
+            adjMet[a].append(b)
+            adjMet[b].append(a)
+        return adjMet
+
+    # def move(self):
+    #     if not self.terminated:
+    #         if not self.computerShortestPath():
+    #             self.terminated = True
+    #     else:
+    #         print("Stupid greedy agent cannot move - terminated")
+
 
 
 class Saboteur(Agent):
@@ -111,24 +161,25 @@ class Saboteur(Agent):
         vertex.isBlocked = True
         self.graph.deleteVertex(vertex)
 
-    def move(self):
-        path, dist = self.search(self.state.currentVertex)
+    def act(self):
+        path, dist = self.search()
         if path is None:
             self.terminated = True
-            # todo: Do no-op + print
+            self.doNoOp()
+            print(self)
         elif dist == 2:  # path of length 1 - move one vertex then break it
-            self.state.currentVertex = path[1]
+            self.state.currentVertex = self.graph.getVertexByName(path[1])
             self.breakV(path[1])
-            # todo: print
+            print(self)
         else:  # move to next vertex, don't break it
-            self.state.currentVertex = path[1]
-            # todo: print
+            self.state.currentVertex = self.graph.getVertexByName(path[1])
+            print(self)
 
     def search(self):
         startPosition = self.state.currentVertex
         brittles = self.graph.getAllBrittle()
         if len(brittles) == 0:
-            return None
+            return None, None
         minDist = None
         path = None
         adjMet = self.buildAdjMatrix(self.graph)
@@ -137,7 +188,7 @@ class Saboteur(Agent):
             newPath, dist = self.BFSShortestPath(adjMet, startPos, vertex.name)
             if newPath is None:
                 continue
-            elif path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2]):
+            elif dist > 1 and (path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2])):
                 minDist = dist
                 path = newPath
         return path, minDist
@@ -151,7 +202,6 @@ class Saboteur(Agent):
             adjMet[b].append(a)
         return adjMet
 
-
 class HumanAgent(Agent):
     def __init__(self, startingPosition):
         super(HumanAgent, self).__init__(startingPosition)
@@ -160,6 +210,8 @@ class HumanAgent(Agent):
     def move(self):
         print("Current agent state : {}".format(self.state))
 
+    def act(self):
+        self.move()
 
 class AIAgent(Agent):
     def __init__(self, h, startingPosition, movesLimit):

@@ -70,6 +70,13 @@ class Graph(Singleton):
                 self.toSave[vertex] = True
         return self.toSave
 
+    def getAllLeftToSave(self):
+        needSave = []
+        for vertex in self.vertexes:
+            if int(vertex.persons) > 0:
+                needSave.append(vertex)
+        return needSave
+
     def getAllToSaveByName(self):
         leftToSave = []
         for vertex in self.vertexes:
