@@ -85,10 +85,10 @@ class Assignment1(object):
         agentString = out.POSITION_PART1
         for agent in range(len(agentString)):
             print(agentString[agent])
-            position = self.initPosition()
-            agents.append(self.createAgent1(agent, position))
+            position = self.initPosition() + 1
+            agents.append(self.createAgent1(agent + 2, position))
         agentType = self.numInput(out.CHOOSE_AGENT3, 4)
-        position = self.initPosition()
+        position = self.initPosition() + 1
         newAgent = self.createAgent1(agentType, position)
         agents.append(newAgent)
         return agents
