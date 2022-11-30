@@ -3,7 +3,7 @@ TIME = "Time Lapsed = {0}:{1}:{2}"
 INVALID_INPUT = "Invalid input, insert a number bigger than 0 and smaller than {0} - "
 
 POSITION_GREEDY = "Choose initial position for stupid greedy agent"
-POSITION_SABOTEUR = "Choose initial position for saboteur agent agent"
+POSITION_SABOTEUR = "Choose initial position for saboteur agent"
 POSITION_PART1 = [POSITION_GREEDY, POSITION_SABOTEUR]
 
 FILE_DOESNT_EXIST = "File given doesn't exist!"
