@@ -50,12 +50,12 @@ class Assignment1(object):
         userVal = 0
         while not valid:
             userVal = input("Choose A-Star depth limit")
-            if userVal > 0:
+            if int(userVal) > 0:
                 valid = True
             else:
                 print("We wish our AI could perform moves looking at negative amount of moves\n"
                       "choose a positive number")
-        return userVal
+        return int(userVal)
 
     def allAgentTerminated(self):
         for agent in self.agents:
