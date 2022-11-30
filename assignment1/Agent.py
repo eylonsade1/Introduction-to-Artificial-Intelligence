@@ -209,8 +209,8 @@ class AIAgent(Agent):
         edge_weight = self.graph.getEdgeWeigtFromVerName(vertexWrapperCurrent.state.currentVertex.name,
                                             vertexWrapperCurrent.parentWraper.state.currentVertex.name)
         current_move = []
-        for i in range(edge_weight):
-            current_move.append(vertexWrapperCurrent.state.currentVertex)
+
+        current_move.append(vertexWrapperCurrent.state.currentVertex)
         current_sequence = self.generateSequence(vertexWrapperCurrent.parentWraper)
         current_sequence.extend(current_move)
         return current_sequence
@@ -251,7 +251,6 @@ class AIAgent(Agent):
     #todo : casuses crash because moving from same vertex to same vertex - tofix heaurstic to avoid issue here
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
-        #todo add if current vertex is none - > possibly broken -> do no-op
         if currentVertex is not None and currentVertex.persons > 0:
             print("Saving: " + str(self.state.currentVertex))
             self.score += self.state.currentVertex.persons
