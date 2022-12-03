@@ -70,7 +70,7 @@ def spanning_trees(G, currentPos):
         for vertex in graph.vertexes:
             newGraph.add_node(vertex.name, isBrittle=vertex.isBrittle, toSave=vertex.persons)
         for edge in graph.edges:
-            newGraph.add_edge(edge.fromV, edge.toV, weight=edge.weight)
+            newGraph.add_edge(edge.fromV, edge.toV, weight=1)
         # nx.draw(newGraph)
         # plt.show()
         onlyConnected = nx.node_connected_component(newGraph, currentPos)

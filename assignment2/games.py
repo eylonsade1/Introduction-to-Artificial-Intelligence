@@ -40,7 +40,6 @@ def alpha_beta_search(state, game):
             best_action = a
     return best_action
 
-
 def query_player(game, state):
     """Make a move by querying standard input."""
     print("current state:")
@@ -58,13 +57,8 @@ def query_player(game, state):
         print('no legal moves: passing turn to next player')
     return move
 
-
 def alpha_beta_player(game, state):
     return alpha_beta_search(state, game)
-
-# ______________________________________________________________________________
-# Some Sample Games
-
 
 class Game:
     """A game is similar to a problem, but it has a utility for each
