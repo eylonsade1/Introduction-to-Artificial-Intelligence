@@ -6,7 +6,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import collections
 from Vertex import Vertex
-
+import operator
 def createGraph(pathToGraph):
     if os.path.isfile(pathToGraph):
         graph = Graph()
@@ -185,6 +185,9 @@ def minTree(graphs, currentPos, currentState):
     else:
         return bestWeightNotValid
 
+def vector_add(a, b):
+    """Component-wise addition of two vectors."""
+    return tuple(map(operator.add, a, b))
 
 if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
