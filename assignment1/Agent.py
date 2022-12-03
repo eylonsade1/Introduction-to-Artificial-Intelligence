@@ -32,7 +32,6 @@ class Agent(object):
     def doNoOp(self):
         print("No-Op")
 
-    #todo connect update time instead of 1 update each move
     def updateTime(self, weightOfMove):
         self.timeSpent += weightOfMove
 
@@ -91,7 +90,6 @@ class StupidGreedy(Agent):
 
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
-        #todo add if current vertex is none - > possibly broken -> do no-op
         if currentVertex is not None and currentVertex.persons > 0:
             print("Saving: " + str(self.state.currentVertex))
             self.score += self.state.currentVertex.persons
@@ -300,7 +298,6 @@ class AIAgent(Agent):
     def weight(self, vertexWrapper: Vertex.VertexWrapper):
         return vertexWrapper.accumelatedweight
 
-    #todo : casuses crash because moving from same vertex to same vertex - tofix heaurstic to avoid issue here
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
         if currentVertex is not None and currentVertex.persons > 0:
