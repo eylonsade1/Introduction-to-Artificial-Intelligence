@@ -3,7 +3,6 @@ import sys
 import os
 from Graph import Graph
 import networkx as nx
-import matplotlib.pyplot as plt
 import collections
 from Vertex import Vertex
 
@@ -120,12 +119,12 @@ def reduceGraph(G, current):
     return G
 
 
-def printGraph(graph):
-    pos = nx.spring_layout(graph)
-    nx.draw_networkx(graph, pos, with_labels=True, font_weight='bold')
-    weightLabels = nx.get_edge_attributes(graph, 'weight')
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=weightLabels)
-    plt.show()
+# def printGraph(graph):
+#     pos = nx.spring_layout(graph)
+#     nx.draw_networkx(graph, pos, with_labels=True, font_weight='bold')
+#     weightLabels = nx.get_edge_attributes(graph, 'weight')
+#     nx.draw_networkx_edge_labels(graph, pos, edge_labels=weightLabels)
+#     plt.show()
 
 
 # get the minimum weight of a path in tree that saves all people

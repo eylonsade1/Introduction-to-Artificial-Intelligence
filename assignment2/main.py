@@ -1,5 +1,5 @@
 import os
-from Assignment import Assignmen2
+from Assignment import Assignment2
 import OutputStrings as out
 from Graph import Graph
 def createGraph(pathToGraph):
@@ -13,7 +13,7 @@ def createGraph(pathToGraph):
 
 if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
-    ass2 = Assignment1()
+    ass2 = Assignment2()
     ass2.userInit()
     ass2.runAgents()
     ass2.printAgentsState()

@@ -7,16 +7,20 @@ import matplotlib.pyplot as plt
 import collections
 from Vertex import Vertex
 import operator
+
+
 def createGraph(pathToGraph):
     if os.path.isfile(pathToGraph):
         graph = Graph()
         graph.readCsvFillInfo(pathToGraph)
         graph.buildMatrix()
 
+
 def printSolution(graph, dist):
     print("Vertex \t Distance from Source")
     for node in range(len(graph.vertexes)):
         print(node, "\t\t", dist[node])
+
 
 def minDistance(graph, dist, sptSet):
     min = sys.maxsize
@@ -26,6 +30,7 @@ def minDistance(graph, dist, sptSet):
             min_index = vertex
 
     return min_index
+
 
 def getReachableToSave(vertex:Vertex):
     reachables = {}
@@ -47,6 +52,7 @@ def getReachableToSave(vertex:Vertex):
             continue
     return reachables
 
+
 def dijkstra(graph, src):
     dist = [1e7] * len(graph.vertexes)
     dist[src] = 0
@@ -64,21 +70,21 @@ def dijkstra(graph, src):
     # printSolution(graph, dist) only for debugging
     return dist
 
+
 def spanning_trees(G, currentPos):
+    # converts our graph to networkx
     def buidNXGraph(graph, currentPos):
         newGraph = nx.Graph()
         for vertex in graph.vertexes:
             newGraph.add_node(vertex.name, isBrittle=vertex.isBrittle, toSave=vertex.persons)
         for edge in graph.edges:
             newGraph.add_edge(edge.fromV, edge.toV, weight=edge.weight)
-        # nx.draw(newGraph)
-        # plt.show()
         onlyConnected = nx.node_connected_component(newGraph, currentPos)
         for vert in graph.vertexes:
             if vert.name not in onlyConnected:
                 newGraph.remove_node(vert.name)
         return newGraph
-
+    # generates spanning trees
     def build_tree(H, edges, currentPos):
         if nx.is_connected(H):
             yield H
@@ -87,7 +93,6 @@ def spanning_trees(G, currentPos):
                 if edges[i][0][1] not in nx.algorithms.descendants(H, edges[i][0][0]):
                     H1 = nx.Graph(H)
                     H1.add_edge(*edges[i][0], weight=int(edges[i][1]))
-                    # print("*edges[i] = ", *edges[i])
                     for H2 in build_tree(H1, edges[i+1:], currentPos):
                         yield H2
 
@@ -97,7 +102,7 @@ def spanning_trees(G, currentPos):
     E.add_nodes_from(reducedGraph)
     return build_tree(E, [(e, weight) for e, weight in nx.get_edge_attributes(reducedGraph,'weight').items()], currentPos)
 
-
+# reduces graph to vertexes with people, bittles and current position
 def reduceGraph(G, current):
     verticesNbrittle = nx.get_node_attributes(G, 'isBrittle')
     verticesNpeople = nx.get_node_attributes(G, 'toSave')
@@ -107,26 +112,19 @@ def reduceGraph(G, current):
             for neighbor1 in neighbors:
                 # todo verify issue here
                 for neighbor2 in neighbors:
-                    # if neighbor1 not in G[neighbor2].keys():
-                    # weight1 = Graph().getEdgeWeigtFromVerName(neighbor1)
                     newWeight = int(G.edges[vertex, neighbor1]['weight']) + int(G.edges[vertex, neighbor2]['weight'])
                     G.add_edge(neighbor1, neighbor2, weight=newWeight)
-                    # else:
-                    #     newWeight = neighbors[neighbor1] + neighbors[neighbor2]
-                    #     G.add_edge(neighbor1, neighbor2, weight=newWeight)
 
             G.remove_node(vertex)
-   # printGraph(newGraph)
     return G
 
-
+# prints networkx graph
 def printGraph(graph):
     pos = nx.spring_layout(graph)
     nx.draw_networkx(graph, pos, with_labels=True, font_weight='bold')
     weightLabels = nx.get_edge_attributes(graph, 'weight')
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=weightLabels)
     plt.show()
-
 
 # get the minimum weight of a path in tree that saves all people
 def minTree(graphs, currentPos, currentState):
@@ -193,7 +191,5 @@ if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     print(Graph().adjMatrix)
     getReachableToSave(Graph().getVertexByName("#V1"))
-    # s = spanning_trees(Graph(), "#V1")
-    # minWeight = minTree(s, "#V1")
 
 

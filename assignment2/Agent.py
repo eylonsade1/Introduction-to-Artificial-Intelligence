@@ -2,13 +2,9 @@ from collections import defaultdict
 import Vertex
 from Graph import Graph
 from State import State
-from PriorityQueue import PriorityQueue
 import copy
 
 SCORE_MULTIPLYER = 1000
-GREEDY_LIMIT = 1
-A_STAR_LIMIT = 10000
-A_START_DEPTH_LIMIT = 10
 TIME_LIMIT = 400
 
 class Agent(object):
@@ -69,7 +65,6 @@ class Agent(object):
         # nodes aren't connected
         return None, None
 
-
     def __str__(self):
         self.calcualteScore()
         agentString = "---------------\n" \
@@ -83,12 +78,6 @@ class Agent(object):
                                                  self.amountOfPeopleSaved)
         return agentString
 
-
-class StupidGreedy(Agent):
-    def __init__(self, startingPosition):
-        super(StupidGreedy, self).__init__(startingPosition)
-        # print("stupid greedy constructor called")
-
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
         #todo add if current vertex is none - > possibly broken -> do no-op
@@ -100,37 +89,6 @@ class StupidGreedy(Agent):
             currentVertex.persons = 0
         self.state.saveVertex()
 
-    def search(self):
-        startPosition = self.state.currentVertex
-        needToSave = self.graph.getAllLeftToSave()
-        if len(needToSave) == 0:
-            return None, None
-        minDist = None
-        path = None
-        adjMet = self.buildAdjMatrix(self.graph)
-        startPos = startPosition.name
-        for vertex in needToSave:
-            newPath, dist = self.BFSShortestPath(adjMet, startPos, vertex.name)
-            if newPath is None:
-                continue
-            elif dist > 1 and (path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2])):
-                minDist = dist
-                path = newPath
-        return path, minDist
-
-    def act(self):
-        path, dist = self.search()
-        if path is None:
-            self.terminated = True
-            self.doNoOp()
-            # print(self)
-        elif dist == 2:  # path of length 1 - move one vertex then break it
-            self.state.currentVertex = self.graph.getVertexByName(path[1])
-            self.saveVertexOnMove()
-            # print(self)
-        else:  # move to next vertex, don't break it
-            self.state.currentVertex = self.graph.getVertexByName(path[1])
-            # print(self)
 
     def buildAdjMatrix(self, graph):
         adjMet = defaultdict(list)
@@ -140,78 +98,6 @@ class StupidGreedy(Agent):
             adjMet[a].append(b)
             adjMet[b].append(a)
         return adjMet
-
-    # def move(self):
-    #     if not self.terminated:
-    #         if not self.computerShortestPath():
-    #             self.terminated = True
-    #     else:
-    #         print("Stupid greedy agent cannot move - terminated")
-
-
-
-class Saboteur(Agent):
-    def __init__(self, startPosition: Vertex.Vertex):
-        super(Saboteur, self).__init__(startPosition)
-
-    def breakV(self, vertexName):
-        vertex = self.graph.getVertexByName(vertexName)
-        if None:
-            print("Error!! This shouldn't happen")
-        vertex.isBlocked = True
-        self.graph.deleteVertex(vertex)
-
-    def act(self):
-        path, dist = self.search()
-        if path is None:
-            self.terminated = True
-            self.doNoOp()
-            print(self)
-        elif dist == 2:  # path of length 1 - move one vertex then break it
-            self.state.currentVertex = self.graph.getVertexByName(path[1])
-            self.breakV(path[1])
-            print(self)
-        else:  # move to next vertex, don't break it
-            self.state.currentVertex = self.graph.getVertexByName(path[1])
-            print(self)
-
-    def search(self):
-        startPosition = self.state.currentVertex
-        brittles = self.graph.getAllBrittle()
-        if len(brittles) == 0:
-            return None, None
-        minDist = None
-        path = None
-        adjMet = self.buildAdjMatrix(self.graph)
-        startPos = startPosition.name
-        for vertex in brittles:
-            newPath, dist = self.BFSShortestPath(adjMet, startPos, vertex.name)
-            if newPath is None:
-                continue
-            elif dist > 1 and (path is None or minDist > dist or (minDist == dist and newPath[1][2] < path[1][2])):
-                minDist = dist
-                path = newPath
-        return path, minDist
-
-    def buildAdjMatrix(self, graph):
-        adjMet = defaultdict(list)
-        for edge in graph.edges:
-            a = edge.toV
-            b = edge.fromV
-            adjMet[a].append(b)
-            adjMet[b].append(a)
-        return adjMet
-
-class HumanAgent(Agent):
-    def __init__(self, startingPosition):
-        super(HumanAgent, self).__init__(startingPosition)
-        print("Human constructor called")
-
-    def move(self):
-        print("Current agent state : {}".format(self.state))
-
-    def act(self):
-        self.move()
 
 class AIAgent(Agent):
     def __init__(self, h, startingPosition, movesLimit):
@@ -267,35 +153,13 @@ class AIAgent(Agent):
         current_sequence.extend(current_move)
         return current_sequence
 
-
+    # checks if all vertexes with people are connected to the current vertex
     def impossibleToReachGoal(self, stateOfVertex):
         reachableToSave = stateOfVertex.reachableFromPosition()
         for reachable in reachableToSave.values():
             if reachable:
                 return False
         return True
-
-
-    def limitedSearch(self, fringe):
-        counter = 0
-        vertexWrapperSelf = Vertex.VertexWrapper(copy.copy(self.state), None, 0)
-        fringe.insert(vertexWrapperSelf)
-        while not fringe.is_empty():
-            vertexWrapperCurrent = fringe.pop()
-            current_vertex = vertexWrapperCurrent.state.currentVertex
-            acc_weight = vertexWrapperCurrent.accumelatedweight
-            vertexWrapperCurrent.state.saveVertex()
-            if counter == self.movesLimit or self.reachedGoal(vertexWrapperCurrent.state) or self.impossibleToReachGoal(vertexWrapperCurrent.state):
-                self.actionSequence = self.generateSequence(vertexWrapperCurrent)
-                break
-            counter += 1
-            for neighbor_tup in self.graph.getNeighborsList(current_vertex):
-                neighbor_state = State(neighbor_tup[0], copy.copy(vertexWrapperCurrent.state.toSave))
-                neighbor_vertex_wrapper = Vertex.VertexWrapper(neighbor_state, vertexWrapperCurrent,
-                                                          acc_weight + neighbor_tup[1])
-                fringe.insert(neighbor_vertex_wrapper)
-        self.expansionsAmount += counter
-        return counter
 
     def weight(self, vertexWrapper: Vertex.VertexWrapper):
         return vertexWrapper.accumelatedweight
@@ -341,31 +205,9 @@ class AIAgent(Agent):
             self.terminated = True
 
 
-class greedyAgent(AIAgent):
-    def __init__(self, h, startingPosition):
-        super(greedyAgent, self).__init__(h, startingPosition, GREEDY_LIMIT)
-
-    def search(self):
-        fringe = PriorityQueue(self.heauristic)
-        return self.limitedSearch(fringe)
 
 
-class AStarAgent(AIAgent):
-    def __init__(self,h ,startingPosition):
-        super(AStarAgent, self).__init__(h, startingPosition, A_STAR_LIMIT)
 
-    def search(self):
-        fringe = PriorityQueue(lambda x: self.heauristic(x) + self.weight(x))
-        return self.limitedSearch(fringe)
-
-
-class AStarAgentDepth(AIAgent):
-    def __init__(self, h, startingPosition, newLimit = A_START_DEPTH_LIMIT):
-        super(AStarAgentDepth, self).__init__(h, startingPosition, newLimit)
-
-    def search(self):
-        fringe = PriorityQueue(lambda x: self.heauristic(x) + self.weight(x))
-        return self.limitedSearch(fringe)
 
 
 
