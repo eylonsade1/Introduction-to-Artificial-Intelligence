@@ -6,7 +6,6 @@ from Singleton import Singleton
 NUMBER_PREFIX = '#N'
 VERTEX_PREFIX = '#V'
 EDGE_PREFIX = '#E'
-WEIGHT_PREFIX = 'W'
 PEOPLE_PREFIX = 'P'
 
 
@@ -55,7 +54,7 @@ class Graph(Singleton):
                     #     self.toSave[vertex] = True
                     self.vertexes.append(vertex)
                 elif row[0].startswith(EDGE_PREFIX):
-                    self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1]))
+                    self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2]))
 
     def getAllBrittle(self):
         return self.brittles
@@ -119,13 +118,13 @@ class Graph(Singleton):
         for edge in self.edges:
             aCoordinate = int(edge.toV.split(VERTEX_PREFIX)[1]) -1
             bCoordinate = int(edge.fromV.split(VERTEX_PREFIX)[1]) -1
-            self.adjMatrix[aCoordinate][bCoordinate] = int(edge.weight)
-            self.adjMatrix[bCoordinate][aCoordinate] = int(edge.weight)
+            self.adjMatrix[aCoordinate][bCoordinate] = 1
+            self.adjMatrix[bCoordinate][aCoordinate] = 1
 
     def getEdgeWeigtFromVerName(self, vertexFrom, vertexTo):
         for edge in self.edges:
             if (edge.fromV == vertexFrom and edge.toV == vertexTo) or (edge.fromV == vertexTo and edge.toV == vertexFrom) :
-                return int(edge.weight)
+                return 1
         return 0
 
     def getNeighborsList(self, vertex: Vertex):
