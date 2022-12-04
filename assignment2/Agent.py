@@ -18,6 +18,10 @@ class Agent(object):
         # new - to test
         self.expansionsAmount = 0
         self.movementAmount = 0
+        self.actionSequence = []
+
+    def act(self):
+        print("not yet implemented")
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
@@ -28,7 +32,22 @@ class Agent(object):
     def doNoOp(self):
         print("No-Op")
 
-    #todo connect update time instead of 1 update each move
+    def strFromSequence(self):
+        sequenceString = "["
+        for vertex in self.actionSequence:
+            sequenceString += str(vertex)
+        sequenceString += "]"
+        return sequenceString
+
+    def translateSequenceToString(self, actionSequence):
+        s = "[ "
+        for vertex in actionSequence:
+            s += str(vertex) + ", "
+        last_index_of_comma = s.rfind(",")
+        if last_index_of_comma != -1:
+            s = s[:last_index_of_comma] + s[last_index_of_comma + 1:]
+        return s + "]"
+
     def updateTime(self, weightOfMove):
         self.timeSpent += weightOfMove
 
@@ -80,7 +99,6 @@ class Agent(object):
 
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
-        #todo add if current vertex is none - > possibly broken -> do no-op
         if currentVertex is not None and currentVertex.persons > 0:
             print("Saving: " + str(self.state.currentVertex))
             self.score += self.state.currentVertex.persons
@@ -100,19 +118,9 @@ class Agent(object):
         return adjMet
 
 class AIAgent(Agent):
-    def __init__(self, h, startingPosition, movesLimit):
-        self.actionSequence = []
-        self.heauristic = h
-        self.movesLimit = movesLimit
+    def __init__(self, startingPosition):
+
         super(AIAgent, self).__init__(startingPosition)
-
-
-    def strFromSequence(self):
-        sequenceString = "["
-        for vertex in self.actionSequence:
-            sequenceString += str(vertex)
-        sequenceString += "]"
-        return sequenceString
 
     def act(self):
         print("------ {} ------".format(type(self).__name__))
@@ -164,7 +172,6 @@ class AIAgent(Agent):
     def weight(self, vertexWrapper: Vertex.VertexWrapper):
         return vertexWrapper.accumelatedweight
 
-    #todo : casuses crash because moving from same vertex to same vertex - tofix heaurstic to avoid issue here
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
         if currentVertex is not None and currentVertex.persons > 0:
@@ -175,14 +182,7 @@ class AIAgent(Agent):
             currentVertex.persons = 0
         self.state.saveVertex()
 
-    def translateSequenceToString(self, actionSequence):
-        s = "[ "
-        for vertex in actionSequence:
-            s += str(vertex) + ", "
-        last_index_of_comma = s.rfind(",")
-        if last_index_of_comma != -1:
-            s = s[:last_index_of_comma] + s[last_index_of_comma + 1:]
-        return s + "]"
+
 
     def move(self):
         self.movementAmount += 1

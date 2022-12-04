@@ -37,8 +37,8 @@ class Assignment2(object):
         num = input(text)
         return self.checkValidNumber(num, limit)
 
-    def initPosition(self):
-        positions = "Choose starting position:\n"
+    def initPosition(self, agentNumString = "first"):
+        positions = "Choose starting position {} agent:\n".format(agentNumString)
         numOfVert = len(self.graph.vertexes)
         for vertNumber in range(numOfVert):
             positions += str(vertNumber + 1) + ")\t" + str(self.graph.vertexes[vertNumber]) + "\n"
@@ -51,15 +51,27 @@ class Assignment2(object):
                 return False
         return True
 
+    def initAdversarial(self,startPositionMax , startPositionMin):
+        return
+
+    def initSemiCoop(self,startPositionMax , startPositionMin):
+        return
+
+    def initFullCoop(self,startPositionMax , startPositionMin):
+        return
 
     def userInit(self):
         print(out.WELCOME_HURRICANE)
-        # choose setting
         self.agents = []
-        for i in range(0, 2):
-            position = self.initPosition()
-            # newAgent =
-            # agents.append(newAgent)
+        impNum = self.numInput(out.CHOOSE_GAME_TYPE)
+        startingMax = self.initPosition("first")
+        startingMin = self.initPosition("second")
+        if impNum == 1:
+            self.initAdversarial(startingMax, startingMin)
+        elif impNum == 2:
+            self.initSemiCoop(startingMax, startingMin)
+        else:
+            self.initFullCoop(startingMax, startingMin)
 
     def runAgents(self):
         while not self.allAgentTerminated():
