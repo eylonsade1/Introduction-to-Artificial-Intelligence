@@ -1,9 +1,12 @@
 from Graph import Graph
 import time
 import OutputStrings as out
-import Agent
-import utils
+from Agent import Agent
+from utils import Enum
+import comporators
 
+AGENT_TYPES = Enum(['MaxAgent',
+                    'MinAgent'])
 class Assignment2(object):
     def __init__(self):
         self.graph = Graph()
@@ -51,14 +54,24 @@ class Assignment2(object):
                 return False
         return True
 
-    def initAdversarial(self,startPositionMax , startPositionMin):
-        return
+    def initAgents(self, startPositionMax, startPositionMin, impNum):
+        if impNum == 1:
+            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, doPrune=True)
+            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, doPrune=True)
+        elif impNum == 2:
+            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent,
+                             utilityFunction=comporators.max_semi_cooperative_comparator)
+            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent,
+                             utilityFunction=comporators.min_semi_cooperative_comparator)
+        else:
+            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent,
+                             utilityFunction=comporators.fully_cooperative_comparator)
+            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent,
+                             utilityFunction=comporators.fully_cooperative_comparator)
 
-    def initSemiCoop(self,startPositionMax , startPositionMin):
-        return
-
-    def initFullCoop(self,startPositionMax , startPositionMin):
-        return
+        maxAgent.otherAgent = minAgent
+        minAgent.otherAgent = maxAgent
+        self.agents.extend([maxAgent, minAgent])
 
     def userInit(self):
         print(out.WELCOME_HURRICANE)
@@ -66,12 +79,8 @@ class Assignment2(object):
         impNum = self.numInput(out.CHOOSE_GAME_TYPE)
         startingMax = self.initPosition("first")
         startingMin = self.initPosition("second")
-        if impNum == 1:
-            self.initAdversarial(startingMax, startingMin)
-        elif impNum == 2:
-            self.initSemiCoop(startingMax, startingMin)
-        else:
-            self.initFullCoop(startingMax, startingMin)
+
+        self.initAgents(startingMax, startingMin, impNum)
 
     def runAgents(self):
         while not self.allAgentTerminated():

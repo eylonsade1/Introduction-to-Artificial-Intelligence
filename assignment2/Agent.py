@@ -8,26 +8,34 @@ SCORE_MULTIPLYER = 1000
 TIME_LIMIT = 400
 
 class Agent(object):
-    def __init__(self, startingPosition):
-        self.score = 0
-        self.amountOfPeopleSaved = 0
-        self.timeSpent = 0
-        self.terminated = False
+    def __init__(self, startingPosition, agentType, utilityFunction=None, doPrune=False):
         self.graph = Graph()
         self.state = State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
-        # new - to test
-        self.expansionsAmount = 0
+        self.actionSequence = [startingPosition, 0, startingPosition]
+        self.type = agentType
+        self.utilityFunction = utilityFunction
+        self.prune = doPrune
         self.movementAmount = 0
-        self.actionSequence = []
+        self.amountOfPeopleSaved = 0
+        self.timeSpent = 0
+        self.score = 0
+        self.otherAgent = None
+        self.terminated = False
 
-    def act(self):
-        print("not yet implemented")
+    def __str__(self):
+        self.calcualteScore()
+        agentString = "---------------\n" \
+                      "{}\n" \
+                      "score: {}\n" \
+                      "time spent (weight of edges): {}\n" \
+                      "people saved: {}\n" \
+                      "---------------\n".format(type(self).__name__, self.score,
+                                                 self.timeSpent,
+                                                 self.amountOfPeopleSaved)
+        return agentString
 
     def calcualteScore(self):
         self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
-
-    def move(self):
-        print("not yet implemented for this agent")
 
     def doNoOp(self):
         print("No-Op")
@@ -50,77 +58,6 @@ class Agent(object):
 
     def updateTime(self, weightOfMove):
         self.timeSpent += weightOfMove
-
-    def BFSShortestPath(self, adjMet, start, goal):
-        explored = []
-
-        # Queue for traversing the graph in the BFS
-        queue = [[start]]
-
-        # If the desired node is reached
-        if start == goal:
-            return start, 0
-
-        # Loop to traverse the graph with the help of the queue
-        while queue:
-            path = queue.pop(0)
-            node = path[-1]
-
-            # Condition to check if the current node is not visited
-            if node not in explored:
-                neighbours = adjMet[node]
-
-                # Loop to iterate over the neighbours of the node
-                for neighbour in neighbours:
-                    new_path = list(path)
-                    new_path.append(neighbour)
-                    queue.append(new_path)
-
-                    # Condition to check if the neighbour node is the goal
-                    if neighbour == goal:
-                        return new_path, len(new_path)
-                explored.append(node)
-
-        # nodes aren't connected
-        return None, None
-
-    def __str__(self):
-        self.calcualteScore()
-        agentString = "---------------\n" \
-                      "{}\n" \
-                      "score: {}\n" \
-                      "time spent (weight of edges): {}\n" \
-                      "expansions performed: {}\n" \
-                      "people saved: {}\n" \
-                      "---------------\n".format(type(self).__name__, self.score,
-                                                 self.timeSpent, self.expansionsAmount,
-                                                 self.amountOfPeopleSaved)
-        return agentString
-
-    def saveVertexOnMove(self):
-        currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
-        if currentVertex is not None and currentVertex.persons > 0:
-            print("Saving: " + str(self.state.currentVertex))
-            self.score += self.state.currentVertex.persons
-            self.amountOfPeopleSaved += currentVertex.persons
-            self.state.currentVertex.persons = 0
-            currentVertex.persons = 0
-        self.state.saveVertex()
-
-
-    def buildAdjMatrix(self, graph):
-        adjMet = defaultdict(list)
-        for edge in graph.edges:
-            a = edge.toV
-            b = edge.fromV
-            adjMet[a].append(b)
-            adjMet[b].append(a)
-        return adjMet
-
-class AIAgent(Agent):
-    def __init__(self, startingPosition):
-
-        super(AIAgent, self).__init__(startingPosition)
 
     def act(self):
         print("------ {} ------".format(type(self).__name__))
@@ -182,8 +119,6 @@ class AIAgent(Agent):
             currentVertex.persons = 0
         self.state.saveVertex()
 
-
-
     def move(self):
         self.movementAmount += 1
         # print("Current sequence: " + self.translateSequenceToString(self.actionSequence))
@@ -200,9 +135,10 @@ class AIAgent(Agent):
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
             self.saveVertexOnMove()
-        # todo verify if this is needed
         if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
             self.terminated = True
+
+
 
 
 

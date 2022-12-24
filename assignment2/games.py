@@ -40,23 +40,6 @@ def alpha_beta_search(state, game):
             best_action = a
     return best_action
 
-def query_player(game, state):
-    """Make a move by querying standard input."""
-    print("current state:")
-    game.display(state)
-    print("available moves: {}".format(game.actions(state)))
-    print("")
-    move = None
-    if game.actions(state):
-        move_string = input('Your move? ')
-        try:
-            move = eval(move_string)
-        except NameError:
-            move = move_string
-    else:
-        print('no legal moves: passing turn to next player')
-    return move
-
 def alpha_beta_player(game, state):
     return alpha_beta_search(state, game)
 
@@ -71,14 +54,6 @@ class Game:
 
     def actions(self, state):
         """Return a list of the allowable moves at this point."""
-        raise NotImplementedError
-
-    def result(self, state, move):
-        """Return the state that results from making a move from a state."""
-        raise NotImplementedError
-
-    def utility(self, state, player):
-        """Return the value of this final state to player."""
         raise NotImplementedError
 
     def terminal_test(self, state):
