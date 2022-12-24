@@ -8,62 +8,19 @@ SCORE_MULTIPLYER = 1000
 TIME_LIMIT = 400
 
 class Agent(object):
-    def __init__(self, startingPosition):
-        self.score = 0
-        self.amountOfPeopleSaved = 0
-        self.timeSpent = 0
-        self.terminated = False
+    def __init__(self, startingPosition, agentType, utilityFunction=None, doPrune=False):
         self.graph = Graph()
         self.state = State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
-        # new - to test
-        self.expansionsAmount = 0
+        self.actionSequence = [startingPosition, 0, startingPosition]
+        self.type = agentType
+        self.utilityFunction = utilityFunction
+        self.prune = doPrune
         self.movementAmount = 0
-
-    def calcualteScore(self):
-        self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
-
-    def move(self):
-        print("not yet implemented for this agent")
-
-    def doNoOp(self):
-        print("No-Op")
-
-    #todo connect update time instead of 1 update each move
-    def updateTime(self, weightOfMove):
-        self.timeSpent += weightOfMove
-
-    def BFSShortestPath(self, adjMet, start, goal):
-        explored = []
-
-        # Queue for traversing the graph in the BFS
-        queue = [[start]]
-
-        # If the desired node is reached
-        if start == goal:
-            return start, 0
-
-        # Loop to traverse the graph with the help of the queue
-        while queue:
-            path = queue.pop(0)
-            node = path[-1]
-
-            # Condition to check if the current node is not visited
-            if node not in explored:
-                neighbours = adjMet[node]
-
-                # Loop to iterate over the neighbours of the node
-                for neighbour in neighbours:
-                    new_path = list(path)
-                    new_path.append(neighbour)
-                    queue.append(new_path)
-
-                    # Condition to check if the neighbour node is the goal
-                    if neighbour == goal:
-                        return new_path, len(new_path)
-                explored.append(node)
-
-        # nodes aren't connected
-        return None, None
+        self.amountOfPeopleSaved = 0
+        self.timeSpent = 0
+        self.score = 0
+        self.otherAgent = None
+        self.terminated = False
 
     def __str__(self):
         self.calcualteScore()
@@ -71,41 +28,17 @@ class Agent(object):
                       "{}\n" \
                       "score: {}\n" \
                       "time spent (weight of edges): {}\n" \
-                      "expansions performed: {}\n" \
                       "people saved: {}\n" \
                       "---------------\n".format(type(self).__name__, self.score,
-                                                 self.timeSpent, self.expansionsAmount,
+                                                 self.timeSpent,
                                                  self.amountOfPeopleSaved)
         return agentString
 
-    def saveVertexOnMove(self):
-        currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
-        #todo add if current vertex is none - > possibly broken -> do no-op
-        if currentVertex is not None and currentVertex.persons > 0:
-            print("Saving: " + str(self.state.currentVertex))
-            self.score += self.state.currentVertex.persons
-            self.amountOfPeopleSaved += currentVertex.persons
-            self.state.currentVertex.persons = 0
-            currentVertex.persons = 0
-        self.state.saveVertex()
+    def calcualteScore(self):
+        self.score = (self.amountOfPeopleSaved * SCORE_MULTIPLYER) - self.timeSpent
 
-
-    def buildAdjMatrix(self, graph):
-        adjMet = defaultdict(list)
-        for edge in graph.edges:
-            a = edge.toV
-            b = edge.fromV
-            adjMet[a].append(b)
-            adjMet[b].append(a)
-        return adjMet
-
-class AIAgent(Agent):
-    def __init__(self, h, startingPosition, movesLimit):
-        self.actionSequence = []
-        self.heauristic = h
-        self.movesLimit = movesLimit
-        super(AIAgent, self).__init__(startingPosition)
-
+    def doNoOp(self):
+        print("No-Op")
 
     def strFromSequence(self):
         sequenceString = "["
@@ -113,6 +46,18 @@ class AIAgent(Agent):
             sequenceString += str(vertex)
         sequenceString += "]"
         return sequenceString
+
+    def translateSequenceToString(self, actionSequence):
+        s = "[ "
+        for vertex in actionSequence:
+            s += str(vertex) + ", "
+        last_index_of_comma = s.rfind(",")
+        if last_index_of_comma != -1:
+            s = s[:last_index_of_comma] + s[last_index_of_comma + 1:]
+        return s + "]"
+
+    def updateTime(self, weightOfMove):
+        self.timeSpent += weightOfMove
 
     def act(self):
         print("------ {} ------".format(type(self).__name__))
@@ -164,7 +109,6 @@ class AIAgent(Agent):
     def weight(self, vertexWrapper: Vertex.VertexWrapper):
         return vertexWrapper.accumelatedweight
 
-    #todo : casuses crash because moving from same vertex to same vertex - tofix heaurstic to avoid issue here
     def saveVertexOnMove(self):
         currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
         if currentVertex is not None and currentVertex.persons > 0:
@@ -174,15 +118,6 @@ class AIAgent(Agent):
             self.state.currentVertex.persons = 0
             currentVertex.persons = 0
         self.state.saveVertex()
-
-    def translateSequenceToString(self, actionSequence):
-        s = "[ "
-        for vertex in actionSequence:
-            s += str(vertex) + ", "
-        last_index_of_comma = s.rfind(",")
-        if last_index_of_comma != -1:
-            s = s[:last_index_of_comma] + s[last_index_of_comma + 1:]
-        return s + "]"
 
     def move(self):
         self.movementAmount += 1
@@ -200,9 +135,10 @@ class AIAgent(Agent):
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
             self.saveVertexOnMove()
-        # todo verify if this is needed
         if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
             self.terminated = True
+
+
 
 
 

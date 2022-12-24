@@ -6,5 +6,10 @@ FILE_DOESNT_EXIST = "File given doesn't exist!"
 
 GRAPH_FINISHED = "Finished generating graph object"
 
-WELCOME_HURRICANE = "----Welcome to Hurricane Evacuation Problem----"
+WELCOME_HURRICANE = "----Welcome to assignment 2 ----"
 
+CHOOSE_GAME_TYPE = "Insert game type to run:\n" \
+                  "1)\tAdversarial\n" \
+                  "2)\tsemi-cooperative\n" \
+                  "3)\tfully cooperative\n" \
+                  "Your choice - "
