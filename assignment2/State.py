@@ -1,7 +1,9 @@
 import copy
 
 from Graph import Graph
+from utils import *
 
+NUM_OF_PLYS = 10
 
 class State(object):
     def __init__(self, maxLocation, minLocation, vertexWithPeopleToSave, brokenVertexes):
@@ -18,6 +20,11 @@ class State(object):
 
     def __str__(self):
         return "Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
+
+    def terminalState(self, numOfPlys):
+        if numOfPlys == NUM_OF_PLYS:
+            return True
+        # check if to save people
 
     def updateState(self):
         graphState = self.graph.getAllToSave()

@@ -8,6 +8,7 @@ import copy
 
 TIME_LIMIT = 400
 
+
 class Agent(object):
     def __init__(self, startingPositionMax, startingPositionMin, agentType, utilityFunction=None, doPrune=False):
         self.graph = Graph()
