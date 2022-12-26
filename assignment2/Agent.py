@@ -2,15 +2,16 @@ from collections import defaultdict
 import Vertex
 from Graph import Graph
 from State import State
+from utils import *
 import copy
 
 SCORE_MULTIPLYER = 1000
 TIME_LIMIT = 400
 
 class Agent(object):
-    def __init__(self, startingPosition, agentType, utilityFunction=None, doPrune=False):
+    def __init__(self, startingPosition, agentType, othersLocation, utilityFunction=None, doPrune=False):
         self.graph = Graph()
-        self.state = State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
+        self.state = State(self.graph.vertexes[startingPosition], self.graph.getAllToSave(), self.graph.getAllBroken(), othersLocation)
         self.actionSequence = [startingPosition, 0, startingPosition]
         self.type = agentType
         self.utilityFunction = utilityFunction
@@ -21,6 +22,8 @@ class Agent(object):
         self.score = 0
         self.otherAgent = None
         self.terminated = False
+        self.othersLocation = othersLocation
+        self.states = []
 
     def __str__(self):
         self.calcualteScore()
@@ -39,6 +42,9 @@ class Agent(object):
 
     def doNoOp(self):
         print("No-Op")
+
+    def setOthersLocation(self, othersLocation):
+        self.othersLocation = othersLocation
 
     def strFromSequence(self):
         sequenceString = "["
@@ -63,6 +69,7 @@ class Agent(object):
         print("------ {} ------".format(type(self).__name__))
         if not self.terminated:
             self.state.updateState()
+            self.states.append(copy.deepcopy(self.state))
             if self.state.currentVertex in self.graph.broken:
                 self.doNoOp()
                 self.terminated = True
@@ -138,7 +145,12 @@ class Agent(object):
         if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
             self.terminated = True
 
-
+    def terminal_state(self):
+        if self.state.getAllReachable() == 0:
+            return True
+        for state in self.states:
+            if equalStates(state, self.state):
+                return True
 
 
 

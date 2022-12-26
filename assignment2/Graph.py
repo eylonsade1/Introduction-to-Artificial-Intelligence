@@ -142,3 +142,6 @@ class Graph(Singleton):
         for vertexNumber in range(len(self.vertexes)):
             if self.vertexes[vertexNumber] == vertex:
                 return vertexNumber
+
+    def getAllBroken(self):
+        return self.broken

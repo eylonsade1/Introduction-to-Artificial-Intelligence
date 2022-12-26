@@ -3,6 +3,7 @@ import sys
 import os
 from Graph import Graph
 import networkx as nx
+from State import *
 import matplotlib.pyplot as plt
 import collections
 from Vertex import Vertex
@@ -191,6 +192,31 @@ def minTree(graphs, currentPos, currentState):
 def vector_add(a, b):
     """Component-wise addition of two vectors."""
     return tuple(map(operator.add, a, b))
+
+def equalStates(state1: State, state2: State):
+    if state1.getCurrentLocation() != state2.getCurrentLocation():
+        return False
+    toSave2 = state2.getAllToSaveByName()
+    for vertex in state1.getAllToSaveByName():
+        if vertex not in toSave2:
+            return False
+
+    reachable2 = state2.getAllReachable()
+    for vertex in state1.getAllReachable():
+        if vertex not in reachable2:
+            return False
+
+    broken2 = state2.getAllBrokenVertexes()
+    for vertex in state1.getAllBrokenVertexes():
+        if vertex not in broken2:
+            return False
+
+    if state1.getOthersLocation() != state2.getOthersLocation():
+        return False
+
+    return True
+
+
 
 if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))

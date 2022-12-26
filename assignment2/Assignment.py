@@ -56,17 +56,17 @@ class Assignment2(object):
 
     def initAgents(self, startPositionMax, startPositionMin, impNum):
         if impNum == 1:
-            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, doPrune=True)
-            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, doPrune=True)
+            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMax, doPrune=True)
+            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMin, doPrune=True)
         elif impNum == 2:
-            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent,
+            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
                              utilityFunction=comporators.max_semi_cooperative_comparator)
-            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent,
+            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
                              utilityFunction=comporators.min_semi_cooperative_comparator)
         else:
-            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent,
+            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
                              utilityFunction=comporators.fully_cooperative_comparator)
-            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent,
+            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
                              utilityFunction=comporators.fully_cooperative_comparator)
 
         maxAgent.otherAgent = minAgent
@@ -83,10 +83,14 @@ class Assignment2(object):
         self.initAgents(startingMax, startingMin, impNum)
 
     def runAgents(self):
+        othersLocation = self.agents[1]
         while not self.allAgentTerminated():
             for agent in self.agents:
                 if not agent.terminated:
+                    agent.setOthersLocation(othersLocation)
                     agent.act()
+                    othersLocation = agent.state.getCurrentLocation()
+
 
 
     def heauristicFunction(self, wrapper):

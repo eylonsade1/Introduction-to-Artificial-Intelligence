@@ -1,6 +1,7 @@
 import numpy as np
 from Graph import Graph
 from Agent import Agent
+from State import State
 # def alpha_beta_search(state, game):
 #     """Search game to determine best action; use alpha-beta pruning.
 #     As in [Figure 5.7], this version searches all the way to the leaves."""
@@ -42,91 +43,148 @@ from Agent import Agent
 #     return best_action
 
 
-def min_value(self, state: s.State, num_of_plys, WORLD: Graph, agent: Agent):
-    if state.terminal_state(num_of_plys):
+def minVal(state: State, numOfPlys, graph: Graph, agent: Agent):
+    #if agent.terminal_state(numOfPlys):
+    if agent.terminal_state():
         return state.evaluate()
-    best_value = None
-    for next_state in state.successor("MIN", WORLD):
-        next_state_max_value = self.max_value(next_state, num_of_plys + 1, WORLD)
-        if best_value is None:
-            best_value = next_state_max_value
+    bestVal = None
+    for nextState in state.successor("MIN", graph):
+        nextStateMaxVal = maxVal(nextState, numOfPlys + 1, graph, agent)
+        if bestVal is None:
+            bestVal = nextStateMaxVal
         if agent.type == 1:
-            best_value = agent.other_agent.comparator(best_value, next_state_max_value)
+            bestVal = agent.other_agent.utilityFunction(bestVal, nextStateMaxVal)
         else:
-            best_value = agent.comparator(best_value, next_state_max_value)
-    return best_value
+            bestVal = agent.utilityFunction(bestVal, nextStateMaxVal)
+    return bestVal
 
 
-def max_value(self, state, num_of_plys, WORLD: Graph, agent: Agent):
-    if state.terminal_state(num_of_plys):
+def maxVal(state, numOfPlys, graph: Graph, agent: Agent):
+    #if agent.terminal_state(numOfPlys):
+    if agent.terminal_state():
         return state.evaluate()
-    best_value = None
-    for next_state in state.successor("MAX", WORLD):
-        next_state_min_value = self.min_value(next_state, num_of_plys + 1, WORLD, agent)
-        if best_value is None:
-            best_value = next_state_min_value
+    bestVal = None
+    for nextState in state.successor("MAX", graph):
+        nextStateMinVal = minVal(nextState, numOfPlys + 1, graph, agent)
+        if bestVal is None:
+            bestVal = nextStateMinVal
         if agent.type == 1:
-            best_value = agent.comparator(best_value, next_state_min_value)
+            bestVal = agent.utilityFunction(bestVal, nextStateMinVal)
         else:
-            best_value = agent.other_agent.comparator(best_value, next_state_min_value)
-    return best_value
+            bestVal = agent.other_agent.utilityFunction(bestVal, nextStateMinVal)
+    return bestVal
 
 
-def maxValueAlphaBeta(self, state, num_of_plys, graph: Graph, alpha, beta):
-    if state.terminal_state(num_of_plys):
+def maxValueAlphaBeta(state, numOfPlys, graph: Graph, alpha, beta, agent):
+    #if agent.terminal_state(numOfPlys):
+    if agent.terminal_state():
         # def evaluate_alpha_beta(self): return self.max_agent_score - self.min_agent_score
         return state.evaluate_alpha_beta()
     v = float('-inf')
-    for next_state in state.successor("MAX", graph):
-        v = max(v, self.minValueAlphaBeta(next_state, num_of_plys + 1, graph, alpha, beta))
+    for nextState in state.successor("MAX", graph):
+        v = max(v, minValueAlphaBeta(nextState, numOfPlys + 1, graph, alpha, beta, agent))
         if v >= beta:
             return v
         alpha = max(alpha, v)
     return v
 
 
-def minValueAlphaBeta(self, state: s.State, num_of_plys, graph: Graph, alpha, beta):
-    if state.terminal_state(num_of_plys):
+def minValueAlphaBeta(state: State, numOfPlys, graph: Graph, alpha, beta, agent):
+    #if agent.terminal_state(numOfPlys):
+    if agent.terminal_state():
         return state.evaluate_alpha_beta()
     v = float('inf')
-    for next_state in state.successor("MIN", graph):
-        v = min(v, self.maxValueAlphaBeta(next_state, num_of_plys + 1, graph, alpha, beta))
+    for nextState in state.successor("MIN", graph):
+        v = min(v, maxValueAlphaBeta(nextState, numOfPlys + 1, graph, alpha, beta, agent))
         if v <= alpha:
             return v
         beta = min(beta, v)
     return v
 
 
-def minimaxAlphaBeta(self, state:s.State, graph:Graph):
-    best_edge = None
-    num_of_plys = 0
-    v = float('-inf')
+def minimaxAlphaBeta(state:State, graph:Graph, agent):
+    bestEdge = None
+    numOfPlys = 0
+    if agent.type == 1:
+        v = float('-inf')
+        successor = state.successor("MAX", graph)
+    else:
+        v = float('inf')
+        successor = state.successor("MIN", graph)
     alpha = float('-inf')
     beta = float('inf')
-    for next_state in state.successor("MAX", graph):
-        value_of_new_state = self.minValueAlphaBeta(next_state, num_of_plys + 1, graph, alpha, beta)
-        current_edge = graph.get_edge(next_state.max_agent_current_location.prev,next_state.max_agent_current_location.successor)
-        if v < value_of_new_state:
-            v = value_of_new_state
-            best_edge = current_edge
-        alpha = max(v, alpha)
-    return [best_edge[0], best_edge[1], best_edge[2]]
+    for nextState in successor:
+        if agent.type == 1:
+            valOfNextState = minValueAlphaBeta(nextState, numOfPlys + 1, graph, alpha, beta, agent)
+            currentEdge = graph.get_edge(nextState.max_agent_current_location.prev,nextState.max_agent_current_location.successor)
+            if v < valOfNextState:
+                v = valOfNextState
+                bestEdge = currentEdge
+            alpha = max(v, alpha)
+        else:
+            valOfNewState = maxValueAlphaBeta(nextState, numOfPlys + 1, graph, alpha, beta, agent)
+            currentEdge = graph.get_edge(nextState.min_agent_current_location.prev, nextState.min_agent_current_location.successor)
+            if v > valOfNewState:
+                v = valOfNewState
+                bestEdge = currentEdge
+            beta = min(v, beta)
+    return [bestEdge[0], bestEdge[1], bestEdge[2]]
 
 
-def maximinAlphaBeta(self, state: s.State, graph: Graph):
-    best_edge = None
-    num_of_plys = 0
-    v = float('inf')
-    alpha = float('-inf')
-    beta = float('inf')
-    for next_state in state.successor("MIN", graph):
-        value_of_new_state = self.maxValueAlphaBeta(next_state, num_of_plys + 1, graph, alpha, beta)
-        current_edge = graph.get_edge(next_state.min_agent_current_location.prev, next_state.min_agent_current_location.successor)
-        if v > value_of_new_state:
-            v = value_of_new_state
-            best_edge = current_edge
-        beta = min(v, beta)
-    return [best_edge[0], best_edge[1], best_edge[2]]
+# def maximinAlphaBeta(self, state: State, graph: Graph, agent):
+#     bestEdge = None
+#     numOfPlys = 0
+#     v = float('inf')
+#     alpha = float('-inf')
+#     beta = float('inf')
+#     for next_state in state.successor("MIN", graph):
+#         valOfNewState = self.maxValueAlphaBeta(next_state, numOfPlys + 1, graph, alpha, beta, agent)
+#         currentEdge = graph.get_edge(next_state.min_agent_current_location.prev, next_state.min_agent_current_location.successor)
+#         if v > valOfNewState:
+#             v = valOfNewState
+#             bestEdge = currentEdge
+#         beta = min(v, beta)
+#     return [bestEdge[0], bestEdge[1], bestEdge[2]]
+
+
+def minimax(state: State, graph: Graph, agent):
+    bestVal = None
+    bestEdge = None
+    numOfPlys = 0
+    if agent.type == 1:
+        successor = state.successor("MAX", graph)
+    else:
+        successor = state.successor("MIN", graph)
+    for nextState in successor:
+        if agent.type == 1:
+            valOfNewState = minVal(nextState, numOfPlys + 1, graph, agent)
+            currentEdge = graph.get_edge(nextState.max_agent_current_location.prev, nextState.max_agent_current_location.successor)
+        else:
+            valOfNewState = maxVal(nextState, numOfPlys + 1, graph, agent)
+            currentEdge = graph.get_edge(nextState.min_agent_current_location.prev, nextState.min_agent_current_location.successor)
+        if bestVal is None:
+            bestVal = valOfNewState
+            bestEdge = currentEdge
+        elif not (bestVal == agent.utilityFunction(bestVal, valOfNewState)):
+            bestVal = valOfNewState
+            bestEdge = currentEdge
+    return [bestEdge[0], bestEdge[1], bestEdge[2]]
+
+
+# def maximin(self, state: State, graph: Graph, agent):
+#     bestVal = None
+#     bestEdge = None
+#     numOfPlys = 0
+#     for nextState in state.successor("MIN", graph):
+#         valOfNewState = self.maxVal(nextState, numOfPlys + 1, graph, agent)
+#         currentEdge = graph.get_edge(nextState.min_agent_current_location.prev, nextState.min_agent_current_location.successor)
+#         if bestVal is None:
+#             bestVal = valOfNewState
+#             bestEdge = currentEdge
+#         elif not (bestVal == self.comparator(bestVal, valOfNewState)):
+#             bestVal = valOfNewState
+#             bestEdge = currentEdge
+#     return [bestEdge[0], bestEdge[1], bestEdge[2]]
 
 
 def query_player(game, state):
