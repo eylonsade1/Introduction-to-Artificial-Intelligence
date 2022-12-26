@@ -69,6 +69,12 @@ class Graph(Singleton):
                 self.toSave[vertex] = True
         return self.toSave
 
+    def areAllSaved(self):
+        for vertex in self.vertexes:
+            if int(vertex.persons) != 0:
+                return False
+        return True
+
     def getAllLeftToSave(self):
         needSave = []
         for vertex in self.vertexes:
@@ -127,14 +133,21 @@ class Graph(Singleton):
                 return 1
         return 0
 
+    def getEdgeFromVerNames(self, vertexFrom, vertexTo):
+        for edge in self.edges:
+            if (edge.fromV == vertexFrom and edge.toV == vertexTo) or \
+                    (edge.fromV == vertexTo and edge.toV == vertexFrom):
+                return edge
+        return None
+
     def getNeighborsList(self, vertex: Vertex):
         neighbors = []
         for edge in self.edges:
             if edge.fromV == vertex.name:
-                weight = self.getEdgeWeigtFromVerName(vertex.name, edge.toV)
+                weight = 1
                 neighbors.append(tuple((self.getVertexByName(edge.toV), int(weight))))
             elif edge.toV == vertex.name:
-                weight = self.getEdgeWeigtFromVerName(edge.fromV, vertex.name)
+                weight = 1
                 neighbors.append(tuple((self.getVertexByName(edge.fromV), int(weight))))
         return neighbors
 
