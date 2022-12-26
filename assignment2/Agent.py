@@ -1,17 +1,20 @@
+from collections import defaultdict
 import Vertex
 from Graph import Graph
 from State import State
-import games
+from utils import *
+from games import *
 import copy
 
 TIME_LIMIT = 400
 
 class Agent(object):
-    def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
+    def __init__(self, startingPositionMax, startingPositionMin, agentType, utilityFunction=None, doPrune=False):
         self.graph = Graph()
         #todo - add handling of new state structure
         self.state = None #State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
         self.actionSequence = [startingPositionMax, 0, startingPositionMax]
+        self.type = agentType
         self.utilityFunction = utilityFunction
         self.prune = doPrune
         self.movementAmount = 0
@@ -20,6 +23,7 @@ class Agent(object):
         self.totalScore = 0
         self.otherAgent = None
         self.terminated = False
+        self.states = []
 
     def __str__(self):
         agentString = "---------------\n" \
@@ -33,6 +37,17 @@ class Agent(object):
 
     def doNoOp(self):
         print("No-Op")
+
+    # todo :prob dont need - added for merge
+    def setOthersLocation(self, othersLocation):
+        self.othersLocation = othersLocation
+
+    def terminal_state(self):
+        if self.state.getAllReachable() == 0:
+            return True
+        for state in self.states:
+            if equalStates(state, self.state):
+                return True
 
     def strFromSequence(self):
         sequenceString = "["
