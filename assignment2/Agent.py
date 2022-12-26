@@ -168,9 +168,10 @@ class Agent(object):
             beta = min(beta, v)
         return v
 
-class maxAgent(Agent):
+
+class MaxAgent(Agent):
     def __init__(self, startingPosition, agentType, utilityFunction=None, doPrune=False):
-        super(maxAgent, self).__init__(startingPosition, agentType, utilityFunction, doPrune)
+        super(MaxAgent, self).__init__(startingPosition, agentType, utilityFunction, doPrune)
 
     def set_new_location(self, location_params):
         self.state.max_agent_current_location.set_location_parameters(location_params[0], location_params[1],
@@ -184,7 +185,6 @@ class maxAgent(Agent):
         # self.state.min_agent_score = self.otherAgent.totalScore
         # self.state.simulated_movements = Agent.num_of_real_movements
 
-
     def max_value(self, state, num_of_plys, WORLD: Graph):
         if state.terminal_state(num_of_plys):
             return state.evaluate()
@@ -196,7 +196,6 @@ class maxAgent(Agent):
             best_value = self.utilityFunction(best_value, next_state_min_value)
         return best_value
 
-
     def min_value(self, state: State, num_of_plys, WORLD: Graph):
         if state.terminal_state(num_of_plys):
             return state.evaluate()
@@ -207,7 +206,6 @@ class maxAgent(Agent):
                 best_value = next_state_max_value
             best_value = self.otherAgent.utilityFunction(best_value, next_state_max_value)
         return best_value
-
 
     def miniMax(self, state: State, WORLD: Graph):
         best_value = None
@@ -225,7 +223,6 @@ class maxAgent(Agent):
                 best_edge = current_edge
         return [best_edge[0], best_edge[1], best_edge[2]]
 
-
     def minimax_alpha_beta(self, state: s.State, WORLD: Graph):
         best_edge = None
         num_of_plys = 0
@@ -241,6 +238,7 @@ class maxAgent(Agent):
                 best_edge = current_edge
             alpha = max(v, alpha)
         return [best_edge[0], best_edge[1], best_edge[2]]
+
 
 class MinAgent(Agent):
     def __init__(self, startingPosition, utilityFunction=None, doPrune=False):
