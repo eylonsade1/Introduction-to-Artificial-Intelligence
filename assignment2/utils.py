@@ -193,9 +193,8 @@ def vector_add(a, b):
     """Component-wise addition of two vectors."""
     return tuple(map(operator.add, a, b))
 
+
 def equalStates(state1: State, state2: State):
-    if state1.getCurrentLocation() != state2.getCurrentLocation():
-        return False
     toSave2 = state2.getAllToSaveByName()
     for vertex in state1.getAllToSaveByName():
         if vertex not in toSave2:
@@ -211,7 +210,10 @@ def equalStates(state1: State, state2: State):
         if vertex not in broken2:
             return False
 
-    if state1.getOthersLocation() != state2.getOthersLocation():
+    if state1.getMinLocation() != state2.getMinLocation():
+        return False
+
+    if state1.getMaxLocation() != state2.getMaxLocation():
         return False
 
     return True

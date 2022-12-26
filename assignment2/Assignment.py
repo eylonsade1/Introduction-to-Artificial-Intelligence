@@ -60,14 +60,14 @@ class Assignment2(object):
             minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMin, doPrune=True)
         elif impNum == 2:
             maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
-                             utilityFunction=UtilityFuncs.max_semi_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.maxSemiCooperative)
             minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
-                             utilityFunction=UtilityFuncs.min_semi_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.minSemiCooperative)
         else:
             maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
-                             utilityFunction=UtilityFuncs.fully_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.fullyCooperative)
             minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
-                             utilityFunction=UtilityFuncs.fully_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.fullyCooperative)
 
         maxAgent.otherAgent = minAgent
         minAgent.otherAgent = maxAgent
