@@ -3,7 +3,7 @@ import time
 import OutputStrings as out
 from Agent import Agent
 from utils import Enum
-import comporators
+from games import UtilityFuncs
 
 AGENT_TYPES = Enum(['MaxAgent',
                     'MinAgent'])
@@ -60,14 +60,14 @@ class Assignment2(object):
             minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMin, doPrune=True)
         elif impNum == 2:
             maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
-                             utilityFunction=comporators.max_semi_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.maxSemiCooperative)
             minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
-                             utilityFunction=comporators.min_semi_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.minSemiCooperative)
         else:
             maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
-                             utilityFunction=comporators.fully_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.fullyCooperative)
             minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
-                             utilityFunction=comporators.fully_cooperative_comparator)
+                             utilityFunction=UtilityFuncs.fullyCooperative)
 
         maxAgent.otherAgent = minAgent
         minAgent.otherAgent = maxAgent

@@ -152,6 +152,16 @@ class Graph(Singleton):
                 neighbors.append(tuple((self.getVertexByName(edge.fromV), int(weight))))
         return neighbors
 
+    # Not with weight
+    def getNeighborsListNoWeight(self, vertex: Vertex):
+        neighbors = []
+        for edge in self.edges:
+            if edge.fromV == vertex.name:
+                neighbors.append(self.getVertexByName(edge.toV))
+            elif edge.toV == vertex.name:
+                neighbors.append(self.getVertexByName(edge.fromV))
+        return neighbors
+
     def getVertexNumber(self, vertex: Vertex):
         for vertexNumber in range(len(self.vertexes)):
             if self.vertexes[vertexNumber] == vertex:
