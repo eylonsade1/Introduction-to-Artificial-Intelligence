@@ -112,3 +112,9 @@ class State(object):
             newState.minScore = minNewScore
             newStates.append(newState)
         return newStates
+
+    def evaluate(self):
+        return self.maxScore, self.minScore
+
+    def evaluate_alpha_beta(self):
+        return self.maxScore - self.minScore
