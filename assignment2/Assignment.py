@@ -1,7 +1,7 @@
 from Graph import Graph
 import time
 import OutputStrings as out
-from Agent import Agent
+from Agent import Agent, MinAgent, MaxAgent
 from utils import Enum
 from games import UtilityFuncs
 
@@ -56,17 +56,17 @@ class Assignment2(object):
 
     def initAgents(self, startPositionMax, startPositionMin, impNum):
         if impNum == 1:
-            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMax, doPrune=True)
-            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMin, doPrune=True)
+            maxAgent = MaxAgent(startPositionMax, startPositionMin, doPrune=True)
+            minAgent = MinAgent(startPositionMax, startPositionMin, doPrune=True)
         elif impNum == 2:
-            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
+            maxAgent = MaxAgent(startPositionMax, startPositionMin,
                              utilityFunction=UtilityFuncs.maxSemiCooperative)
-            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
+            minAgent = MinAgent(startPositionMax, startPositionMin,
                              utilityFunction=UtilityFuncs.minSemiCooperative)
         else:
-            maxAgent = Agent(startPositionMax, AGENT_TYPES.MaxAgent, startPositionMin,
+            maxAgent = MaxAgent(startPositionMax, startPositionMin,
                              utilityFunction=UtilityFuncs.fullyCooperative)
-            minAgent = Agent(startPositionMin, AGENT_TYPES.MinAgent, startPositionMax,
+            minAgent = MinAgent(startPositionMax, startPositionMin,
                              utilityFunction=UtilityFuncs.fullyCooperative)
 
         maxAgent.otherAgent = minAgent

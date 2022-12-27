@@ -6,20 +6,20 @@ from utils import *
 NUM_OF_PLYS = 10
 
 class State(object):
-    def __init__(self, maxLocation, minLocation, vertexWithPeopleToSave, brokenVertexes, simulatedMovements = 0):
-        self.toSave = vertexWithPeopleToSave
+    def __init__(self, maxLocation, minLocation):
         self.graph = Graph()
+        self.toSave = self.graph.getAllToSave()
         # todo - reachable for who? + need tpo change all of current location usage
         # self.reachable = utils.getReachableToSave(currentVertex)
-        self.brokenVertexes = brokenVertexes
+        self.brokenVertexes = self.graph.getAllBroken()
         self.minScore = 0
         self.maxScore = 0
         self.maxLocation = maxLocation
         self.minLocation = minLocation
-        self.simulatedMovements = simulatedMovements
 
+    #todo add print for state
     def __str__(self):
-        return "Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
+        return #"Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
 
     def shouldTerminateSearch(self, numOfPlys):
         if numOfPlys == NUM_OF_PLYS:
@@ -57,12 +57,6 @@ class State(object):
                 needSave.append(key.name)
         return needSave
 
-    def getMaxCurrentLocation(self):
-        return self.maxLocation
-
-    def getMinCurrentLocation(self):
-        return self.minLocation
-
     def getAllReachable(self):
         return self.reachable
 
@@ -74,12 +68,6 @@ class State(object):
 
     def getMinLocation(self):
         return self.minLocation
-
-    def getMaxScore(self):
-        return self.maxScore
-
-    def getMinScore(self):
-        return self.minScore
 
     def successor(self, type_of_agent: str, graph: Graph):
         if type_of_agent == 1: # Max
@@ -116,5 +104,5 @@ class State(object):
     def evaluate(self):
         return self.maxScore, self.minScore
 
-    def evaluate_alpha_beta(self):
+    def evalAlphaBeta(self):
         return self.maxScore - self.minScore

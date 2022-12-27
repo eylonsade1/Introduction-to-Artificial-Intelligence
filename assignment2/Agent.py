@@ -9,12 +9,11 @@ import copy
 TIME_LIMIT = 400
 
 class Agent(object):
-    def __init__(self, startingPositionMax, startingPositionMin, agentType, utilityFunction=None, doPrune=False):
+    def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
         self.graph = Graph()
         #todo - add handling of new state structure
-        self.state = None #State(self.graph.vertexes[startingPosition], self.graph.getAllToSave())
+        self.state = State(startingPositionMax, startingPositionMin)
         self.actionSequence = [startingPositionMax, 0, startingPositionMax]
-        self.type = agentType
         self.utilityFunction = utilityFunction
         self.prune = doPrune
         self.movementAmount = 0
@@ -101,11 +100,10 @@ class Agent(object):
         next_vertex = self.actionSequence[0]
         print("Current Vertex: " + str(self.currentPosition))
         print("Moving to: " + str(next_vertex))
-        if next_vertex != self.state.currentVertex:
+        if next_vertex != self.currentPosition:
             self.saveVertexOnMove()
         if self.currentPosition.isBrittle:
             self.graph.deleteVertex(self.currentPosition)
-        # self.state.currentVertex = next_vertex
         self.timeSpent += 1
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
@@ -119,14 +117,10 @@ class Agent(object):
 
     #todo fix for current state behavior
     def saveVertexOnMove(self):
-
-        # currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
         currentVertex = self.currentPosition
         if currentVertex is not None and currentVertex.persons > 0:
             print("Saving: " + str(self.state.currentVertex))
             self.individualScore += currentVertex.persons
-            #todo add reprentation of people on state
-            # self.state.currentVertex.persons = 0
             currentVertex.persons = 0
         self.state.saveVertex()
 
@@ -137,7 +131,7 @@ class Agent(object):
 
     def maxVal_alphaBeta(self, state: State, plys, alpha, beta):
         if state.shouldTerminateSearch(plys):
-            return state.evaluate_alpha_beta()
+            return state.evalAlphaBeta()
         v = float('-inf')
         for next_state in state.successor("MAX"):
             v = max(v, self.minVal_alphaBeta(next_state, plys + 1, alpha, beta))
@@ -148,7 +142,7 @@ class Agent(object):
 
     def minVal_alphaBeta(self, state: State, plys, alpha, beta):
         if state.shouldTerminateSearch(plys):
-            return state.evaluate_alpha_beta()
+            return state.evalAlphaBeta()
         v = float('inf')
         for next_state in state.successor("MIN"):
             v = min(v, self.maxVal_alphaBeta(next_state, plys + 1, alpha, beta))
@@ -157,9 +151,9 @@ class Agent(object):
             beta = min(beta, v)
         return v
 
-class maxAgent(Agent):
-    def __init__(self, startingPositionMax, startingPositionMin, agentType, utilityFunction=None, doPrune=False):
-        super(maxAgent, self).__init__(startingPositionMax, startingPositionMin,agentType, utilityFunction, doPrune)
+class MaxAgent(Agent):
+    def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
+        super(MaxAgent, self).__init__(startingPositionMax, startingPositionMin, utilityFunction, doPrune)
         self.currentPosition = startingPositionMax
 
     def updateState(self):
@@ -228,8 +222,8 @@ class maxAgent(Agent):
 
 
 class MinAgent(Agent):
-    def __init__(self, startingPositionMax, startingPositionMin, agentType, utilityFunction=None, doPrune=False):
-        super(MinAgent, self).__init__(startingPositionMax, startingPositionMin, agentType, utilityFunction, doPrune)
+    def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
+        super(MinAgent, self).__init__(startingPositionMax, startingPositionMin, utilityFunction, doPrune)
         self.currentPosition = startingPositionMin
 
     def updateState(self):
