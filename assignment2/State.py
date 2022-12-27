@@ -21,10 +21,10 @@ class State(object):
     def __str__(self):
         return "Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
 
-    def terminalState(self, numOfPlys):
+    def shouldTerminateSearch(self, numOfPlys):
         if numOfPlys == NUM_OF_PLYS:
             return True
-        # check if to save people
+        return self.areAllSaved()
 
     def updateState(self):
         graphState = self.graph.getAllToSave()
