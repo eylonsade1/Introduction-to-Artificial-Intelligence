@@ -103,9 +103,9 @@ class Agent(object):
         print("Moving to: " + str(next_vertex))
         if next_vertex != self.state.currentVertex:
             self.saveVertexOnMove()
-        if self.state.currentVertex.isBrittle:
-            self.graph.deleteVertex(self.state.currentVertex)
-        self.state.currentVertex = next_vertex
+        if self.currentPosition.isBrittle:
+            self.graph.deleteVertex(self.currentPosition)
+        # self.state.currentVertex = next_vertex
         self.timeSpent += 1
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
@@ -202,7 +202,7 @@ class maxAgent(Agent):
         plys = 0
         for neighborState in state.successor("MAX"):
             neighborStateValue = self.minVal(neighborState, plys + 1)
-            nextVertex = neighborState.currentVertex
+            nextVertex = neighborState.maxLocation
             if bestVal is None:
                 bestVal = neighborStateValue
                 goalVertexBestMove = nextVertex
@@ -219,7 +219,7 @@ class maxAgent(Agent):
         beta = float('inf')
         for neighborState in state.successor("MAX"):
             neighborStateValue = self.minVal_alphaBeta(neighborState, plys + 1, alpha, beta)
-            nextVertex = neighborState.currentVertex
+            nextVertex = neighborState.maxLocation
             if bestVal < neighborStateValue:
                 bestVal = neighborStateValue
                 goalVertexBestMove = nextVertex
@@ -273,7 +273,7 @@ class MinAgent(Agent):
         plys = 0
         for neighborState in state.successor("MIN"):
             neighborStateValue = self.maxVal(neighborState, plys + 1)
-            goalVertex = neighborState.currentVertex
+            goalVertex = neighborState.minLocation
             if bestVal is None:
                 bestVal = neighborStateValue
                 goalVertexBestMove = goalVertex
@@ -290,7 +290,7 @@ class MinAgent(Agent):
         beta = float('inf')
         for neighborState in state.successor("MIN"):
             neighborStateValue = self.maxVal_alphaBeta(neighborState, plys + 1, alpha, beta)
-            goalVertex = neighborState.currentVertex
+            goalVertex = neighborState.minLocation
             if bestVal > neighborStateValue:
                 bestVal = neighborStateValue
                 goalVertexBestMove = goalVertex
