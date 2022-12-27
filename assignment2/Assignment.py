@@ -1,12 +1,9 @@
 from Graph import Graph
 import time
 import OutputStrings as out
-from Agent import Agent, MinAgent, MaxAgent
-from utils import Enum
+from Agent import  MinAgent, MaxAgent
 from games import UtilityFuncs
 
-AGENT_TYPES = Enum(['MaxAgent',
-                    'MinAgent'])
 class Assignment2(object):
     def __init__(self):
         self.graph = Graph()
@@ -92,11 +89,6 @@ class Assignment2(object):
                     agent.setOthersLocation(othersLocation)
                     agent.act()
                     othersLocation = agent.state.getCurrentLocation()
-
-
-
-    def heauristicFunction(self, wrapper):
-        return
 
 
     def printAgentsState(self):

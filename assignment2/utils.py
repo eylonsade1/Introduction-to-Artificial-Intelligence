@@ -1,15 +1,9 @@
 from State import *
 from Vertex import Vertex
 from State import State
-import os
 import sys
+import os
 from Graph import Graph
-
-class Enum(set):
-    def __getattr__(self, name):
-        if name in self:
-            return name
-        return AttributeError
 
 def createGraph(pathToGraph):
     if os.path.isfile(pathToGraph):
@@ -95,7 +89,6 @@ def equalStates(state1: State, state2: State):
         return False
 
     return True
-
 
 
 if __name__ == '__main__':

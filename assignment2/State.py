@@ -17,9 +17,16 @@ class State(object):
         self.maxLocation = maxLocation
         self.minLocation = minLocation
 
-    #todo add print for state
+
     def __str__(self):
-        return #"Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
+        return "---state---- \n" \
+               "Location max {} score max {}\n" \
+               "Location min {} score min {}\n" \
+               "Broken vertexes {}\n" \
+               "saved vertexes status {}".format(self.maxLocation, self.maxScore,
+                                                 self.minLocation, self.minScore,
+                                                 self.brokenVertexes, self.toSave)
+
 
     def shouldTerminateSearch(self, numOfPlys):
         if numOfPlys == NUM_OF_PLYS:
@@ -80,6 +87,7 @@ class State(object):
         for neighbour in graph.getNeighborsListNoWeight(self.maxLocation):
             maxNewScore = self.maxScore
             newState = copy.deepcopy(self)
+            # newState.simulated_movements += 1
             if not newState.toSave[neighbour]:
                 maxNewScore = self.maxScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
@@ -93,6 +101,7 @@ class State(object):
         for neighbour in graph.getNeighborsList(self.minLocation):
             minNewScore = self.minScore
             newState = copy.deepcopy(self)
+            # newState.simulated_movements += 1
             if not newState.toSave[neighbour]:
                 minNewScore = self.minScore + neighbour.numOfPeople
                 newState.saveVertex(neighbour)
