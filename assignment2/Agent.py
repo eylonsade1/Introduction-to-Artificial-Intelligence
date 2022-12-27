@@ -13,7 +13,7 @@ class Agent(object):
         self.graph = Graph()
         #todo - add handling of new state structure
         self.state = State(startingPositionMax, startingPositionMin)
-        self.actionSequence = [startingPositionMax, 0, startingPositionMax]
+        self.actionSequence = []
         self.utilityFunction = utilityFunction
         self.prune = doPrune
         self.movementAmount = 0
@@ -82,11 +82,11 @@ class Agent(object):
                 self.updateState()
                 print("MINIMAXING")
                 if self.prune:
-                    self.actionSequence = self.minimaxAlphaBeta(self.state)
+                    self.actionSequence.append(self.minimaxAlphaBeta(self.state))
                 else:
-                    self.actionSequence = self.miniMax(self.state)
+                    self.actionSequence.append(self.miniMax(self.state))
                 #todo dependent on the actionSequence returned from state behavior
-                self.actionSequence.append(self.actionSequence[2])
+                # self.actionSequence.append(self.actionSequence[2])
                 self.move()
         else:
             print("TERMINATED\n")
@@ -115,10 +115,10 @@ class Agent(object):
     def saveVertexOnMove(self):
         currentVertex = self.currentPosition
         if currentVertex is not None and currentVertex.persons > 0:
-            print("Saving: " + str(self.state.currentVertex))
+            print("Saving: " + str(self.currentPosition))
             self.individualScore += currentVertex.persons
             currentVertex.persons = 0
-        self.state.saveVertex()
+        self.state.saveVertex(self.currentPosition)
 
 
     #@todo add state update method - based on relevant state behavior - state recieves
