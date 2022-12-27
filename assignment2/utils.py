@@ -1,13 +1,10 @@
-import copy
-import sys
-import os
-from Graph import Graph
 import networkx as nx
 from State import *
 import matplotlib.pyplot as plt
 import collections
 from Vertex import Vertex
 import operator
+from State import State
 
 class Enum(set):
     def __getattr__(self, name):

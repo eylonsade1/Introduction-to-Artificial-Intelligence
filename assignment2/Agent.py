@@ -24,6 +24,7 @@ class Agent(object):
         self.otherAgent = None
         self.terminated = False
         self.states = []
+        self.currentPosition = None
 
     def __str__(self):
         agentString = "---------------\n" \
@@ -89,30 +90,19 @@ class Agent(object):
                     self.actionSequence = self.minimaxAlphaBeta(self.state)
                 else:
                     self.actionSequence = self.miniMax(self.state)
+                #todo dependent on the actionSequence returned from state behavior
                 self.actionSequence.append(self.actionSequence[2])
                 self.move()
         else:
             print("TERMINATED\n")
 
-
-    def saveVertexOnMove(self):
-        currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
-        if currentVertex is not None and currentVertex.persons > 0:
-            print("Saving: " + str(self.state.currentVertex))
-            self.individualScore += currentVertex.persons
-            self.state.currentVertex.persons = 0
-            currentVertex.persons = 0
-        self.state.saveVertex()
-
     def move(self):
         self.movementAmount += 1
         next_vertex = self.actionSequence[0]
-        print("Current Vertex: " + str(self.state.currentVertex))
+        print("Current Vertex: " + str(self.currentPosition))
         print("Moving to: " + str(next_vertex))
         if next_vertex != self.state.currentVertex:
             self.saveVertexOnMove()
-        #todo - always 1
-        moveCost = self.graph.getEdgeWeigtFromVerName(self.state.currentVertex.name, next_vertex.name)
         if self.state.currentVertex.isBrittle:
             self.graph.deleteVertex(self.state.currentVertex)
         self.state.currentVertex = next_vertex
@@ -120,15 +110,32 @@ class Agent(object):
         self.actionSequence = self.actionSequence[1:]
         if len(self.actionSequence) == 0:
             self.saveVertexOnMove()
+        self.currentPosition = next_vertex
+
         #todo add termination based on the state
         # if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
         #     self.terminated = True
+
+
+    #todo fix for current state behavior
+    def saveVertexOnMove(self):
+
+        # currentVertex = self.graph.getVertexByName(self.state.currentVertex.name)
+        currentVertex = self.currentPosition
+        if currentVertex is not None and currentVertex.persons > 0:
+            print("Saving: " + str(self.state.currentVertex))
+            self.individualScore += currentVertex.persons
+            #todo add reprentation of people on state
+            # self.state.currentVertex.persons = 0
+            currentVertex.persons = 0
+        self.state.saveVertex()
+
 
     #@todo add state update method - based on relevant state behavior - state recieves
     def updateState(self):
         print("Not yet implemented")
 
-    def maxVal_alphaBeta(self, state, plys, alpha, beta):
+    def maxVal_alphaBeta(self, state: State, plys, alpha, beta):
         if state.shouldTerminateSearch(plys):
             return state.evaluate_alpha_beta()
         v = float('-inf')
@@ -151,8 +158,9 @@ class Agent(object):
         return v
 
 class maxAgent(Agent):
-    def __init__(self, startingPosition, agentType, utilityFunction=None, doPrune=False):
-        super(maxAgent, self).__init__(startingPosition, agentType, utilityFunction, doPrune)
+    def __init__(self, startingPositionMax, startingPositionMin, agentType, utilityFunction=None, doPrune=False):
+        super(maxAgent, self).__init__(startingPositionMax, startingPositionMin,agentType, utilityFunction, doPrune)
+        self.currentPosition = startingPositionMax
 
     def updateState(self):
         graphState = self.graph.getAllToSave()
@@ -166,7 +174,7 @@ class maxAgent(Agent):
         self.state.maxScore = self.individualScore
         self.state.minScore = self.otherAgent.individualScore
 
-    def maxVal(self, state, plys):
+    def maxVal(self, state: State, plys):
         if state.shouldTerminateSearch(plys):
             return state.evaluate()
         bestVal = None
@@ -220,8 +228,9 @@ class maxAgent(Agent):
 
 
 class MinAgent(Agent):
-    def __init__(self, startingPosition, utilityFunction=None, doPrune=False):
-        super(MinAgent, self).__init__(startingPosition, utilityFunction, doPrune)
+    def __init__(self, startingPositionMax, startingPositionMin, agentType, utilityFunction=None, doPrune=False):
+        super(MinAgent, self).__init__(startingPositionMax, startingPositionMin, agentType, utilityFunction, doPrune)
+        self.currentPosition = startingPositionMin
 
     def updateState(self):
         graphState = self.graph.getAllToSave()
@@ -236,7 +245,7 @@ class MinAgent(Agent):
         self.state.minScore = self.individualScore
         return
 
-    def maxVal(self, state, plys):
+    def maxVal(self, state: State, plys):
         if state.shouldTerminateSearch(plys):
             return state.evaluate()
         bestVal = None
