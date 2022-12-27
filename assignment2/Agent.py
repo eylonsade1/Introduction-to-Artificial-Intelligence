@@ -19,7 +19,6 @@ class Agent(object):
         self.movementAmount = 0
         self.timeSpent = 0
         self.individualScore = 0
-        self.totalScore = 0 # total score is dependent on game mode
         self.otherAgent = None
         self.terminated = False
         self.states = []
@@ -30,9 +29,8 @@ class Agent(object):
                       "{}\n" \
                       "people saved: {}\n" \
                       "time spent (weight of edges): {}\n" \
-                      "score(total) {}\n" \
                       "---------------\n".format(type(self).__name__, self.individualScore,
-                                                 self.timeSpent, self.totalScore)
+                                                 self.timeSpent)
         return agentString
 
     def doNoOp(self):

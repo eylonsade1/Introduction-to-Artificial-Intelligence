@@ -20,5 +20,6 @@ if __name__ == '__main__':
     ass2.userInit()
     ass2.runAgents()
     ass2.printAgentsState()
+    ass2.printFinalScore()
     print("End state of the graph: {}".format(Graph()))
 

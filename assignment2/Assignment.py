@@ -9,6 +9,7 @@ class Assignment2(object):
         self.graph = Graph()
         self.start_time = time.time()
         self.agents = []
+        self.implNum = 0
 
     def timeConvert(self):
         end_time = time.time()
@@ -51,11 +52,11 @@ class Assignment2(object):
                 return False
         return True
 
-    def initAgents(self, startPositionMax, startPositionMin, impNum):
-        if impNum == 1:
+    def initAgents(self, startPositionMax, startPositionMin):
+        if self.implNum == 1:
             maxAgent = MaxAgent(startPositionMax, startPositionMin, doPrune=True)
             minAgent = MinAgent(startPositionMax, startPositionMin, doPrune=True)
-        elif impNum == 2:
+        elif self.implNum == 2:
             maxAgent = MaxAgent(startPositionMax, startPositionMin,
                              utilityFunction=UtilityFuncs.maxSemiCooperative)
             minAgent = MinAgent(startPositionMax, startPositionMin,
@@ -73,13 +74,13 @@ class Assignment2(object):
     def userInit(self):
         print(out.WELCOME_HURRICANE)
         self.agents = []
-        impNum = self.numInput(out.CHOOSE_GAME_TYPE, 4)
+        self.implNum = self.numInput(out.CHOOSE_GAME_TYPE, 4)
         startingMax = self.initPosition("first")
         startingMin = self.initPosition("second")
         startingMax = self.graph.vertexes[startingMax]
         startingMin = self.graph.vertexes[startingMin]
 
-        self.initAgents(startingMax, startingMin, impNum)
+        self.initAgents(startingMax, startingMin)
 
     def runAgents(self):
         while not self.allAgentTerminated():
@@ -90,5 +91,14 @@ class Assignment2(object):
     def printAgentsState(self):
         for agent in self.agents:
             print(agent)
+
+    def printFinalScore(self):
+        if self.implNum == 1:
+            score = self.agents[0].individualScore - self.agents[1].individualScore
+        elif self.implNum == 2:
+            score = self.agents[0].individualScore + self.agents[1].individualScore
+        else:
+            score = self.agents[0].individualScore + self.agents[1].individualScore
+        print("Final score for game is {}".format(score))
 
 
