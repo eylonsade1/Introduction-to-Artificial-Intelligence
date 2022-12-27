@@ -38,10 +38,6 @@ class Agent(object):
     def doNoOp(self):
         print("No-Op")
 
-    # todo :prob dont need - added for merge
-    def setOthersLocation(self, othersLocation):
-        self.othersLocation = othersLocation
-
     def shouldTerminateGame(self):
         if self.graph.areAllSaved():
             return True

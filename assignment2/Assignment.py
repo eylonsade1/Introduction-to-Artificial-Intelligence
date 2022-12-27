@@ -82,13 +82,10 @@ class Assignment2(object):
         self.initAgents(startingMax, startingMin, impNum)
 
     def runAgents(self):
-        othersLocation = self.agents[1]
         while not self.allAgentTerminated():
             for agent in self.agents:
                 if not agent.terminated:
-                    agent.setOthersLocation(othersLocation)
                     agent.act()
-                    othersLocation = agent.state.getCurrentLocation()
 
 
     def printAgentsState(self):
