@@ -1,6 +1,5 @@
 from State import *
 from Vertex import Vertex
-from State import State
 import sys
 import os
 from Graph import Graph
@@ -66,7 +65,7 @@ def dijkstra(graph, src):
     # printSolution(graph, dist) only for debugging
     return dist
 
-def equalStates(state1: State, state2: State):
+def equalStates(state1, state2):
     toSave2 = state2.getAllToSaveByName()
     for vertex in state1.getAllToSaveByName():
         if vertex not in toSave2:

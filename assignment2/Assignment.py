@@ -73,7 +73,7 @@ class Assignment2(object):
     def userInit(self):
         print(out.WELCOME_HURRICANE)
         self.agents = []
-        impNum = self.numInput(out.CHOOSE_GAME_TYPE)
+        impNum = self.numInput(out.CHOOSE_GAME_TYPE, 4)
         startingMax = self.initPosition("first")
         startingMin = self.initPosition("second")
         startingMax = self.graph.getVertexByName(startingMax)
