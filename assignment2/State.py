@@ -1,4 +1,7 @@
+import copy
+
 from utils import *
+from copy import *
 
 NUM_OF_PLYS = 10
 
@@ -77,15 +80,15 @@ class State(object):
     def getMinScore(self):
         return self.minScore
 
-    def successor(self, type_of_agent: str, graph: Graph):
+    def successor(self, type_of_agent: str):
         if type_of_agent == 1: # Max
-            return self.maxSuccessor(graph)
+            return self.maxSuccessor()
         else: # Min
-            return self.minSuccessor(graph)
+            return self.minSuccessor()
         
-    def maxSuccessor(self, graph):
+    def maxSuccessor(self):
         newStates = []
-        for neighbour in graph.getNeighborsListNoWeight(self.maxLocation):
+        for neighbour in self.graph.getNeighborsListNoWeight(self.maxLocation):
             if neighbour in self.brokenVertexes:
                 continue
             maxNewScore = self.maxScore
@@ -100,9 +103,9 @@ class State(object):
             newStates.append(newState)
         return newStates
 
-    def minSuccessor(self, graph):
+    def minSuccessor(self):
         newStates = []
-        for neighbour in graph.getNeighborsList(self.minLocation):
+        for neighbour in self.graph.getNeighborsList(self.minLocation):
             if neighbour in self.brokenVertexes:
                 continue
             minNewScore = self.minScore
