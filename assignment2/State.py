@@ -80,10 +80,10 @@ class State(object):
         for neighbour in graph.getNeighborsListNoWeight(self.maxLocation):
             maxNewScore = self.maxScore
             newState = copy.deepcopy(self)
-            newState.simulatedMovements += 1
             if not newState.toSave[neighbour]:
                 maxNewScore = self.maxScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
+            newState.maxLocation = neighbour
             newState.maxScore = maxNewScore
             newStates.append(newState)
         return newStates
@@ -93,10 +93,10 @@ class State(object):
         for neighbour in graph.getNeighborsList(self.minLocation):
             minNewScore = self.minScore
             newState = copy.deepcopy(self)
-            newState.simulatedMovements += 1
             if not newState.toSave[neighbour]:
                 minNewScore = self.minScore + neighbour.numOfPeople
                 newState.saveVertex(neighbour)
+            newState.minLocation = neighbour
             newState.minScore = minNewScore
             newStates.append(newState)
         return newStates
