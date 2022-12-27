@@ -1,7 +1,6 @@
 import copy
 
 from utils import *
-from copy import *
 
 NUM_OF_PLYS = 10
 
@@ -86,9 +85,9 @@ class State(object):
             if neighbour in self.brokenVertexes:
                 continue
             maxNewScore = self.maxScore
-            newState = copy.deepcopy(self)
+            newState = copy.copy(self)
             if not newState.toSave[neighbour]:
-                maxNewScore = self.maxScore + neighbour.numOfPeople()
+                maxNewScore = self.maxScore + neighbour.persons
                 newState.saveVertex(neighbour)
             if neighbour.isBrittle:
                 self.brokenVertexes.append(neighbour)
@@ -99,13 +98,13 @@ class State(object):
 
     def minSuccessor(self):
         newStates = []
-        for neighbour in self.graph.getNeighborsList(self.minLocation):
+        for neighbour in self.graph.getNeighborsListNoWeight(self.minLocation):
             if neighbour in self.brokenVertexes:
                 continue
             minNewScore = self.minScore
-            newState = copy.deepcopy(self)
+            newState = copy.copy(self)
             if not newState.toSave[neighbour]:
-                minNewScore = self.minScore + neighbour.numOfPeople
+                minNewScore = self.minScore + neighbour.persons
                 newState.saveVertex(neighbour)
             if neighbour.isBrittle:
                 self.brokenVertexes.append(neighbour)
