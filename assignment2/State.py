@@ -9,8 +9,6 @@ class State(object):
     def __init__(self, maxLocation, minLocation):
         self.graph = Graph()
         self.toSave = self.graph.getAllToSave()
-        # todo - reachable for who? + need tpo change all of current location usage
-        # self.reachable = utils.getReachableToSave(currentVertex)
         self.brokenVertexes = self.graph.getAllBroken()
         self.minScore = 0
         self.maxScore = 0
@@ -76,6 +74,12 @@ class State(object):
     def getMinLocation(self):
         return self.minLocation
 
+    def getMaxScore(self):
+        return self.maxScore
+
+    def getMinScore(self):
+        return self.minScore
+
     def successor(self, type_of_agent: str, graph: Graph):
         if type_of_agent == 1: # Max
             return self.maxSuccessor(graph)
@@ -85,12 +89,15 @@ class State(object):
     def maxSuccessor(self, graph):
         newStates = []
         for neighbour in graph.getNeighborsListNoWeight(self.maxLocation):
+            if neighbour in self.brokenVertexes:
+                continue
             maxNewScore = self.maxScore
             newState = copy.deepcopy(self)
-            # newState.simulated_movements += 1
             if not newState.toSave[neighbour]:
                 maxNewScore = self.maxScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
+            if neighbour.isBrittle:
+                self.brokenVertexes.append(neighbour)
             newState.maxLocation = neighbour
             newState.maxScore = maxNewScore
             newStates.append(newState)
@@ -99,12 +106,15 @@ class State(object):
     def minSuccessor(self, graph):
         newStates = []
         for neighbour in graph.getNeighborsList(self.minLocation):
+            if neighbour in self.brokenVertexes:
+                continue
             minNewScore = self.minScore
             newState = copy.deepcopy(self)
-            # newState.simulated_movements += 1
             if not newState.toSave[neighbour]:
                 minNewScore = self.minScore + neighbour.numOfPeople
                 newState.saveVertex(neighbour)
+            if neighbour.isBrittle:
+                self.brokenVertexes.append(neighbour)
             newState.minLocation = neighbour
             newState.minScore = minNewScore
             newStates.append(newState)
