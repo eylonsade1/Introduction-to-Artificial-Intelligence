@@ -133,6 +133,7 @@ class Graph(Singleton):
                 return 1
         return 0
 
+    #todo - probably remove this is redundent
     def getEdgeFromVerNames(self, vertexFrom, vertexTo):
         for edge in self.edges:
             if (edge.fromV == vertexFrom and edge.toV == vertexTo) or \

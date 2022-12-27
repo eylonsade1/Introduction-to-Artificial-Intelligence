@@ -77,6 +77,7 @@ def dijkstra(graph, src):
     return dist
 
 
+#todo - consider removing . is this required?
 def spanning_trees(G, currentPos):
     # converts our graph to networkx
     def buidNXGraph(graph, currentPos):
@@ -108,6 +109,8 @@ def spanning_trees(G, currentPos):
     E.add_nodes_from(reducedGraph)
     return build_tree(E, [(e, weight) for e, weight in nx.get_edge_attributes(reducedGraph,'weight').items()], currentPos)
 
+
+#todo - consider removing . is this required?
 # reduces graph to vertexes with people, bittles and current position
 def reduceGraph(G, current):
     verticesNbrittle = nx.get_node_attributes(G, 'isBrittle')
@@ -124,6 +127,8 @@ def reduceGraph(G, current):
             G.remove_node(vertex)
     return G
 
+
+#todo - consider removing . is this required?
 # prints networkx graph
 def printGraph(graph):
     pos = nx.spring_layout(graph)
@@ -133,6 +138,8 @@ def printGraph(graph):
     plt.show()
 
 # get the minimum weight of a path in tree that saves all people
+
+#todo - consider removing . is this required?
 def minTree(graphs, currentPos, currentState):
     realGraph = Graph()
     bestWeight = None
