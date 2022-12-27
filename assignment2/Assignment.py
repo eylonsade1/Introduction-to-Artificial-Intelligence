@@ -76,8 +76,8 @@ class Assignment2(object):
         impNum = self.numInput(out.CHOOSE_GAME_TYPE, 4)
         startingMax = self.initPosition("first")
         startingMin = self.initPosition("second")
-        startingMax = self.graph.getVertexByName(startingMax)
-        startingMin = self.graph.getVertexByName(startingMin)
+        startingMax = self.graph.vertexes[startingMax]
+        startingMin = self.graph.vertexes[startingMin]
 
         self.initAgents(startingMax, startingMin, impNum)
 
