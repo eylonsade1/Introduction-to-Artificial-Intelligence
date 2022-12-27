@@ -87,7 +87,7 @@ class State(object):
             maxNewScore = self.maxScore
             newState = copy.copy(self)
             if not newState.toSave[neighbour]:
-                maxNewScore = self.maxScore + neighbour.persons
+                maxNewScore = self.maxScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
             if neighbour.isBrittle:
                 self.brokenVertexes.append(neighbour)
@@ -104,7 +104,7 @@ class State(object):
             minNewScore = self.minScore
             newState = copy.copy(self)
             if not newState.toSave[neighbour]:
-                minNewScore = self.minScore + neighbour.persons
+                minNewScore = self.minScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
             if neighbour.isBrittle:
                 self.brokenVertexes.append(neighbour)
