@@ -74,12 +74,6 @@ class State(object):
     def getMinLocation(self):
         return self.minLocation
 
-    def getMaxScore(self):
-        return self.maxScore
-
-    def getMinScore(self):
-        return self.minScore
-
     def successor(self, type_of_agent: str):
         if type_of_agent == 1: # Max
             return self.maxSuccessor()
