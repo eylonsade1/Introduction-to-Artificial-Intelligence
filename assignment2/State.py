@@ -74,7 +74,7 @@ class State(object):
         return self.minLocation
 
     def successor(self, type_of_agent: str):
-        if type_of_agent == 1: # Max
+        if type_of_agent == "MAX": # Max
             return self.maxSuccessor()
         else: # Min
             return self.minSuccessor()
