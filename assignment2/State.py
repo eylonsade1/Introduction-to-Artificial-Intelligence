@@ -119,3 +119,27 @@ class State(object):
 
     def evalAlphaBeta(self):
         return self.maxScore - self.minScore
+
+def equalStates(state1: State, state2: State):
+    toSave2 = state2.getAllToSaveByName()
+    for vertex in state1.getAllToSaveByName():
+        if vertex not in toSave2:
+            return False
+
+    reachable2 = state2.getAllReachable()
+    for vertex in state1.getAllReachable():
+        if vertex not in reachable2:
+            return False
+
+    broken2 = state2.getAllBrokenVertexes()
+    for vertex in state1.getAllBrokenVertexes():
+        if vertex not in broken2:
+            return False
+
+    if state1.getMinLocation() != state2.getMinLocation():
+        return False
+
+    if state1.getMaxLocation() != state2.getMaxLocation():
+        return False
+
+    return True

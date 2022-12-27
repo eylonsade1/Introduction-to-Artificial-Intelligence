@@ -1,7 +1,7 @@
 from collections import defaultdict
 import Vertex
 from Graph import Graph
-from State import State
+from State import State, equalStates
 from utils import *
 from games import *
 import copy

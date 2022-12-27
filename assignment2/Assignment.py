@@ -87,7 +87,6 @@ class Assignment2(object):
                 if not agent.terminated:
                     agent.act()
 
-
     def printAgentsState(self):
         for agent in self.agents:
             print(agent)
