@@ -96,6 +96,7 @@ class State(object):
             if not newState.toSave[neighbour]:
                 maxNewScore = self.maxScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
+            newState.maxLocation = neighbour
             newState.maxScore = maxNewScore
             newStates.append(newState)
         return newStates
@@ -109,6 +110,7 @@ class State(object):
             if not newState.toSave[neighbour]:
                 minNewScore = self.minScore + neighbour.numOfPeople
                 newState.saveVertex(neighbour)
+            newState.minLocation = neighbour
             newState.minScore = minNewScore
             newStates.append(newState)
         return newStates
