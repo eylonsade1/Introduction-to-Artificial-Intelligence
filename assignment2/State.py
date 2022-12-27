@@ -6,7 +6,7 @@ from utils import *
 NUM_OF_PLYS = 10
 
 class State(object):
-    def __init__(self, maxLocation, minLocation, vertexWithPeopleToSave, brokenVertexes):
+    def __init__(self, maxLocation, minLocation, vertexWithPeopleToSave, brokenVertexes, simulatedMovements = 0):
         self.toSave = vertexWithPeopleToSave
         self.graph = Graph()
         # todo - reachable for who? + need tpo change all of current location usage
@@ -16,7 +16,7 @@ class State(object):
         self.maxScore = 0
         self.maxLocation = maxLocation
         self.minLocation = minLocation
-
+        self.simulatedMovements = simulatedMovements
 
     def __str__(self):
         return "Current position: {} in the environment: \n{}\n".format(self.currentVertexstr, (self.graph))
@@ -92,7 +92,7 @@ class State(object):
         for neighbour in graph.getNeighborsListNoWeight(self.maxLocation):
             maxNewScore = self.maxScore
             newState = copy.deepcopy(self)
-            # newState.simulated_movements += 1
+            newState.simulatedMovements += 1
             if not newState.toSave[neighbour]:
                 maxNewScore = self.maxScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
@@ -105,7 +105,7 @@ class State(object):
         for neighbour in graph.getNeighborsList(self.minLocation):
             minNewScore = self.minScore
             newState = copy.deepcopy(self)
-            # newState.simulated_movements += 1
+            newState.simulatedMovements += 1
             if not newState.toSave[neighbour]:
                 minNewScore = self.minScore + neighbour.numOfPeople
                 newState.saveVertex(neighbour)
