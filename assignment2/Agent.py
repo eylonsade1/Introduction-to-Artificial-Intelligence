@@ -67,8 +67,6 @@ class Agent(object):
     def minimaxAlphaBeta(self, state: State):
         return []
 
-    def update_state(self):
-        pass
 
     def act(self):
         print("------ {} ------".format(type(self).__name__))
@@ -104,6 +102,7 @@ class Agent(object):
         if len(self.actionSequence) == 0:
             self.saveVertexOnMove()
         self.currentPosition = next_vertex
+        self.updateStateLocation()
 
         #todo add termination based on the state
         # if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
@@ -122,6 +121,9 @@ class Agent(object):
 
     #@todo add state update method - based on relevant state behavior - state recieves
     def updateState(self):
+        print("Not yet implemented")
+
+    def updateStateLocation(self):
         print("Not yet implemented")
 
     def maxVal_alphaBeta(self, state: State, plys, alpha, beta):
@@ -218,6 +220,8 @@ class MaxAgent(Agent):
             alpha = max(bestVal, alpha)
         return goalVertexBestMove
 
+    def updateStateLocation(self):
+        self.state.maxLocation = self.currentPosition
 
 class MinAgent(Agent):
     def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
@@ -289,3 +293,6 @@ class MinAgent(Agent):
                 goalVertexBestMove = goalVertex
             beta = min(bestVal, beta)
         return goalVertexBestMove
+
+    def updateStateLocation(self):
+        self.state.minLocation = self.currentPosition
