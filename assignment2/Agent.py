@@ -1,4 +1,4 @@
-from State import State, equalStates
+from State import State
 from utils import *
 
 
