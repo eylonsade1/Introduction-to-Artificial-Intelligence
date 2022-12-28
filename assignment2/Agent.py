@@ -13,7 +13,6 @@ NEGATIVE_INFINITE = float('-inf')
 class Agent(object):
     def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
         self.graph = Graph()
-        #todo - add handling of new state structure
         self.state = State(startingPositionMax, startingPositionMin)
         self.actionSequence = []
         self.utilityFunction = utilityFunction
@@ -147,10 +146,12 @@ class Agent(object):
             beta = min(beta, v)
         return v
 
+
 class MaxAgent(Agent):
     def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
         super(MaxAgent, self).__init__(startingPositionMax, startingPositionMin, utilityFunction, doPrune)
         self.currentPosition = startingPositionMax
+        self.saveVertexOnMove()
 
     def updateState(self):
         graphState = self.graph.getAllToSave()
@@ -222,6 +223,7 @@ class MinAgent(Agent):
     def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
         super(MinAgent, self).__init__(startingPositionMax, startingPositionMin, utilityFunction, doPrune)
         self.currentPosition = startingPositionMin
+        self.saveVertexOnMove()
 
     def updateState(self):
         graphState = self.graph.getAllToSave()
