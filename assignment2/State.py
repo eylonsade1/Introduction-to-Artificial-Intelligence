@@ -7,8 +7,9 @@ NUM_OF_PLYS = 10
 class State(object):
     def __init__(self, maxLocation, minLocation):
         self.graph = Graph()
-        self.toSave = self.graph.getAllToSave()
-        self.brokenVertexes = self.graph.getAllBroken()
+        self.brokenVertexes = []
+        self.toSave = dict()
+        self.updateState()
         self.minScore = 0
         self.maxScore = 0
         self.maxLocation = maxLocation
@@ -32,12 +33,23 @@ class State(object):
 
     def updateState(self):
         graphState = self.graph.getAllToSave()
-        self.brokenVertexes = self.graph.getAllBroken()
+        self.brokenVertexes = copy.copy(self.graph.getAllBroken())
         for vertex in graphState:
             if graphState[vertex]:
                 self.toSave[vertex] = True
             else:
                 self.toSave[vertex] = False
+
+    def shallowCopy(self):
+        newBroken = []
+        for vertex in self.brokenVertexes:
+            newBroken.append(vertex)
+        self.brokenVertexes = newBroken
+
+        newToSave = dict()
+        for vertex, val in self.toSave.items():
+            newToSave[vertex] = val
+        self.toSave = newToSave
 
     def saveVertex(self, location):
         self.toSave[location] = True
@@ -80,37 +92,43 @@ class State(object):
             return self.minSuccessor()
         
     def maxSuccessor(self):
+        # print("maxSuccessor")
         newStates = []
         for neighbour in self.graph.getNeighborsListNoWeight(self.maxLocation):
             if neighbour in self.brokenVertexes:
                 continue
             maxNewScore = self.maxScore
             newState = copy.copy(self)
-            if not newState.toSave[neighbour]:
+            self.shallowCopy()
+            if not newState.toSave[self.maxLocation]:
                 maxNewScore = self.maxScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
-            if neighbour.isBrittle:
-                self.brokenVertexes.append(neighbour)
             newState.maxLocation = neighbour
             newState.maxScore = maxNewScore
+            if self.maxLocation.isBrittle:
+                newState.brokenVertexes.append(self.maxLocation)
             newStates.append(newState)
+            # print("vertex added ----->  ", newState.maxLocation, " with score  ==  ", maxNewScore)
         return newStates
 
     def minSuccessor(self):
+        # print("minSuccessor")
         newStates = []
         for neighbour in self.graph.getNeighborsListNoWeight(self.minLocation):
             if neighbour in self.brokenVertexes:
                 continue
             minNewScore = self.minScore
             newState = copy.copy(self)
-            if not newState.toSave[neighbour]:
+            self.shallowCopy()
+            if not newState.toSave[self.minLocation]:
                 minNewScore = self.minScore + neighbour.numOfPeople()
                 newState.saveVertex(neighbour)
-            if neighbour.isBrittle:
-                self.brokenVertexes.append(neighbour)
             newState.minLocation = neighbour
             newState.minScore = minNewScore
+            if self.minLocation.isBrittle:
+                newState.brokenVertexes.append(self.minLocation)
             newStates.append(newState)
+            # print("vertex added ----->  ", newState.minLocation, " with score  ==  ", minNewScore)
         return newStates
 
     def evaluate(self):
