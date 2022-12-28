@@ -79,8 +79,6 @@ class Agent(object):
                     self.actionSequence.append(self.minimaxAlphaBeta(self.state))
                 else:
                     self.actionSequence.append(self.miniMax(self.state))
-                #todo dependent on the actionSequence returned from state behavior
-                # self.actionSequence.append(self.actionSequence[2])
                 self.move()
         else:
             print("TERMINATED\n")
@@ -101,12 +99,6 @@ class Agent(object):
         self.currentPosition = next_vertex
         self.updateStateLocation()
 
-        #todo add termination based on the state
-        # if self.reachedGoal(self.state) or self.impossibleToReachGoal(self.state):
-        #     self.terminated = True
-
-
-    #todo fix for current state behavior
     def saveVertexOnMove(self):
         currentVertex = self.currentPosition
         if currentVertex is not None and currentVertex.persons > 0:
@@ -116,7 +108,6 @@ class Agent(object):
         self.state.saveVertex(self.currentPosition)
 
 
-    #@todo add state update method - based on relevant state behavior - state recieves
     def updateState(self):
         print("Not yet implemented")
 
@@ -127,8 +118,9 @@ class Agent(object):
         if state.shouldTerminateSearch(plys):
             return state.evalAlphaBeta()
         v = NEGATIVE_INFINITE
-        for next_state in state.successor("MAX"):
-            v = max(v, self.minVal_alphaBeta(next_state, plys + 1, alpha, beta))
+        neighboringStates = state.successor("MAX")
+        for neighborState in neighboringStates:
+            v = max(v, self.minVal_alphaBeta(neighborState, plys + 1, alpha, beta))
             if v >= beta:
                 return v
             alpha = max(alpha, v)
@@ -138,8 +130,9 @@ class Agent(object):
         if state.shouldTerminateSearch(plys):
             return state.evalAlphaBeta()
         v = POSITIVE_INFINITE
-        for next_state in state.successor("MIN"):
-            v = min(v, self.maxVal_alphaBeta(next_state, plys + 1, alpha, beta))
+        neighboringStates = state.successor("MIN")
+        for neighborState in neighboringStates:
+            v = min(v, self.maxVal_alphaBeta(neighborState, plys + 1, alpha, beta))
             if v <= alpha:
                 return v
             beta = min(beta, v)
