@@ -168,4 +168,8 @@ class Graph(Singleton):
                 return vertexNumber
 
     def getAllBroken(self):
-        return self.broken
+        brokenCopy = []
+        for vertex in self.broken:
+            brokenCopy.append(vertex)
+        return brokenCopy
+

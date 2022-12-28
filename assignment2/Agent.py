@@ -279,7 +279,8 @@ class MinAgent(Agent):
         bestVal = POSITIVE_INFINITE
         alpha = NEGATIVE_INFINITE
         beta = POSITIVE_INFINITE
-        for neighborState in state.minSuccessor():
+        neighboringStates = state.minSuccessor()
+        for neighborState in neighboringStates:
             neighborStateValue = self.maxVal_alphaBeta(neighborState, plys + 1, alpha, beta)
             goalVertex = neighborState.minLocation
             if bestVal > neighborStateValue:

@@ -32,7 +32,7 @@ class State(object):
 
     def updateState(self):
         graphState = self.graph.getAllToSave()
-        self.brokenVertexes = copy.copy(self.graph.getAllBroken())
+        self.brokenVertexes = self.graph.getAllBroken()
         for vertex in graphState:
             if graphState[vertex]:
                 self.toSave[vertex] = True
