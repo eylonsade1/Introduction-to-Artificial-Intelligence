@@ -94,7 +94,9 @@ class State(object):
     def maxSuccessor(self):
         # print("maxSuccessor")
         newStates = []
-        for neighbour in self.graph.getNeighborsListNoWeight(self.maxLocation):
+        neighboursAndMe = self.graph.getNeighborsListNoWeight(self.maxLocation)
+        neighboursAndMe.append(self.maxLocation)
+        for neighbour in neighboursAndMe:
             if neighbour in self.brokenVertexes:
                 continue
             maxNewScore = self.maxScore
@@ -105,7 +107,7 @@ class State(object):
                 newState.saveVertex(neighbour)
             newState.maxLocation = neighbour
             newState.maxScore = maxNewScore
-            if self.maxLocation.isBrittle:
+            if self.maxLocation.isBrittle and self.maxLocation != newState.maxLocation:
                 newState.brokenVertexes.append(self.maxLocation)
             newStates.append(newState)
             # print("vertex added ----->  ", newState.maxLocation, " with score  ==  ", maxNewScore)
@@ -114,7 +116,9 @@ class State(object):
     def minSuccessor(self):
         # print("minSuccessor")
         newStates = []
-        for neighbour in self.graph.getNeighborsListNoWeight(self.minLocation):
+        neighboursAndMe = self.graph.getNeighborsListNoWeight(self.minLocation)
+        neighboursAndMe.append(self.minLocation)
+        for neighbour in neighboursAndMe:
             if neighbour in self.brokenVertexes:
                 continue
             minNewScore = self.minScore
@@ -125,7 +129,7 @@ class State(object):
                 newState.saveVertex(neighbour)
             newState.minLocation = neighbour
             newState.minScore = minNewScore
-            if self.minLocation.isBrittle:
+            if self.minLocation.isBrittle and self.minLocation != newState.minLocation:
                 newState.brokenVertexes.append(self.minLocation)
             newStates.append(newState)
             # print("vertex added ----->  ", newState.minLocation, " with score  ==  ", minNewScore)
