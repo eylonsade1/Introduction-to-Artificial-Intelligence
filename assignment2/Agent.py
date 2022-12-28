@@ -87,17 +87,21 @@ class Agent(object):
         self.movementAmount += 1
         next_vertex = self.actionSequence[0]
         print("Current Vertex: " + str(self.currentPosition))
-        print("Moving to: " + str(next_vertex))
-        if next_vertex != self.currentPosition:
-            self.saveVertexOnMove()
-        if self.currentPosition.isBrittle:
-            self.graph.deleteVertex(self.currentPosition)
-        self.timeSpent += 1
-        self.actionSequence = self.actionSequence[1:]
-        if len(self.actionSequence) == 0:
-            self.saveVertexOnMove()
-        self.currentPosition = next_vertex
-        self.updateStateLocation()
+        if not next_vertex is None:
+            print("Moving to: " + str(next_vertex))
+            if next_vertex != self.currentPosition:
+                self.saveVertexOnMove()
+            if self.currentPosition.isBrittle:
+                self.graph.deleteVertex(self.currentPosition)
+            self.timeSpent += 1
+            self.actionSequence = self.actionSequence[1:]
+            if len(self.actionSequence) == 0:
+                self.saveVertexOnMove()
+            self.currentPosition = next_vertex
+            self.updateStateLocation()
+        else:
+            self.terminated = True
+            print("Agent can not continue, on a broken vertex !")
 
     def saveVertexOnMove(self):
         currentVertex = self.currentPosition

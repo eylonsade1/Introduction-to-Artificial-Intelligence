@@ -97,7 +97,6 @@ class Graph(Singleton):
 
     def deleteVertex(self, vertexToDelete: Vertex):
         print("Agent moved from brittle vertex - updating graph")
-        print("Deleting ---  ", vertexToDelete.name)
         for vertex in self.vertexes:
             if vertex == vertexToDelete:
                 self.vertexes.remove(vertex)
