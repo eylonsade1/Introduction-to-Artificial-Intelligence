@@ -1,4 +1,4 @@
-from State import State
+from State import State, equalStates
 from utils import *
 
 
@@ -122,7 +122,7 @@ class Agent(object):
         if state.shouldTerminateSearch(plys):
             return state.evalAlphaBeta()
         v = NEGATIVE_INFINITE
-        neighboringStates = state.successor("MAX")
+        neighboringStates = state.maxSuccessor()
         for neighborState in neighboringStates:
             v = max(v, self.minVal_alphaBeta(neighborState, plys + 1, alpha, beta))
             if v >= beta:
@@ -134,7 +134,7 @@ class Agent(object):
         if state.shouldTerminateSearch(plys):
             return state.evalAlphaBeta()
         v = POSITIVE_INFINITE
-        neighboringStates = state.successor("MIN")
+        neighboringStates = state.minSuccessor()
         for neighborState in neighboringStates:
             v = min(v, self.maxVal_alphaBeta(neighborState, plys + 1, alpha, beta))
             if v <= alpha:
@@ -165,7 +165,7 @@ class MaxAgent(Agent):
         if state.shouldTerminateSearch(plys):
             return state.evaluate(plys)
         bestVal = None
-        for neighborState in state.successor("MAX"):
+        for neighborState in state.maxSuccessor():
             neighborStateMinVal = self.minVal(neighborState, plys + 1)
             if bestVal is None:
                 bestVal = neighborStateMinVal
@@ -176,7 +176,7 @@ class MaxAgent(Agent):
         if state.shouldTerminateSearch(plys):
             return state.evaluate(plys)
         bestVal = None
-        for neighborState in state.successor("MIN"):
+        for neighborState in state.minSuccessor():
             neighborStateMaxVal = self.maxVal(neighborState, plys + 1)
             if bestVal is None:
                 bestVal = neighborStateMaxVal
@@ -187,7 +187,7 @@ class MaxAgent(Agent):
         bestVal = None
         goalVertexBestMove = None
         plys = 0
-        for neighborState in state.successor("MAX"):
+        for neighborState in state.maxSuccessor():
             neighborStateValue = self.minVal(neighborState, plys + 1)
             nextVertex = neighborState.maxLocation
             if bestVal is None:
@@ -204,7 +204,7 @@ class MaxAgent(Agent):
         bestVal = NEGATIVE_INFINITE
         alpha = NEGATIVE_INFINITE
         beta = POSITIVE_INFINITE
-        neighboringStates = state.successor("MAX")
+        neighboringStates = state.maxSuccessor()
         for neighborState in neighboringStates:
             neighborStateValue = self.minVal_alphaBeta(neighborState, plys + 1, alpha, beta)
             nextVertex = neighborState.maxLocation
@@ -240,7 +240,7 @@ class MinAgent(Agent):
         if state.shouldTerminateSearch(plys):
             return state.evaluate(plys)
         bestVal = None
-        for neighborState in state.successor("MAX"):
+        for neighborState in state.maxSuccessor():
             neighborStateMinVal = self.minVal(neighborState, plys + 1)
             if bestVal is None:
                 bestVal = neighborStateMinVal
@@ -251,7 +251,7 @@ class MinAgent(Agent):
         if state.shouldTerminateSearch(plys):
             return state.evaluate(plys)
         bestVal = None
-        for neighborState in state.successor("MIN"):
+        for neighborState in state.minSuccessor():
             neighborStateMaxVal = self.maxVal(neighborState, plys + 1)
             if bestVal is None:
                 bestVal = neighborStateMaxVal
@@ -262,7 +262,7 @@ class MinAgent(Agent):
         bestVal = None
         goalVertexBestMove = None
         plys = 0
-        for neighborState in state.successor("MIN"):
+        for neighborState in state.minSuccessor():
             neighborStateValue = self.maxVal(neighborState, plys + 1)
             goalVertex = neighborState.minLocation
             if bestVal is None:
@@ -279,7 +279,7 @@ class MinAgent(Agent):
         bestVal = POSITIVE_INFINITE
         alpha = NEGATIVE_INFINITE
         beta = POSITIVE_INFINITE
-        for neighborState in state.successor("MIN"):
+        for neighborState in state.minSuccessor():
             neighborStateValue = self.maxVal_alphaBeta(neighborState, plys + 1, alpha, beta)
             goalVertex = neighborState.minLocation
             if bestVal > neighborStateValue:

@@ -91,8 +91,7 @@ class State(object):
             return self.minSuccessor()
         
     def maxSuccessor(self):
-        # print("\n\nmin location   ---->    ", self.minLocation)
-        # print("maxSuccessor\ncurrent location -->  ", self.maxLocation)
+        # print("maxSuccessor")
         newStates = []
         neighboursAndMe = self.graph.getNeighborsListNoWeight(self.maxLocation)
         neighboursAndMe.append(self.maxLocation)
@@ -109,14 +108,12 @@ class State(object):
             newState.maxScore = maxNewScore
             if self.maxLocation.isBrittle and self.maxLocation != newState.maxLocation:
                 newState.brokenVertexes.append(self.maxLocation)
-            # if not self.equalStates(newState, self):
             newStates.append(newState)
             # print("vertex added ----->  ", newState.maxLocation, " with score  ==  ", maxNewScore)
         return newStates
 
     def minSuccessor(self):
-        # print("\n\nmax location   ---->    ", self.maxLocation)
-        # print("minSuccessor\ncurrent location -->  ", self.minLocation)
+        # print("minSuccessor")
         newStates = []
         neighboursAndMe = self.graph.getNeighborsListNoWeight(self.minLocation)
         neighboursAndMe.append(self.minLocation)
@@ -133,7 +130,6 @@ class State(object):
             newState.minScore = minNewScore
             if self.minLocation.isBrittle and self.minLocation != newState.minLocation:
                 newState.brokenVertexes.append(self.minLocation)
-            # if not self.equalStates(newState, self):
             newStates.append(newState)
             # print("vertex added ----->  ", newState.minLocation, " with score  ==  ", minNewScore)
         return newStates
@@ -144,21 +140,21 @@ class State(object):
     def evalAlphaBeta(self):
         return self.maxScore - self.minScore
 
-    def equalStates(self, state1, state2):
-        toSave2 = state2.getAllToSaveByName()
-        for vertex in state1.getAllToSaveByName():
-            if vertex not in toSave2:
-                return False
-
-        broken2 = state2.getAllBrokenVertexes()
-        for vertex in state1.getAllBrokenVertexes():
-            if vertex not in broken2:
-                return False
-
-        if state1.getMinLocation() != state2.getMinLocation():
+def equalStates(state1, state2):
+    toSave2 = state2.getAllToSaveByName()
+    for vertex in state1.getAllToSaveByName():
+        if vertex not in toSave2:
             return False
 
-        if state1.getMaxLocation() != state2.getMaxLocation():
+    broken2 = state2.getAllBrokenVertexes()
+    for vertex in state1.getAllBrokenVertexes():
+        if vertex not in broken2:
             return False
 
-        return True
+    if state1.getMinLocation() != state2.getMinLocation():
+        return False
+
+    if state1.getMaxLocation() != state2.getMaxLocation():
+        return False
+
+    return True
