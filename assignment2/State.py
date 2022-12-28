@@ -135,8 +135,8 @@ class State(object):
             # print("vertex added ----->  ", newState.minLocation, " with score  ==  ", minNewScore)
         return newStates
 
-    def evaluate(self):
-        return self.maxScore, self.minScore
+    def evaluate(self, plys):
+        return self.maxScore, self.minScore, plys
 
     def evalAlphaBeta(self):
         return self.maxScore - self.minScore

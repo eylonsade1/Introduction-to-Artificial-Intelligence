@@ -2,7 +2,7 @@ from Graph import Graph
 import time
 import OutputStrings as out
 from Agent import  MinAgent, MaxAgent
-from games import UtilityFuncs
+from games import *
 
 class Assignment2(object):
     def __init__(self):
@@ -58,14 +58,14 @@ class Assignment2(object):
             minAgent = MinAgent(startPositionMax, startPositionMin, doPrune=True)
         elif self.implNum == 2:
             maxAgent = MaxAgent(startPositionMax, startPositionMin,
-                             utilityFunction=UtilityFuncs.maxSemiCooperative)
+                             utilityFunction=maxSemiCooperative)
             minAgent = MinAgent(startPositionMax, startPositionMin,
-                             utilityFunction=UtilityFuncs.minSemiCooperative)
+                             utilityFunction=minSemiCooperative)
         else:
             maxAgent = MaxAgent(startPositionMax, startPositionMin,
-                             utilityFunction=UtilityFuncs.fullyCooperative)
+                             utilityFunction=fullyCooperative)
             minAgent = MinAgent(startPositionMax, startPositionMin,
-                             utilityFunction=UtilityFuncs.fullyCooperative)
+                             utilityFunction=fullyCooperative)
 
         maxAgent.otherAgent = minAgent
         minAgent.otherAgent = maxAgent
@@ -96,7 +96,7 @@ class Assignment2(object):
         if self.implNum == 1:
             score = self.agents[0].individualScore - self.agents[1].individualScore
         elif self.implNum == 2:
-            score = self.agents[0].individualScore + self.agents[1].individualScore
+            score = self.agents[0].individualScore - self.agents[1].individualScore
         else:
             score = self.agents[0].individualScore + self.agents[1].individualScore
         print("Final score for game is {}".format(score))

@@ -1,14 +1,11 @@
-from collections import defaultdict
-import Vertex
-from Graph import Graph
 from State import State, equalStates
 from utils import *
-from games import *
-import copy
+
 
 TIME_LIMIT = 400
 POSITIVE_INFINITE = float('inf')
 NEGATIVE_INFINITE = float('-inf')
+
 
 class Agent(object):
     def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
@@ -169,7 +166,7 @@ class MaxAgent(Agent):
 
     def maxVal(self, state: State, plys):
         if state.shouldTerminateSearch(plys):
-            return state.evaluate()
+            return state.evaluate(plys)
         bestVal = None
         for neighborState in state.successor("MAX"):
             neighborStateMinVal = self.minVal(neighborState, plys + 1)
@@ -180,7 +177,7 @@ class MaxAgent(Agent):
 
     def minVal(self, state: State, plys):
         if state.shouldTerminateSearch(plys):
-            return state.evaluate()
+            return state.evaluate(plys)
         bestVal = None
         for neighborState in state.successor("MIN"):
             neighborStateMaxVal = self.maxVal(neighborState, plys + 1)
@@ -244,7 +241,7 @@ class MinAgent(Agent):
 
     def maxVal(self, state: State, plys):
         if state.shouldTerminateSearch(plys):
-            return state.evaluate()
+            return state.evaluate(plys)
         bestVal = None
         for neighborState in state.successor("MAX"):
             neighborStateMinVal = self.minVal(neighborState, plys + 1)
@@ -255,7 +252,7 @@ class MinAgent(Agent):
 
     def minVal(self, state: State, plys):
         if state.shouldTerminateSearch(plys):
-            return state.evaluate()
+            return state.evaluate(plys)
         bestVal = None
         for neighborState in state.successor("MIN"):
             neighborStateMaxVal = self.maxVal(neighborState, plys + 1)
