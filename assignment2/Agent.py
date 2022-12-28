@@ -7,6 +7,8 @@ from games import *
 import copy
 
 TIME_LIMIT = 400
+POSITIVE_INFINITE = float('inf')
+NEGATIVE_INFINITE = float('-inf')
 
 class Agent(object):
     def __init__(self, startingPositionMax, startingPositionMin, utilityFunction=None, doPrune=False):
@@ -126,7 +128,7 @@ class Agent(object):
     def maxVal_alphaBeta(self, state: State, plys, alpha, beta):
         if state.shouldTerminateSearch(plys):
             return state.evalAlphaBeta()
-        v = float('-inf')
+        v = NEGATIVE_INFINITE
         for next_state in state.successor("MAX"):
             v = max(v, self.minVal_alphaBeta(next_state, plys + 1, alpha, beta))
             if v >= beta:
@@ -137,7 +139,7 @@ class Agent(object):
     def minVal_alphaBeta(self, state: State, plys, alpha, beta):
         if state.shouldTerminateSearch(plys):
             return state.evalAlphaBeta()
-        v = float('inf')
+        v = POSITIVE_INFINITE
         for next_state in state.successor("MIN"):
             v = min(v, self.maxVal_alphaBeta(next_state, plys + 1, alpha, beta))
             if v <= alpha:
@@ -202,10 +204,11 @@ class MaxAgent(Agent):
     def minimaxAlphaBeta(self, state: State):
         goalVertexBestMove = None
         plys = 0
-        bestVal = float('-inf')
-        alpha = float('-inf')
-        beta = float('inf')
-        for neighborState in state.successor("MAX"):
+        bestVal = NEGATIVE_INFINITE
+        alpha = NEGATIVE_INFINITE
+        beta = POSITIVE_INFINITE
+        neighboringStates = state.successor("MAX")
+        for neighborState in neighboringStates:
             neighborStateValue = self.minVal_alphaBeta(neighborState, plys + 1, alpha, beta)
             nextVertex = neighborState.maxLocation
             if bestVal < neighborStateValue:
@@ -273,9 +276,9 @@ class MinAgent(Agent):
     def minimaxAlphaBeta(self, state: State):
         goalVertexBestMove = None
         plys = 0
-        bestVal = float('inf')
-        alpha = float('-inf')
-        beta = float('inf')
+        bestVal = POSITIVE_INFINITE
+        alpha = NEGATIVE_INFINITE
+        beta = POSITIVE_INFINITE
         for neighborState in state.successor("MIN"):
             neighborStateValue = self.maxVal_alphaBeta(neighborState, plys + 1, alpha, beta)
             goalVertex = neighborState.minLocation

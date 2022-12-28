@@ -1,9 +1,8 @@
 class Vertex(object):
-    def __init__(self, name, numberOfPersons:int , isBrittle = False, isBlocked = False):
+    def __init__(self, name, numberOfPersons:int , isBrittle = False):
         self.name = name
-        self.persons = int(numberOfPersons) #todo check if casting for int required
+        self.persons = int(numberOfPersons)
         self.isBrittle = isBrittle
-        self.isBlocked = isBlocked
 
     def __str__(self):
         return "[{}:persons:{}--brittle:{}]\n".format(self.name, self.persons, self.isBrittle)
