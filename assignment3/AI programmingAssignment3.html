@@ -1,0 +1,178 @@
+<HTML>
+<HEAD>
+<TITLE>AI Programming Assignment 3</TITLE>
+<LINK REV="made" HREF="mailto:webmaster@cs.bgu.ac.il">
+
+</HEAD>
+
+<BODY>
+        <CENTER>
+        <H1>Introduction to Artificial Inteligence </H1>
+        <H3>Programming Assignment 3</H3>
+        </CENTER>
+<HR>
+        <CENTER>
+<H2> Programming assignment - Reasoning under uncertainty  </H2>
+<H2>Hurricane Evacuation Problem: Locate the Blockages and Evacuees</H2>
+        </CENTER>
+<p>
+
+<H3>Goals </H3>
+<P>
+Probabilistic reasoning using 
+Bayes networks, with scenarios similar to the
+hurricane evacuation problem environment of assignment 1.
+
+<H3>Uncerain Hurricane Evacuation Problem - Domain Description</H3>
+
+<P>
+
+As they try to find their best path, in the real world, evacuation forces may be unable
+to tell in advance which vertices are blocked and where are there people to be evacuated, if any.
+There may be evidence which can help, but one cannot be sure until
+the vertex in question is observed from a nearby location! Not knowing the blockages and
+evacuee contents in advance makes it hard
+to plan an optimal path, so reasoning about the unknown is crucial.
+We know that it is more likely for people to need evacuation near or at blocked vertices,
+and vertices are more likely to be blocked if the weather is bad.
+In this version of the problem, we will consider only binary-valued occupation
+of vertices, i.e. whether it contains people to be evacuated, or not.
+<P>
+
+Thus we have a binary random variable B(v)
+standing in blockage at vertex v,
+one binary random variable Ev(v) standing in for "people to evacuate" at each vertex v,
+and a 3-valued variable W standing for the weather: mild, stormy, and extreme.
+The blocking events are assumed independent given the weather, with known distributions given
+weather. In the input we are given for each vertex that a probablity that it is blocked given mild
+weather. Thos probability is doubled for stormy weather, and tripled for extreme weather
+(up to a maximum of 1 obviously)
+
+The people variables are noisy-or distributed given the blocakges at neighboring vertices,
+with qi = max(1, p1*w(e)) where e is the edge between the vertices.
+There is also a qs = p2 for the effect of blockage in the same vertex.
+P1 and p2 are parameters to be given in the file or queried from the user.
+
+<P>
+All in all, you have 3 types of variables (BN nodes): blockages (one for each vertex)
+weather (only one global variable) and evacuees present (one for each vertex).
+<P>
+
+In your program, a file specifies the geometry (graph), and parameters such as P(B(v)=true)|mild weather).
+Then, you enter some locations where blockages, or evacuees are 
+reported either present or absent (and the rest remain unknown), or the weather.
+This is the evidence in the problem.
+
+Once evidence is instantiated, you need to perform reasoning about the likely locations of 
+blockages, and evacuees, and the weather (all probabilities below "given the evidence"):
+
+<OL>
+<LI> What is the probability that each of the vertices contains evacuees?
+<LI> What is the probability that each of the vertices is blocked?
+<LI> What is the distribution of the weather variable?
+<LI> What is the probability that a certain path (set of edges) is free from blockages?
+(Note that the distributions of blockages in vertices are NOT necessarily independent.)
+<LI> What is the path from a given location to a goal that has the highest probability of
+being free from blockages? (bonus)
+</OL>
+
+<P>
+Input can be as an ASCII
+file, similar to graph descriptions in previous assignments, for example:
+
+<pre>
+#V 4          ; number of vertices n in graph (from 1 to n)
+
+#V 1 F 0.2    ; Vertex 1, probability blockage given mild weather 0.2
+#V 2 F 0.3    ; Vertex 2, probability blockage given mild weather 0.3
+              ; Either assume blockage probability 0 by default,
+              ; or make sure to specify this probability for all vertices.
+
+#E1 1 2 W1 ; Edge1 between vertices 1 and 2, weight 1
+#E2 2 3 W3 ; Edge2 between vertices 2 and 3, weight 3
+#E3 3 4 W3 ; Edge3 between vertices 3 and 4, weight 3
+#E4 2 4 W4 ; Edge4 between vertices 2 and 4, weight 4
+
+#W 0.1 0.4 0.5 ; Prior distribution over weather: 0.1 for mild, 0.4 for stormy, 0.5 for extreme
+</pre>
+
+
+<P>
+ 
+<H3>Requirements </H3>
+
+<P>
+(Part I) Your program should read the data, including the distribution
+parameters, which are defined as above.
+The program should construct a Bayes network according
+to the scenario.
+The program should also allow for an output of the Bayes network constructed
+for the scenario.
+
+<P>
+For example, part of the output for the above graph,  would be:
+<pre>
+WEATHER:
+  P(mild) = 0.1
+  P(stormy) = 0.4
+  P(extreme) = 0.5
+	
+VERTEX 1:
+  P(blocked|mild) = 0.2
+  P(blocked|stormy) = 0.4
+  P(blocked|extreme) = 0.6
+
+  P(Evacuees|Blockage 1, Blockage 2) = 0.94
+  P(Evacuees|not Blockage 1, Blockage 2) = 0.8
+  P(Evacuees|Blockage 1, not Blockage 2) = 0.7
+  P(Evacuees|not Blockage 1, not Blockage 2) = 0
+
+VERTEX 2:
+etc.
+
+</pre>
+
+<P>
+(Part II) After the network is fully constructed, you should support querying the
+user for a set of evidence. We do this
+by reading one piece of evidence at a time (e.g. "Blockage reported at vertex 2", and then
+"Evacuees reported at vertex 1" etc.).
+The online interactive operations your program  should support are:
+<IL>
+<LI> Reset evidence list to empty.
+<LI> Add piece of evidence to evidence list.
+<LI> Do probabilistic reasoning (1, 2, 3, 4), or (1,2,3,4,5), whichever your program supports, 
+and report the results.
+<LI> Quit.
+</IL>
+
+<P>
+Probabilistic reasoning should be done
+in order to answer the questions on
+distribution of blockages, etc., and report on the answers,
+including all the posterior probabilities. 
+
+You may use any algorithm in the literature that supports solution of
+BNs, including simple enumerarion,
+variable elimination, polytree propagation, or sampling.
+
+
+<H3>Deliverables </H3>
+
+<OL>
+<LI> Source code and executable files of programs.
+<LI> Explanation of the method for constructing the BN and your
+reasoning algorithm.
+<LI> Non-trivial example runs on at least 2 scenarios,
+including the input and output.
+<LI> Submit makefile and short description on how to run your program.
+ i.e. how what  parameters are passed to the program and how 
+other inputs including 
+at least one full example on how to run your program with actual input.
+</OL>
+
+<P>
+
+Due date: January 10, 2023.
+</BODY>
+</HTML>
