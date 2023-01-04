@@ -6,3 +6,6 @@ class Weather(object):
             self.extremeProb = extremeProbability
         else:
             raise Exception("Probability sum does not equal 1 - incorrect behavior")
+
+    def getProbabilityTable(self):
+        return [self.mildProb, self.stormyProb, self.extremeProb]

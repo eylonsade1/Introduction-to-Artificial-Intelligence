@@ -8,7 +8,6 @@ NUMBER_PREFIX = '#N'
 VERTEX_PREFIX = '#V'
 EDGE_PREFIX = '#E'
 WEIGHT_PREFIX = 'W'
-PEOPLE_PREFIX = 'P'
 WEATHER_PREFIX = '#W'
 BLOCKAGE_PROBABILITY_PREFIX = 'F'
 
@@ -18,7 +17,6 @@ class Graph(Singleton):
         self.numOfPoints = None
         self.vertexes = []
         self.edges = []
-        self.toSave = dict()
         self.broken = []
         self.weather = None
         self.adjMatrix = None
@@ -39,48 +37,19 @@ class Graph(Singleton):
                 if row[0] == NUMBER_PREFIX:
                     self.numOfPoints = row[1]
                 elif row[0].startswith(VERTEX_PREFIX):
-                    personCounter = 0
                     mildBlockageProbability = 0
-                    peopleToSave = False
                     for field in row:
-                        if field.startswith(PEOPLE_PREFIX):
-                            personCounter = field.split(PEOPLE_PREFIX)[1]
-                            peopleToSave = True
-                        elif field.startswith(BLOCKAGE_PROBABILITY_PREFIX):
+                        if field.startswith(BLOCKAGE_PROBABILITY_PREFIX):
                             mildBlockageProbability = field.split(BLOCKAGE_PROBABILITY_PREFIX)[1]
                             mildBlockageProbability = float(mildBlockageProbability)
 
-                    vertex = Vertex(row[0], personCounter, mildBlockageProbability)
-
-                    if peopleToSave:
-                        self.toSave[vertex] = False
-
+                    vertex = Vertex(row[0], mildBlockageProbability)
                     self.vertexes.append(vertex)
                 elif row[0].startswith(EDGE_PREFIX):
                     self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1]))
 
                 elif row[0].startswith(WEATHER_PREFIX):
                     self.weather = Weather(float(row[1]), float(row[2]), float(row[3]))
-
-    def getAllToSave(self):
-        for vertex in self.vertexes:
-            if int(vertex.persons) == 0:
-                self.toSave[vertex] = True
-        return self.toSave
-
-    def getAllLeftToSave(self):
-        needSave = []
-        for vertex in self.vertexes:
-            if int(vertex.persons) > 0:
-                needSave.append(vertex)
-        return needSave
-
-    def getAllToSaveByName(self):
-        leftToSave = []
-        for vertex in self.vertexes:
-            if int(vertex.persons) > 0:
-                leftToSave.append(vertex.name)
-        return leftToSave
 
     def getVertexByName(self, name):
         for vertex in self.vertexes:

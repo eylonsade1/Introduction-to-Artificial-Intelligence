@@ -1,12 +1,12 @@
 from Graph import Graph
+from BayesNetwork import BayesNetwork
 import time
 import utils
 
 class Assignment3(object):
     def __init__(self):
         self.graph = Graph()
-        self.start_time = time.time()
-        self.agents = []
+        self.bayesNetwork = BayesNetwork()
 
     def enumerateAsk(self, queryVariables, bayesianNetwork, evidenceVars = None):
         if evidenceVars == None:
@@ -27,7 +27,7 @@ class Assignment3(object):
         variable = variables[1]
         if variable.value:
             probability = self.calcProb()
-            probability =  probability * self.enumerateAll(variables[:1], evidence)
+            probability = probability * self.enumerateAll(variables[:1], evidence)
         else:
             for possibleVal in variable.possibleVals:
                 probability += probability * self.enumerateAll(variables[:1], evidence.append(possibleVal))

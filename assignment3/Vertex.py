@@ -2,13 +2,12 @@ STORMY_MUL_FACTOR = 2
 EXTREME_MUL_FACTOR = 3
 
 class Vertex(object):
-    def __init__(self, name, numberOfPersons:int , blockageProbability = 0):
+    def __init__(self, name, blockageProbability = 0):
         self.name = name
-        self.persons = int(numberOfPersons)
         self.mildBlockageProbability = blockageProbability
 
     def __str__(self):
-        return "[{}:persons:{}--brittle:{}]\n".format(self.name, self.persons, self.mildBlockageProbability)
+        return "[{}:--blockedProbability:{}]\n".format(self.name, self.mildBlockageProbability)
 
     def getStormyProbabilty(self):
         return min(self.mildBlockageProbability * STORMY_MUL_FACTOR, 1)
@@ -18,3 +17,6 @@ class Vertex(object):
 
     def getMildProbabilty(self):
         return min(self.mildBlockageProbability, 1)
+
+    def getProbabilityTable(self):
+        return [self.getMildProbabilty(), self.getStormyProbabilty(), self.getExtremeProbability()]
