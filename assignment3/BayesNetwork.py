@@ -13,6 +13,20 @@ class BayesNetwork(Singleton):
         self.parentsDict = {}
         self.weatherNode = None
         self.blockedNodes = []
+        self.evacueeNodes = []
+
+    def __str__(self):
+        str_bayes = self.weatherNode.__str__()
+        for node in self.blockedNodes:
+            node_name = node.name.split(BLOCKED_PREFIX)[1]
+            str_bayes += "\n\nVERTEX " + node_name[2:] + ":\n"
+            str_bayes += node.__str__() + "\n"
+            for evacuee in self.evacueeNodes:
+                if evacuee.name.split(EVACUEE_PREFIX)[1] == node_name:
+                    str_bayes += evacuee.__str__()
+                    break
+        return str_bayes
+
 
     def createWeatherNodes(self):
         self.weatherNode = WeatherNode(self.graph.weather.getProbabilityTable())
@@ -36,7 +50,7 @@ class BayesNetwork(Singleton):
                 for neighborVertex in self.graph.getNeighborsList(vertex):
                     if blockedNodeVertexName == neighborVertex[0].name:
                         self.addRelation(evacueeNode, blockedNode)
-
+            self.evacueeNodes.append(evacueeNode)
 
     def addRelation(self, child: Node, parent: Node):
         if child not in self.childrenDict[parent]:
