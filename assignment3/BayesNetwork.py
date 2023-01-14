@@ -5,7 +5,6 @@ from Nodes import *
 BLOCKED_PREFIX = "blockage_"
 EVACUEE_PREFIX = "evacuee_"
 
-#@todo - add str for part1
 class BayesNetwork(Singleton):
     def __init__(self):
         self.graph = Graph()
@@ -26,7 +25,6 @@ class BayesNetwork(Singleton):
                     str_bayes += evacuee.__str__()
                     break
         return str_bayes
-
 
     def createWeatherNodes(self):
         self.weatherNode = WeatherNode(self.graph.weather.getProbabilityTable())

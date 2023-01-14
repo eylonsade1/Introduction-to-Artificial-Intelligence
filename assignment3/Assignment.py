@@ -1,5 +1,6 @@
 from Graph import Graph
 from BayesNetwork import BayesNetwork
+import out
 import time
 import utils
 
@@ -34,7 +35,6 @@ class Assignment3(object):
 
         return probability
 
-    #todo represent baysian network object - generate order by parents
     def getVarsOrdered(self, bayesianNetwork):
         return []
     #todo
@@ -43,3 +43,15 @@ class Assignment3(object):
     #todo proba claculation
     def calcProb(self):
         return 0
+
+    def userInit(self):
+        print(out.WELCOME_HURRICANE)
+        implNum = utils.numInput(out.CHOOSE_PART, 3)
+        if implNum == 1:
+            self.partOne()
+        elif implNum == 2:
+            #todo add evidence query
+            print("Not yet implemented")
+
+    def partOne(self):
+        print(self.bayesNetwork)

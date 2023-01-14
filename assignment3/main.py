@@ -24,5 +24,6 @@ if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     createBayesNetwork()
     ass3 = Assignment3()
-    print("End state of the graph: {}".format(Graph()))
+    ass3.userInit()
+
 

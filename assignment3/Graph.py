@@ -10,7 +10,8 @@ EDGE_PREFIX = '#E'
 WEIGHT_PREFIX = 'W'
 WEATHER_PREFIX = '#W'
 BLOCKAGE_PROBABILITY_PREFIX = 'F'
-
+P1_PREFIX = "#P1"
+P2_PREFIX = "#P2"
 
 class Graph(Singleton):
     def __init__(self):
@@ -20,6 +21,8 @@ class Graph(Singleton):
         self.broken = []
         self.weather = None
         self.adjMatrix = None
+        self.p1 = 0
+        self.p2 = 0
 
     def __str__(self):
         graphPrint ="Edges :\n ------------------ \n"
@@ -50,6 +53,12 @@ class Graph(Singleton):
 
                 elif row[0].startswith(WEATHER_PREFIX):
                     self.weather = Weather(float(row[1]), float(row[2]), float(row[3]))
+
+                elif row[0].startswith(P1_PREFIX):
+                    self.p1 = float(row[1])
+
+                elif row[0].startswith(P2_PREFIX):
+                    self.p2 = float(row[1])
 
     def getVertexByName(self, name):
         for vertex in self.vertexes:

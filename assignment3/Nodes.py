@@ -6,8 +6,6 @@ EVACUEE_PREFIX = "evacuee_"
 MILD = "mild"
 STORMY = "stromy"
 EXTREME = "extreme"
-p1 = 0.2
-p2 = 0.3
 
 class Node(object):
     def __init__(self, probabiliyTable, nodeName):
@@ -62,8 +60,6 @@ class EvacueeNode(Node):
         return str_permutation[0:-2]
 
 
-
-    #@todo add caluclation for evacueeNodes
     def generateProbabiliyTable(self, neighborVertexes: list, nodeName):
         graph = Graph()
 
@@ -94,13 +90,13 @@ class EvacueeNode(Node):
         for permutation in all_permutations:
             new_row = new_row_values(neighborVertexes, permutation)
             if new_row[nodeName] and all_false_but_one(permutation):
-                probability = p2
+                probability = graph.p2
                 false_table.append((new_row, probability))
             elif not new_row[nodeName] and all_false_but_one(permutation):
                 for vertex, value in new_row.items():
                     if value:
                         weight = graph.getEdgeWeigtFromVerName(nodeName, vertex)
-                        probability = min(1, p1*weight)
+                        probability = min(1, graph.p1*weight)
                         false_table.append((new_row, probability))
                         break
             else:
