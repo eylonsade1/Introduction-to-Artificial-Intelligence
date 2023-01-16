@@ -12,6 +12,9 @@ class Node(object):
         self.name = nodeName
         self.table = probabiliyTable
 
+    def get_name(self):
+        return self.name
+
 class WeatherNode(Node):
     def __init__(self, probabiliyTable):
         super(WeatherNode, self).__init__(probabiliyTable, "WeatherNode")
@@ -37,6 +40,8 @@ class BlockageNode(Node):
         str_vertex += "P(Blocked|Extreme) = " + str(self.table[2]) + "\n"
         return str_vertex
 
+    def get_name(self):
+        return self.name.split(BLOCKED_PREFIX)[1]
 
 class EvacueeNode(Node):
     def __init__(self, neighobrs, nodeName):
@@ -49,6 +54,9 @@ class EvacueeNode(Node):
         for permutation, value in self.table:
             str_vertex += "P(Evacuees| " + self.permutation_str(permutation) + ") = " + str(value) + "\n"
         return str_vertex
+
+    def get_name(self):
+        return self.name.split(EVACUEE_PREFIX)[1]
 
     def permutation_str(self, permutation):
         str_permutation = ""

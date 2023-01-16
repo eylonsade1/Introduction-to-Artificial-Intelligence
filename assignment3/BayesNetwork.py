@@ -61,3 +61,7 @@ class BayesNetwork(Singleton):
             self.childrenDict[node] = []
         if not self.parentsDict.get(node):
             self.parentsDict[node] = []
+
+    # def get_node_values(self, node: Node):
+    #     if node.get_name() == 'WeatherNode':
+    #         return
