@@ -62,6 +62,19 @@ class BayesNetwork(Singleton):
         if not self.parentsDict.get(node):
             self.parentsDict[node] = []
 
-    # def get_node_values(self, node: Node):
-    #     if node.get_name() == 'WeatherNode':
-    #         return
+    def get_node(self, node_name: str):
+        if BLOCKED_PREFIX in node_name:
+            for node in self.blockedNodes:
+                if node.name == node_name:
+                    return node
+        elif EVACUEE_PREFIX in node_name:
+            for node in self.evacueeNodes:
+                if node.name == node_name:
+                    return node
+        elif node_name == 'WeatherNode':
+            return self.weatherNode
+
+    def get_vars(self):
+        all = [self.weatherNode]
+        all.append(self.blockedNodes)
+        return all.append(self.evacueeNodes)

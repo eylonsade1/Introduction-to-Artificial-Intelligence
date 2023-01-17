@@ -49,7 +49,7 @@ class Graph(Singleton):
                     vertex = Vertex(row[0], mildBlockageProbability)
                     self.vertexes.append(vertex)
                 elif row[0].startswith(EDGE_PREFIX):
-                    self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1]))
+                    self.edges.append(Edge(VERTEX_PREFIX + row[1],VERTEX_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1], row[0]))
 
                 elif row[0].startswith(WEATHER_PREFIX):
                     self.weather = Weather(float(row[1]), float(row[2]), float(row[3]))
@@ -110,3 +110,17 @@ class Graph(Singleton):
         for vertexNumber in range(len(self.vertexes)):
             if self.vertexes[vertexNumber] == vertex:
                 return vertexNumber
+
+    def get_vertex_list_from_edges(self, edges):
+        vertexes = []
+        for edge in edges:
+            if edge.fromV not in vertexes:
+                vertexes.append(edge.fromV)
+            if edge.toV not in vertexes:
+                vertexes.append(edge.toV)
+        return vertexes
+
+    def get_edge_by_name(self, edge):
+        for e in self.edges:
+            if edge in e.name:
+                return e
