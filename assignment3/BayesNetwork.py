@@ -76,6 +76,9 @@ class BayesNetwork(Singleton):
 
     def get_vars(self):
         all = [self.weatherNode]
-        all.append(self.blockedNodes)
-        all.append(self.evacueeNodes)
+        all += self.blockedNodes
+        all += self.evacueeNodes
         return all
+
+    def getParents(self, node):
+        return self.parentsDict[node]

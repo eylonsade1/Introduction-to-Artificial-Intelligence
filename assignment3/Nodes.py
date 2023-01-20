@@ -43,6 +43,9 @@ class BlockageNode(Node):
     def get_name(self):
         return self.name.split(BLOCKED_PREFIX)[1]
 
+    # def getProbabilityWithParents(self, parent_evidence):
+    #
+
 class EvacueeNode(Node):
     def __init__(self, neighobrs, nodeName):
         table = self.generateProbabiliyTable(neighobrs, nodeName)
@@ -67,6 +70,15 @@ class EvacueeNode(Node):
                 str_permutation += "not Blockage " + vertex[2:] + ", "
         return str_permutation[0:-2]
 
+    def getProbabilityWithParents(self, parent_evidence):
+        for prob in self.table:
+            parent_key = True
+            for parent in parent_evidence:
+                if prob[parent[0].get_name] != parent[1]:
+                    parent_key = False
+                    break
+            if parent_key:
+                return self.table[prob]
 
     def generateProbabiliyTable(self, neighborVertexes: list, nodeName):
         graph = Graph()

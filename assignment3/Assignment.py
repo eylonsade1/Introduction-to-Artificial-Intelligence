@@ -21,9 +21,13 @@ class Assignment3(object):
         self.bayesNetwork = BayesNetwork()
 
     def getVals(self, node: Nodes, evidence: dict):
-        if node in evidence:
-            return [evidence[node]]
-        return node.legalValues
+        values = []
+        if node in evidence.keys():
+            values.append((node, evidence[node]))
+            return [values]
+        for legalVal in node.legalValues:
+            values.append((node, legalVal))
+        return values
 
     def enumerateAsk(self, queryVariable: list, evidenceVars=None):
         distribution = dict()
@@ -33,27 +37,27 @@ class Assignment3(object):
         all_permutations = list(itertools.product(*possibleValues))
         orderVarsFromNetwork = self.bayesNetwork.get_vars()
         for queryVal in all_permutations:
-            extendedEvidenceVar = self.extend(evidenceVars, queryVal, 0)
+            extendedEvidenceVar = self.extend(evidenceVars, queryVal)
             distribution[queryVal] = self.enumerateAll(orderVarsFromNetwork, extendedEvidenceVar)
         normalizedQueryDistribution = self.normalize(distribution)
         return normalizedQueryDistribution
 
-    def extend(self, s, var, val):
-        """Copy dict s and extend it by setting var to val; return copy."""
-        return {**s, var: val}
+    def extend(self, s, var):
+        return {**s, var[0][0]: var[0][1]}
 
     def enumerateAll(self, variables, evidence):
         probability = 0
         if not variables:
             return 1.0
-        variable = variables[1]
-        if evidence.value:
-            probability = self.calcProb()
-            probability = probability * self.enumerateAll(variables[:1], evidence)
-        else:
-            for possibleVal in variable.possibleVals:
-                probability += probability * self.enumerateAll(variables[:1], evidence.append(possibleVal))
-
+        Y = variables[0]
+        values = [(Y, evidence[Y])] if Y in evidence.keys() else [(Y, value) for value in Y.legalValues]
+        parents = self.bayesNetwork.getParents(Y)
+        parent_evidence = dict()
+        for parent in parents:
+            if parent in evidence.keys():
+                parent_evidence[parent] = evidence[parent]
+        # for value in values:
+        #     value_probability = Y.getProbabilityWithParents(value, parent_evidence)
         return probability
 
     # #todo
