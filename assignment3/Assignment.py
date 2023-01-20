@@ -7,30 +7,33 @@ import out
 import time
 import utils
 import numpy as np
+
 BLOCKED_PREFIX = "blockage_"
 EVACUEE_PREFIX = "evacuee_"
 MILD = "mild"
 STORMY = "stromy"
 EXTREME = "extreme"
 
+
 class Assignment3(object):
     def __init__(self):
         self.graph = Graph()
         self.bayesNetwork = BayesNetwork()
 
-    def get_vals_from_evidence(self, x: Nodes, evidence: dict):
-        for var, val in evidence:
-            if var == x.name:
-                return [val]
-        return x.legalValues
+    def getVals(self, node: Nodes, evidence: dict):
+        if node in evidence:
+            return [evidence[node]]
+        return node.legalValues
 
-    def enumerateAsk(self, queryVariable: list, evidenceVars = None):
+    def enumerateAsk(self, queryVariable: list, evidenceVars=None):
         distribution = dict()
-        possible_values = [self.get_vals_from_evidence(x, evidenceVars) for x in queryVariable]
-        all_permutations = list(itertools.product(*possible_values))
+        possibleValues = []
+        for variable in queryVariable:
+            possibleValues.append(self.getVals(variable, evidenceVars))
+        all_permutations = list(itertools.product(*possibleValues))
         orderVarsFromNetwork = self.bayesNetwork.get_vars()
         for queryVal in all_permutations:
-            extendedEvidenceVar = self.extend(evidenceVars,queryVal,0)
+            extendedEvidenceVar = self.extend(evidenceVars, queryVal, 0)
             distribution[queryVal] = self.enumerateAll(orderVarsFromNetwork, extendedEvidenceVar)
         normalizedQueryDistribution = self.normalize(distribution)
         return normalizedQueryDistribution
@@ -63,6 +66,7 @@ class Assignment3(object):
             for val in distribution:
                 distribution[val] /= total
         return distribution
+
     #
     # #todo proba claculation
     # def calcProb(self):
@@ -83,12 +87,11 @@ class Assignment3(object):
             elif choice == 4:
                 break
 
-
     def userInit(self):
         self.partOne()
         self.second_part_impl()
-            # #todo add evidence query
-            # print("Not yet implemented")
+        # #todo add evidence query
+        # print("Not yet implemented")
 
     def partOne(self):
         print(self.bayesNetwork)
@@ -111,18 +114,18 @@ class Assignment3(object):
             evidence_menu = "Choose the evidence: \n1. blocked \n2. not blocked\n"
             evidence_choice = int(input(evidence_menu))
             nodeObj = self.bayesNetwork.get_node(BLOCKED_PREFIX + "#V" + str(node))
-            evidence[nodeObj] = "1" if evidence_choice == 1 else "0"
+            evidence[nodeObj] = True if evidence_choice == 1 else False
         elif choice == 3:
             node_menu = "Choose to which node you would like to add:"
             node_num = 1
             for node in self.graph.vertexes:
-                    node_menu += "\n" + str(node_num) + ". " + node.name
-                    node_num += 1
+                node_menu += "\n" + str(node_num) + ". " + node.name
+                node_num += 1
             node = int(input(node_menu + "\n"))
             evidence_menu = "Choose the evidence: \n1. people \n2. no people\n"
             evidence_choice = int(input(evidence_menu))
             nodeObj = self.bayesNetwork.get_node(EVACUEE_PREFIX + "#V" + str(node))
-            evidence[nodeObj] = "1" if evidence_choice == 1 else "0"
+            evidence[nodeObj] = True if evidence_choice == 1 else False
 
         return evidence
 
@@ -132,37 +135,36 @@ class Assignment3(object):
             choice = int(input(reasoning_menu))
             if choice == 1:
                 nodes = []
+                node_menu = "Choose node:"
+                node_num = 1
+                for node in self.graph.vertexes:
+                    node_menu += "\n" + str(node_num) + ". " + node.name
+                    node_num += 1
+                node_menu += "\n" + str(node_num) + ". Start calc\n"
                 while True:
-                    node_menu = "Choose node:"
-                    node_num = 1
-                    for node in self.graph.vertexes:
-                        node_menu += "\n" + str(node_num) + ". " + node.name
-                        node_num += 1
-                    node = int(input(node_menu))
-                    node_menu += "\n" + str(node_num) + ". Start calc\n"
                     node = int(input(node_menu))
                     if node == node_num:
                         break
                     node = self.bayesNetwork.get_node(EVACUEE_PREFIX + "#V" + str(node))
-                    nodes.append(node)
-                nodes = [self.bayesNetwork.get_node(node) for node in nodes]
+                    if node not in nodes:
+                        nodes.append(node)
                 probability = self.enumerateAsk(nodes, evidence)
                 print('The probability is: ', probability)
             elif choice == 2:
                 nodes = []
+                node_menu = "Choose node:"
+                node_num = 1
+                for node in self.graph.vertexes:
+                    node_menu += "\n" + str(node_num) + ". " + node.name
+                    node_num += 1
+                node_menu += "\n" + str(node_num) + ". Start calc\n"
                 while True:
-                    node_menu = "Choose node:"
-                    node_num = 1
-                    for node in self.graph.vertexes:
-                        node_menu += "\n" + str(node_num) + ". " + node.name
-                        node_num += 1
-                    node_menu += "\n" + str(node_num) + ". Start calc\n"
                     node = int(input(node_menu))
                     if node == node_num:
                         break
                     node = self.bayesNetwork.get_node(BLOCKED_PREFIX + "#V" + str(node))
-                    nodes.append(node)
-                nodes = [self.bayesNetwork.get_node(node) for node in nodes]
+                    if node not in nodes:
+                        nodes.append(node)
                 probability = self.enumerateAsk(nodes, evidence)
                 print('The probability is: ', probability)
             elif choice == 3:
