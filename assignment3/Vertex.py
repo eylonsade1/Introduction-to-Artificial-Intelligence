@@ -10,13 +10,16 @@ class Vertex(object):
         return "[{}:--blockedProbability:{}]\n".format(self.name, self.mildBlockageProbability)
 
     def getStormyProbabilty(self):
-        return min(self.mildBlockageProbability * STORMY_MUL_FACTOR, 1)
+        stormyProb = round(self.mildBlockageProbability * STORMY_MUL_FACTOR, 2)
+        return min(stormyProb, 1)
 
     def getExtremeProbability(self):
-        return min(self.mildBlockageProbability * EXTREME_MUL_FACTOR, 1)
+        extremePRob = round(self.mildBlockageProbability * EXTREME_MUL_FACTOR, 2)
+        return min(extremePRob, 1)
 
     def getMildProbabilty(self):
-        return min(self.mildBlockageProbability, 1)
+        mildProb = round(self.mildBlockageProbability, 2)
+        return min(mildProb, 1)
 
     def getProbabilityTable(self):
         return [self.getMildProbabilty(), self.getStormyProbabilty(), self.getExtremeProbability()]

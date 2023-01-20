@@ -44,7 +44,7 @@ class Assignment3(object):
         if not variables:
             return 1.0
         variable = variables[1]
-        if variable.value:
+        if evidence.value:
             probability = self.calcProb()
             probability = probability * self.enumerateAll(variables[:1], evidence)
         else:

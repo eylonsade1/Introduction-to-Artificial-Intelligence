@@ -115,9 +115,11 @@ class EvacueeNode(Node):
             for vertex, value in row.items():
                 if value:
                     probability *= get_value(vertex)
+            probability = round(probability, 2)
             false_table.append((row,probability))
         true_table = []
         for permutation, probability in false_table:
             new_probability = 1.0 - probability
+            new_probability = round(new_probability, 2)
             true_table.append((permutation, new_probability))
         return true_table
