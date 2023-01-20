@@ -53,37 +53,6 @@ class Assignment3(object):
 
         return probability
 
-    # def enumeration_ask(self, variable, evidence):
-    #     """
-    #     [Figure 14.9]
-    #     Return the conditional probability distribution of variable X
-    #     given evidence e, from BayesNet bn.
-    #     'False: 0.716, True: 0.284'"""
-    #     if variable.name in evidence.keys():
-    #         return evidence[variable.name]
-    #     distribution = dict()
-    #     for xi in variable.legalValues:
-    #         distribution[xi] = self.enumerate_all(self.bayesNetwork.get_vars(), self.extend(evidence, variable, xi))
-    #     return self.normalize(distribution)
-
-
-    # def enumerate_all(self, variables, evidence):
-    #     """Return the sum of those entries in P(variables | e{others})
-    #     consistent with e, where P is the joint distribution represented
-    #     by bn, and e{others} means e restricted to bn's other variables
-    #     (the ones other than variables). Parents must precede children in variables."""
-    #     if not variables:
-    #         return 1.0
-    #     Y, rest = variables[0], variables[1:]
-    #     Ynode = self.bayesNetwork.get_node(Y)
-    #     if Y in evidence:
-    #         return Ynode.p(evidence[Y], evidence) * self.enumerate_all(rest, evidence)
-    #     else:
-    #         return sum(Ynode.p(y, evidence) * self.enumerate_all(rest, self.extend(evidence, Y, y))
-    #                    for y in Y.legalValues())
-
-    # def getVarsOrdered(self, bayesianNetwork):
-    #     return []
     # #todo
     def normalize(self, distribution):
         """Make sure the probabilities of all values sum to 1.
@@ -130,7 +99,8 @@ class Assignment3(object):
         if choice == 1:
             weather_menu = "Choose the weather: \n1. Mild \n2. Stormy \n3. Extreme\n"
             weather = int(input(weather_menu))
-            evidence["WeatherNode"] = MILD if weather == 1 else STORMY if weather == 2 else EXTREME
+            nodeObj = self.bayesNetwork.get_node("WeatherNode")
+            evidence[nodeObj] = MILD if weather == 1 else STORMY if weather == 2 else EXTREME
         elif choice == 2:
             node_menu = "Choose to which node you would like to add:"
             node_num = 1
@@ -140,7 +110,8 @@ class Assignment3(object):
             node = int(input(node_menu + "\n"))
             evidence_menu = "Choose the evidence: \n1. blocked \n2. not blocked\n"
             evidence_choice = int(input(evidence_menu))
-            evidence[BLOCKED_PREFIX + "#V" + str(node)] = "1" if evidence_choice == 1 else "0"
+            nodeObj = self.bayesNetwork.get_node(BLOCKED_PREFIX + "#V" + str(node))
+            evidence[nodeObj] = "1" if evidence_choice == 1 else "0"
         elif choice == 3:
             node_menu = "Choose to which node you would like to add:"
             node_num = 1
@@ -150,7 +121,8 @@ class Assignment3(object):
             node = int(input(node_menu + "\n"))
             evidence_menu = "Choose the evidence: \n1. people \n2. no people\n"
             evidence_choice = int(input(evidence_menu))
-            evidence[EVACUEE_PREFIX + "#V" + str(node)] = "1" if evidence_choice == 1 else "0"
+            nodeObj = self.bayesNetwork.get_node(EVACUEE_PREFIX + "#V" + str(node))
+            evidence[nodeObj] = "1" if evidence_choice == 1 else "0"
 
         return evidence
 
@@ -161,7 +133,6 @@ class Assignment3(object):
             if choice == 1:
                 nodes = []
                 while True:
-                    node_menu = "Choose node:"
                     node_menu = "Choose node:"
                     node_num = 1
                     for node in self.graph.vertexes:
