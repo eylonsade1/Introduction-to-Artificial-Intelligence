@@ -190,10 +190,12 @@ class Assignment3(object):
                     if node not in nodes:
                         nodes.append(node)
                 probability = self.enumerateAsk(nodes, evidence)
-                print('probability: ', probability)
+                stringProbability = self.generateString(probability)
+                print('probability:\n ', stringProbability)
             elif choice == 3:
                 distribution = self.enumerateAsk([self.bayesNetwork.weatherNode], evidence)
-                print('distribution: ', distribution)
+                stringProbability = self.generateString(distribution)
+                print('distribution: ', stringProbability)
             elif choice == 4:
                 edges = []
                 while True:
@@ -210,6 +212,7 @@ class Assignment3(object):
                 nodes = self.graph.get_vertex_list_from_edges(edges)
                 nodes = [self.bayesNetwork.get_node(BLOCKED_PREFIX + node) for node in nodes]
                 probability = self.enumerateAsk(nodes, evidence)
-                print('probability: ', probability)
+                stringProbability = self.generateString(probability)
+                print('probability:\n ', stringProbability)
             elif choice == 5:
                 break
