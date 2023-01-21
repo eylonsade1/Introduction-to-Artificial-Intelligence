@@ -64,7 +64,7 @@ class Assignment3(object):
             for value in Y.legalValues:
                 value_probability = Y.getProbabilityWithParents(value, parent_evidence)
                 evidence[Y] = value
-                probability += value_probability * self.enumerateAll(variables[1:], evidence)
+                probability += (value_probability * self.enumerateAll(variables[1:], evidence))
             return probability
 
     # #todo
