@@ -2,7 +2,7 @@ STORMY_MUL_FACTOR = 2
 EXTREME_MUL_FACTOR = 3
 
 class Vertex(object):
-    def __init__(self, name, blockageProbability = 0):
+    def __init__(self, name, blockageProbability = 0.0):
         self.name = name
         self.mildBlockageProbability = blockageProbability
 

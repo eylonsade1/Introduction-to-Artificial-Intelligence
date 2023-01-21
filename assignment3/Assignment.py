@@ -38,7 +38,8 @@ class Assignment3(object):
         orderVarsFromNetwork = self.bayesNetwork.get_vars()
         for queryVal in all_permutations:
             extendedEvidenceVar = self.extend(evidenceVars, queryVal)
-            distribution[queryVal] = self.enumerateAll(orderVarsFromNetwork, extendedEvidenceVar)
+            calculatedProbability = self.enumerateAll(orderVarsFromNetwork, extendedEvidenceVar)
+            distribution[queryVal] = calculatedProbability
         normalizedQueryDistribution = self.normalize(distribution)
         return normalizedQueryDistribution
 
@@ -46,7 +47,6 @@ class Assignment3(object):
         return {**s, var[0][0]: var[0][1]}
 
     def enumerateAll(self, variables, evidence):
-        probability = 0
         if not variables:
             return 1.0
         Y = variables[0]
@@ -59,12 +59,17 @@ class Assignment3(object):
                 parent_evidence[parent] = evidence[parent]
         if value is not None:
             value_probability = Y.getProbabilityWithParents(value, parent_evidence)
-            return value_probability * self.enumerateAll(variables[1:], evidence)
+            # print(value_probability) for debugging purposes
+            recurssionValue = self.enumerateAll(variables[1:], evidence)
+            # print("{} * {}".format(value_probability, recurssionValue))
+            return value_probability * recurssionValue
         else:
-            for value in Y.legalValues:
-                value_probability = Y.getProbabilityWithParents(value, parent_evidence)
-                evidence[Y] = value
-                probability += (value_probability * self.enumerateAll(variables[1:], evidence))
+            probability = 0
+            for YLegalvalue in Y.legalValues:
+                value_probability = Y.getProbabilityWithParents(YLegalvalue, parent_evidence)
+                evidence[Y] = YLegalvalue
+                if value_probability:
+                    probability += (value_probability * self.enumerateAll(variables[1:], evidence))
             return probability
 
     # #todo
@@ -159,7 +164,7 @@ class Assignment3(object):
                     if node not in nodes:
                         nodes.append(node)
                 probability = self.enumerateAsk(nodes, evidence)
-                print('The probability is: ', probability)
+                print('probability: ', probability)
             elif choice == 2:
                 nodes = []
                 node_menu = "Choose node:"
@@ -176,10 +181,10 @@ class Assignment3(object):
                     if node not in nodes:
                         nodes.append(node)
                 probability = self.enumerateAsk(nodes, evidence)
-                print('The probability is: ', probability)
+                print('probability: ', probability)
             elif choice == 3:
                 distribution = self.enumerateAsk([self.bayesNetwork.weatherNode], evidence)
-                print('The distribution is: ', distribution)
+                print('distribution: ', distribution)
             elif choice == 4:
                 edges = []
                 while True:
@@ -196,6 +201,6 @@ class Assignment3(object):
                 nodes = self.graph.get_vertex_list_from_edges(edges)
                 nodes = [self.bayesNetwork.get_node(BLOCKED_PREFIX + node) for node in nodes]
                 probability = self.enumerateAsk(nodes, evidence)
-                print('The probability is: ', probability)
+                print('probability: ', probability)
             elif choice == 5:
                 break

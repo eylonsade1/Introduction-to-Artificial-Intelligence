@@ -41,7 +41,7 @@ class BlockageNode(Node):
         self.legalValues = [True, False]
 
     def __str__(self):
-        str_vertex = ""
+        str_vertex = self.name
         str_vertex += "P(Blocked|Mild) = " + str(self.table[0]) + "\n"
         str_vertex += "P(Blocked|Stormy) = " + str(self.table[1]) + "\n"
         str_vertex += "P(Blocked|Extreme) = " + str(self.table[2]) + "\n"
@@ -53,11 +53,15 @@ class BlockageNode(Node):
     def getProbabilityWithParents(self, value, parent_evidence):
         for parent in parent_evidence.values():
             if parent == MILD:
-                return self.table[0]
+                trueVal = self.table[0]
             if parent == STORMY:
-                return self.table[1]
+                trueVal = self.table[1]
             if parent == EXTREME:
-                return self.table[2]
+                trueVal = self.table[2]
+        if value:
+            return trueVal
+        else:
+            return 1 - trueVal
 
 
 class EvacueeNode(Node):
@@ -67,7 +71,7 @@ class EvacueeNode(Node):
         self.legalValues = [True, False]
 
     def __str__(self):
-        str_vertex = ""
+        str_vertex = self.name
         for permutation, value in self.table:
             str_vertex += "P(Evacuees| " + self.permutation_str(permutation) + ") = " + str(value) + "\n"
         return str_vertex
@@ -91,7 +95,10 @@ class EvacueeNode(Node):
                 if prob[0][parent.get_name()] != parent_evidence[parent]:
                     parent_key = False
             if parent_key:
-                return prob[1]
+                if value:
+                    return prob[1]
+                else:
+                    return 1 - prob[1]
         return 0
 
     def generateProbabiliyTable(self, neighborVertexes: list, nodeName):
