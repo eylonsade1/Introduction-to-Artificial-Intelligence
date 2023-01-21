@@ -27,6 +27,13 @@ class WeatherNode(Node):
         str_weather += "P(extreme) = " + str(self.table[2]) + "\n"
         return str_weather
 
+    def getProbabilityWithParents(self, value, parent_evidence):
+        if value == MILD:
+            return self.table[0]
+        if value == STORMY:
+            return self.table[1]
+        if value == EXTREME:
+            return self.table[2]
 
 class BlockageNode(Node):
     def __init__(self, probabiliyTable, nodeName):
@@ -43,8 +50,15 @@ class BlockageNode(Node):
     def get_name(self):
         return self.name.split(BLOCKED_PREFIX)[1]
 
-    # def getProbabilityWithParents(self, parent_evidence):
-    #
+    def getProbabilityWithParents(self, value, parent_evidence):
+        for parent in parent_evidence.values():
+            if parent == MILD:
+                return self.table[0]
+            if parent == STORMY:
+                return self.table[1]
+            if parent == EXTREME:
+                return self.table[2]
+
 
 class EvacueeNode(Node):
     def __init__(self, neighobrs, nodeName):
@@ -70,15 +84,15 @@ class EvacueeNode(Node):
                 str_permutation += "not Blockage " + vertex[2:] + ", "
         return str_permutation[0:-2]
 
-    def getProbabilityWithParents(self, parent_evidence):
+    def getProbabilityWithParents(self, value, parent_evidence):
         for prob in self.table:
             parent_key = True
-            for parent in parent_evidence:
-                if prob[parent[0].get_name] != parent[1]:
+            for parent in parent_evidence.keys():
+                if prob[0][parent.get_name()] != parent_evidence[parent]:
                     parent_key = False
-                    break
             if parent_key:
-                return self.table[prob]
+                return prob[1]
+        return 0
 
     def generateProbabiliyTable(self, neighborVertexes: list, nodeName):
         graph = Graph()

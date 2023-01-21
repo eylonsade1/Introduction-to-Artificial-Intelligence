@@ -50,22 +50,28 @@ class Assignment3(object):
         if not variables:
             return 1.0
         Y = variables[0]
-        values = [(Y, evidence[Y])] if Y in evidence.keys() else [(Y, value) for value in Y.legalValues]
+        value = evidence[Y] if Y in evidence.keys() else None
+        # values = [(Y, evidence[Y])] if Y in evidence.keys() else [(Y, value) for value in Y.legalValues]
         parents = self.bayesNetwork.getParents(Y)
         parent_evidence = dict()
         for parent in parents:
             if parent in evidence.keys():
                 parent_evidence[parent] = evidence[parent]
-        # for value in values:
-        #     value_probability = Y.getProbabilityWithParents(value, parent_evidence)
-        return probability
+        if value is not None:
+            value_probability = Y.getProbabilityWithParents(value, parent_evidence)
+            return value_probability * self.enumerateAll(variables[1:], evidence)
+        else:
+            for value in Y.legalValues:
+                value_probability = Y.getProbabilityWithParents(value, parent_evidence)
+                evidence[Y] = value
+                probability += value_probability * self.enumerateAll(variables[1:], evidence)
+            return probability
 
     # #todo
     def normalize(self, distribution):
-        """Make sure the probabilities of all values sum to 1.
-        Returns the normalized distribution.
-        Raises a ZeroDivisionError if the sum of the values is 0."""
         total = sum(distribution.values())
+        if total == 0:
+            return 0
         if not np.isclose(total, 1.0):
             for val in distribution:
                 distribution[val] /= total
