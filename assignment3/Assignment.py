@@ -146,11 +146,15 @@ class Assignment3(object):
 
     def generateString(self, probabilityStruct):
         stringOfProbability = ""
-        for key, value in probabilityStruct.items():
-            for nodeAss in key:
-                stringOfProbability += "{}:{}, ".format(nodeAss[0].name, nodeAss[1])
-            stringOfProbability += "= {}\n".format(round(value, 2))
-        return stringOfProbability
+        try:
+            for key, value in probabilityStruct.items():
+                for nodeAss in key:
+                    stringOfProbability += "{}:{}, ".format(nodeAss[0].name, nodeAss[1])
+                stringOfProbability += "= {}\n".format(round(value, 2))
+            return stringOfProbability
+        except Exception:
+            print("Failed on generating comfortable string from probabilityStructure- returning objects")
+            return probabilityStruct
 
     def probabalistic_reasoning(self, evidence):
         while True:
