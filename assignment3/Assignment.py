@@ -144,6 +144,14 @@ class Assignment3(object):
 
         return evidence
 
+    def generateString(self, probabilityStruct):
+        stringOfProbability = ""
+        for key, value in probabilityStruct.items():
+            for nodeAss in key:
+                stringOfProbability += "{}:{}, ".format(nodeAss[0].name, nodeAss[1])
+            stringOfProbability += "= {}\n".format(round(value, 2))
+        return stringOfProbability
+
     def probabalistic_reasoning(self, evidence):
         while True:
             reasoning_menu = "Choose one of the following options: \n1. What is the probability that each of the vertices contains evacuees? \n2. What is the probability that each of the vertices is blocked? \n3. What is the distribution of the weather variable? \n4. What is the probability that a certain path (set of edges) is free from blockages? \n5. Return\n"
@@ -164,7 +172,8 @@ class Assignment3(object):
                     if node not in nodes:
                         nodes.append(node)
                 probability = self.enumerateAsk(nodes, evidence)
-                print('probability: ', probability)
+                stringProbability = self.generateString(probability)
+                print('probability:\n ', stringProbability)
             elif choice == 2:
                 nodes = []
                 node_menu = "Choose node:"
