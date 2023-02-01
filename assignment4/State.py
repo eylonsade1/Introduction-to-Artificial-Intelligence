@@ -36,9 +36,13 @@ class State(object):
     def __init__(self, currentVertex: Vertex, BlockagesStatusDict):
         self.currentVertex = currentVertex
         self.blockages = BlockagesStatusDict
+        self.graph = Graph()
 
     def __str__(self):
         s = "STATE\nCurrent vertex: " + str(self.currentVertex) + "\n{"
         for edge in self.blockages:
             s += edge.name + ": " + str(self.blockages[edge]) + ", "
         return s + "}\n"
+
+    def getActions(self):
+        return self.graph.getConnectedEdges(self.currentVertex)

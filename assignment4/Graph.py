@@ -112,6 +112,14 @@ class Graph(Singleton):
                 neighbors.append(tuple((self.getVertexByName(edge.fromV), int(weight))))
         return neighbors
 
+    def getEdgeFromVertexes(self, vertexA, vertexB):
+        for edge in self.edges:
+            if edge.fromV == vertexA.name and edge.toV == vertexB.name:
+                return edge
+            elif edge.fromV == vertexB.name and edge.toV == vertexA.name:
+                return edge
+        return None
+
     def getConnectedEdges(self, vertex):
         connectedEdges = []
         for edge in self.edges:

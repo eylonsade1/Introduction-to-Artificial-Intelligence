@@ -1,5 +1,5 @@
 import os
-# from Assignment import Assignment1
+from Assignment import Assignment
 import OutputStrings as out
 from Graph import Graph
 import State
@@ -16,8 +16,8 @@ if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     graph = Graph()
     states = State.generateAllStates()
-    # ass1 = Assignment1()
-    # ass1.userInit()
+    ass4 = Assignment(states)
+    expectedValueOfPolicies = ass4.valueIteration()
     # ass1.runAgents()
     # ass1.printAgentsState()
     print("End state of the graph: {}".format(Graph()))
