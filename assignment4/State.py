@@ -25,8 +25,10 @@ def removeNonLegalStates(states):
 
 def checkLegal(state):
     for edge, blockage in state.blockages.items():
-        if blockage and state.currentVertex.name == edge.toV:
+        if blockage is True and state.currentVertex.name == edge.toV:
             return False    #a state is not legal if the current vertex is the destination of a broken edge
+        if blockage == UNKNOWN and (state.currentVertex.name == edge.toV or state.currentVertex.name == edge.fromV):
+            return False    #a state is not legal if the status is unkown and we are at a neighboring vertex
     return True
 
 
