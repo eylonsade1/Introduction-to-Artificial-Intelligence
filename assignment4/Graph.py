@@ -13,7 +13,7 @@ VERTEX_NAME_PREFIX = "#V"
 PROBABILITY = "p"
 START = "s"
 GOAL = "g"
-
+DEFAULT_ROUTE = 10000
 
 class Graph(Singleton):
     def __init__(self):
@@ -45,11 +45,24 @@ class Graph(Singleton):
                     self.updateVertex(row[1], row[2], PROBABILITY)
                 elif row[0].startswith(EDGE_PREFIX):
                     self.edges.append(
-                        Edge(VERTEX_NAME_PREFIX + row[1], VERTEX_NAME_PREFIX + row[2], row[3].split(WEIGHT_PREFIX)[1]))
+                        Edge(self.getVertexByName(VERTEX_NAME_PREFIX + row[1]), self.getVertexByName(VERTEX_NAME_PREFIX + row[2]), row[3].split(WEIGHT_PREFIX)[1]))
                 elif row[0].startswith(START_PREFIX):
                     self.updateVertex(row[1], True, START)
                 elif row[0].startswith(TARGET_PREFIX):
                     self.updateVertex(row[1], True, GOAL)
+        self.edges.append(
+            Edge(self.getStartVertex(), self.getGoalVertex(), DEFAULT_ROUTE)
+        )
+
+    def getStartVertex(self):
+        for vertex in self.vertexes:
+            if vertex.isStart:
+                return vertex
+
+    def getGoalVertex(self):
+        for vertex in self.vertexes:
+            if vertex.isGoal:
+                return vertex
 
     def updateVertex(self, vertexNumber, toUpdate, field):
         vertex: Vertex = self.getVertexByName(VERTEX_NAME_PREFIX + str(vertexNumber))
@@ -99,7 +112,26 @@ class Graph(Singleton):
                 neighbors.append(tuple((self.getVertexByName(edge.fromV), int(weight))))
         return neighbors
 
+    def getConnectedEdges(self, vertex):
+        connectedEdges = []
+        for edge in self.edges:
+            if edge.fromV == vertex.name:
+                connectedEdges.append(edge)
+            elif edge.toV == vertex.name:
+                connectedEdges.append(edge)
+        return connectedEdges
+
     def getVertexNumber(self, vertex: Vertex):
         for vertexNumber in range(len(self.vertexes)):
             if self.vertexes[vertexNumber] == vertex:
                 return vertexNumber
+
+    def getAllBlockableEdges(self):
+        allEdgesList = []
+        for vertex in self.vertexes:
+            if vertex.brokenProb:
+                for edge in self.getConnectedEdges(vertex):
+                    if edge not in allEdgesList:
+                        allEdgesList.append(edge)
+        return allEdgesList
+

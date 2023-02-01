@@ -2,7 +2,7 @@ import os
 # from Assignment import Assignment1
 import OutputStrings as out
 from Graph import Graph
-
+import State
 def createGraph(pathToGraph):
     if os.path.isfile(pathToGraph):
         graph = Graph()
@@ -15,6 +15,7 @@ def createGraph(pathToGraph):
 if __name__ == '__main__':
     createGraph(os.path.join(os.getcwd(), 'graph.csv'))
     graph = Graph()
+    states = State.generateAllStates()
     # ass1 = Assignment1()
     # ass1.userInit()
     # ass1.runAgents()
