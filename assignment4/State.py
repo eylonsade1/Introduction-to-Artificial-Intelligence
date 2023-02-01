@@ -2,6 +2,7 @@ from Graph import Graph
 from Vertex import Vertex
 import itertools
 UNKNOWN = "unknown"
+GOAL = "goal"
 
 def generateAllStates():
     graph = Graph()
