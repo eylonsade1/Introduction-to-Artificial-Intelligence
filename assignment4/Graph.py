@@ -13,7 +13,7 @@ VERTEX_NAME_PREFIX = "#V"
 PROBABILITY = "p"
 START = "s"
 GOAL = "g"
-DEFAULT_ROUTE = 10000
+DEFAULT_ROUTE = -10000
 
 class Graph(Singleton):
     def __init__(self):
@@ -51,7 +51,7 @@ class Graph(Singleton):
                 elif row[0].startswith(TARGET_PREFIX):
                     self.updateVertex(row[1], True, GOAL)
         self.edges.append(
-            Edge(self.getStartVertex(), self.getGoalVertex(), DEFAULT_ROUTE)
+            Edge(self.getStartVertex(), self.getGoalVertex(), -DEFAULT_ROUTE)
         )
 
     def getStartVertex(self):
@@ -102,6 +102,8 @@ class Graph(Singleton):
         return 0
 
     def getNeighborsList(self, vertex: Vertex):
+        if type(vertex) is str:
+            vertex = self.getVertexByName(vertex)
         neighbors = []
         for edge in self.edges:
             if edge.fromV == vertex.name:
@@ -143,3 +145,11 @@ class Graph(Singleton):
                         allEdgesList.append(edge)
         return allEdgesList
 
+    def getAllBlockableEdgesFromVertex(self, fromVertex:Vertex):
+        allEdgesList = []
+        for vertex in self.getNeighborsList(fromVertex):
+            if vertex[0].brokenProb:
+                for edge in self.getConnectedEdges(vertex[0]):
+                    if edge not in allEdgesList and (fromVertex == edge.fromV or fromVertex == edge.toV):
+                        allEdgesList.append(edge)
+        return allEdgesList

@@ -6,8 +6,8 @@ class Vertex(object):
         self.brokenProb = brokenProb
 
     def __str__(self):
-        return "[{}:is start:{}--is goal:{} -- probability of being broken:{}]\n".format(self.name, self.isGoal,
-                                                                                         self.isStart, self.brokenProb)
+        return "[{}:is start:{}--is goal:{} -- probability of being broken:{}]\n".format(self.name, self.isStart,
+                                                                                         self.isGoal, self.brokenProb)
     def setIsStart(self, isStart):
         self.isStart = isStart
 
