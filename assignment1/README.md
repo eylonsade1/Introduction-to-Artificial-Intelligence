@@ -31,6 +31,6 @@ Part II focuses on implementing intelligent search agents using different algori
 - A real-time A* search agent is implemented, which performs a user-determined number of expansions before each move decision. This agent balances the trade-off between computation time and path quality.
 
 
-
+## Additional Information
 
 For detailed formal instructions for this assignment, please refer to the file Alass1.html.
